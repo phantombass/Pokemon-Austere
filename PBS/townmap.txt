@@ -1,0 +1,14 @@
+﻿# See the documentation on the wiki to learn how to edit this file.
+#-------------------------------
+[0]
+Filename = mapRegion0.png
+Name = PAXO
+Point = 20,12,SILICA VALLEY,POKéMON LAB,91,6,4,
+Point = 19,12,ROUTE 1,,,,,
+Point = 18,12,ROUTE 1,,,,,
+Point = 18,11,SEGUN TOWN,POKéMON DAY CARE,98,21,10,
+Point = 18,10,ROUTE 2,,,,,
+Point = 18,9,ROUTE 2,,,,,
+Point = 17,9,ROUTE 2,,,,,
+Point = 16,9,TERCER CITY,POKéMON GYM,103,36,23,
+Point = 20,11,MT. PRIMO,,,,,
