@@ -11,6 +11,8 @@ def pbEeveeCheck
   }
   if [:EEVEE].include?(eevee)
     eevee_flag = true
+  else
+    $eeveelution = 9
   end
   if eevee_flag == true
     pbEachPokemon { |pkmn,_box|

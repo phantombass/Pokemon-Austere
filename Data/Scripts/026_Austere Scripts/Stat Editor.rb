@@ -502,45 +502,49 @@ class PokemonPartyScreen
           pbDisplay(_INTL("This POKéMON cannot relearn any moves."))
         end
       elsif cmdEvolve>=0 && command==cmdEvolve
-        evoreqs = {}
-        species = pkmn.species
-        pbGetEvolvedFormData(species).each do |evo|   # [method, parameter, new_species]
-          if [26,27,28,29,30,34,35].include?(evo[0]) #Happiness Evolutions
-            evoreqs[evo[2]] = nil
-          elsif [40,41,47,48,49,50,51,52,62].include?(evo[0]) && $PokemonBag.pbHasItem?(evo[1]) #Item Evolutions
-            evoreqs[evo[2]] = evo[1]
-          elsif [53,54,55,56,57,58,59].include?(evo[0]) && $Trainer.pbHasSpecies?(species) #Trade Evolutions
-            evoreqs[evo[2]] = evo[1]
-          elsif pbCheckEvolution(pkmn) > -1 #Level Up Evolutions
-            evoreqs[evo[2]] = nil
-          end
-        end
-        case evoreqs.length
-        when 0
-          pbDisplay(_INTL("This Pokémon can't evolve."))
-          next
-        when 1
-          newspecies = evoreqs.keys[0]
+        if pkmn.fainted? && $PokemonSystem.nuzlocke == true
+          pbDisplay(_INTL("This POKéMON has fainted and can no longer be used."))
         else
-          newspecies = evoreqs.keys[@scene.pbShowCommands(
-            _INTL("Which species would you like to evolve into?"),
-            evoreqs.keys.map { |id| _INTL(PBSpecies.getName(id)) }
-          )]
+          evoreqs = {}
+          species = pkmn.species
+          pbGetEvolvedFormData(species).each do |evo|   # [method, parameter, new_species]
+            if [26,27,28,29,30,34,35].include?(evo[0]) #Happiness Evolutions
+              evoreqs[evo[2]] = nil
+            elsif [40,41,47,48,49,50,51,52,62].include?(evo[0]) && $PokemonBag.pbHasItem?(evo[1]) #Item Evolutions
+              evoreqs[evo[2]] = evo[1]
+            elsif [53,54,55,56,57,58,59].include?(evo[0]) && $Trainer.pbHasSpecies?(species) #Trade Evolutions
+              evoreqs[evo[2]] = evo[1]
+            elsif pbCheckEvolution(pkmn) > -1 #Level Up Evolutions
+              evoreqs[evo[2]] = nil
+            end
+          end
+          case evoreqs.length
+          when 0
+            pbDisplay(_INTL("This Pokémon can't evolve."))
+            next
+          when 1
+            newspecies = evoreqs.keys[0]
+          else
+            newspecies = evoreqs.keys[@scene.pbShowCommands(
+              _INTL("Which species would you like to evolve into?"),
+              evoreqs.keys.map { |id| _INTL(PBSpecies.getName(id)) }
+            )]
+          end
+          if evoreqs[newspecies] # requires an item
+            next unless @scene.pbConfirmMessage(_INTL(
+              "This will consume a {1}. Do you want to continue?",
+              PBItems.getName(evoreqs[newspecies])
+            ))
+            $PokemonBag.pbDeleteItem(evoreqs[newspecies])
+          end
+          pbFadeOutInWithMusic {
+            evo = PokemonEvolutionScene.new
+            evo.pbStartScreen(pkmn,newspecies)
+            evo.pbEvolution
+            evo.pbEndScreen
+            pbRefresh
+          }
         end
-        if evoreqs[newspecies] # requires an item
-          next unless @scene.pbConfirmMessage(_INTL(
-            "This will consume a {1}. Do you want to continue?",
-            PBItems.getName(evoreqs[newspecies])
-          ))
-          $PokemonBag.pbDeleteItem(evoreqs[newspecies])
-        end
-        pbFadeOutInWithMusic {
-          evo = PokemonEvolutionScene.new
-          evo.pbStartScreen(pkmn,newspecies)
-          evo.pbEvolution
-          evo.pbEndScreen
-          pbRefresh
-        }
       elsif cmdEgg>=0 && command==cmdEgg
         if pkmn.has_egg_move?
           pbEggMoveScreen(pkmn)
@@ -551,6 +555,7 @@ class PokemonPartyScreen
         speciesname = pkmn.speciesName
         nickname = pbEnterPokemonName(_INTL("{1}'s nickname?", speciesname),
                                       0, PokeBattle_Pokemon::MAX_POKEMON_NAME_SIZE, "", pkmn)
+        nickname = speciesname if nickname == ""
         pkmn.name = nickname
       end
     end

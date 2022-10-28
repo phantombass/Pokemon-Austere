@@ -52,7 +52,6 @@ end
 
 def pbGiveHMCatalogue
   HMCatalogue.setup
-  HM_Catalogue.setup
   pbMessage(_INTL("\\me[Key item get]\PN added the HM CATALOGUE to the QOL Access!\\wtnp[75]"))
 end
 

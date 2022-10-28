@@ -108,7 +108,7 @@ class PokeBattle_Move_500 < PokeBattle_BurnMove
   end
 
   def pbAdditionalEffect(user,target)
-    return if target.damageState.substitute && @battle.field.field_effects != PBFieldEffects::Desert
+    return if target.damageState.substitute
     target.pbBurn(user) if target.pbCanBurn?(user,false,self)
   end
 end

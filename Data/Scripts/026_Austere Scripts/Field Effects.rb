@@ -1026,6 +1026,17 @@ class PokeBattle_Battler
 end
 
 class PokeBattle_Move
+  def pbAdditionalEffectChance(user,target,effectChance=0)
+    return 0 if target.hasActiveAbility?(:SHIELDDUST) && !@battle.moldBreaker
+    ret = (effectChance>0) ? effectChance : @addlEffect
+    if NEWEST_BATTLE_MECHANICS || @function!="0A4"   # Secret Power
+      ret *= 2 if user.hasActiveAbility?(:SERENEGRACE) ||
+                  user.pbOwnSide.effects[PBEffects::Rainbow]>0
+    end
+    ret = 100 if @battle.field.field_effects == PBFieldEffects::Desert && @function == "500"
+    ret = 100 if $DEBUG && Input.press?(Input::CTRL)
+    return ret
+  end
   def pbCalcType(user)
     @powerBoost = false
     $orig_grass = false
