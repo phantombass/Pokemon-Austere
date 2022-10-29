@@ -1248,12 +1248,13 @@ class PokeBattle_Move
  end
  case @battle.field.field_effects
  when PBFieldEffects::Desert
+   priority = @battle.pbPriority(true)
    case type
    when isConst?(type,PBTypes,:FIRE), isConst?(type,PBTypes,:GROUND)
      multipliers[FINAL_DMG_MULT] *= 1.2
      @battle.pbDisplay(_INTL("The desert strengthened the attack!")) if $test_trigger == false
    when getConst(PBTypes,:WATER), getConst(PBTypes,:GRASS)
-     multipliers[FINAL_DMG_MULT] *= 0.8
+     multipliers[FINAL_DMG_MULT] *= 0.75
      @battle.pbDisplay(_INTL("The desert weakened the attack!")) if $test_trigger == false
    when getConst(PBTypes,:FLYING)
      if user.effectiveWeather != :Sandstorm
@@ -1263,12 +1264,14 @@ class PokeBattle_Move
      end
    end
  when PBFieldEffects::Lava
+   priority = @battle.pbPriority(true)
    case type
    when getConst(PBTypes,:FIRE)
      multipliers[FINAL_DMG_MULT] *= 1.2
      @battle.pbDisplay(_INTL("The lava strengthened the attack!")) if $test_trigger == false
    end
  when PBFieldEffects::ToxicFumes
+   priority = @battle.pbPriority(true)
    case type
    when getConst(PBTypes,:FIRE)
      multipliers[FINAL_DMG_MULT] *= 1.2
@@ -1280,6 +1283,9 @@ class PokeBattle_Move
        $field_effect_bg = "Wildfire"
        @battle.scene.pbRefreshEverything
        @battle.field.field_effects = PBFieldEffects::Wildfire
+       priority.each do |pkmn|
+         BattleHandlers.triggerAbilityOnSwitchIn(:FLASHFIRE,pkmn,@battle) if pkmn.hasActiveAbility?(:FLASHFIRE)
+       end
        @battle.pbDisplay(_INTL("The field is ablaze.")) if $test_trigger == false
      end
    when getConst(PBTypes,:POISON)
@@ -1292,6 +1298,7 @@ class PokeBattle_Move
      $orig_water = false
    end
  when PBFieldEffects::Wildfire
+   priority = @battle.pbPriority(true)
    case type
    when getConst(PBTypes,:FIRE)
      multipliers[FINAL_DMG_MULT] *= 1.2
@@ -1308,13 +1315,14 @@ class PokeBattle_Move
        $orig_flying = false
      end
    when getConst(PBTypes,:WATER)
-     multipliers[FINAL_DMG_MULT] *= 0.8
+     multipliers[FINAL_DMG_MULT] *= 0.75
      @battle.pbDisplay(_INTL("The wildfire weakened the attack!")) if $test_trigger == false
    end
  when PBFieldEffects::Swamp
+   priority = @battle.pbPriority(true)
    case type
    when getConst(PBTypes,:ROCK)
-     multipliers[FINAL_DMG_MULT] *= 0.8
+     multipliers[FINAL_DMG_MULT] *= 0.75
      @battle.pbDisplay(_INTL("The swamp weakened the attack!")) if $test_trigger == false
      if self.baseDamage >= 80
        @battle.pbDisplay(_INTL("The swamp filled with rocks!")) if $test_trigger == false
@@ -1323,13 +1331,14 @@ class PokeBattle_Move
        @battle.field.field_effects = PBFieldEffects::None
      end
    when getConst(PBTypes,:FIRE),getConst(PBTypes,:FIGHTING)
-     multipliers[FINAL_DMG_MULT] *= 0.8
+     multipliers[FINAL_DMG_MULT] *= 0.75
      @battle.pbDisplay(_INTL("The swamp weakened the attack!")) if $test_trigger == false
    when getConst(PBTypes,:POISON),getConst(PBTypes,:WATER),getConst(PBTypes,:GRASS)
      multipliers[FINAL_DMG_MULT] *= 1.2
      @battle.pbDisplay(_INTL("The swamp strengthened the attack!")) if $test_trigger == false
    end
  when PBFieldEffects::City
+   priority = @battle.pbPriority(true)
    case type
    when getConst(PBTypes,:NORMAL),getConst(PBTypes,:POISON)
      multipliers[FINAL_DMG_MULT] *= 1.2
@@ -1340,6 +1349,9 @@ class PokeBattle_Move
        $field_effect_bg = "Wildfire"
        @battle.field.field_effects = PBFieldEffects::Wildfire
        @battle.scene.pbRefreshEverything
+       priority.each do |pkmn|
+         BattleHandlers.triggerAbilityOnSwitchIn(:FLASHFIRE,pkmn,@battle) if pkmn.hasActiveAbility?(:FLASHFIRE)
+       end
        @battle.pbDisplay(_INTL("The field is ablaze.")) if $test_trigger == false
      end
    when getConst(PBTypes,:GROUND)
@@ -1375,7 +1387,7 @@ class PokeBattle_Move
      end
    end
    if soundMove?
-     @battle.allBattlers.each do |pkmn|
+     priority.each do |pkmn|
        confuse = rand(100)
        if confuse > 85
          @battle.pbDisplay(_INTL("The noise of the city was too much for {1}!",pkmn.name))
@@ -1384,6 +1396,7 @@ class PokeBattle_Move
      end
    end
  when PBFieldEffects::Ruins
+   priority = @battle.pbPriority(true)
    case type
    when getConst(PBTypes,:FIRE), getConst(PBTypes,:WATER), getConst(PBTypes,:GRASS)
      multipliers[FINAL_DMG_MULT] *= 1.2
@@ -1399,6 +1412,7 @@ class PokeBattle_Move
      multipliers[FINAL_DMG_MULT] /= 2
    end
  when PBFieldEffects::Grassy
+   priority = @battle.pbPriority(true)
    if target.pbHasType?(:BUG)
      multipliers[DEF_MULT] *= 1.2
    end
@@ -1414,6 +1428,9 @@ class PokeBattle_Move
        $orig_flying = false
        @battle.field.field_effects = PBFieldEffects::Wildfire
        @battle.scene.pbRefreshEverything
+       priority.each do |pkmn|
+         BattleHandlers.triggerAbilityOnSwitchIn(:FLASHFIRE,pkmn,@battle) if pkmn.hasActiveAbility?(:FLASHFIRE)
+       end
        @battle.pbDisplay(_INTL("The field is ablaze.")) if $test_trigger == false
      end
    when getConst(PBTypes,:FLYING)
@@ -1424,14 +1441,17 @@ class PokeBattle_Move
        if user.status == PBStatuses::NONE
          case spore
          when 0
-           user.status = PBStatuses::PARALYSIS
-           @battle.pbDisplay(_INTL("{1} was paralyzed!",user.pbThis))
+           user.status = PBStatuses::PARALYSIS if pbCanParalyze?(user,nil)
+           @battle.pbDisplay(_INTL("{1} was paralyzed!",user.pbThis)) if pbCanParalyze?(user,nil)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !pbCanParalyze?(user,nil)
          when 3
-           user.status = PBStatuses::POISON
-           @battle.pbDisplay(_INTL("{1} was poisoned!",user.pbThis))
+           user.status = PBStatuses::POISON if pbCanPoison?(user,nil)
+           @battle.pbDisplay(_INTL("{1} was poisoned!",user.pbThis)) if pbCanPoison?(user,nil)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !pbCanPoison?(user,nil)
          when 6
-           user.status = PBStatuses::SLEEP
-           @battle.pbDisplay(_INTL("{1} fell asleep!",user.pbThis))
+           user.status = PBStatuses::SLEEP if pbCanSleep?(user,nil)
+           @battle.pbDisplay(_INTL("{1} fell asleep!",user.pbThis)) if pbCanSleep?(user,nil)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !pbCanSleep?(user,nil)
          when 1,2,4,5,7,8,9
            @battle.pbDisplay(_INTL("The spores had no effect on {1}!",user.pbThis)) if $test_trigger == false
          end
@@ -1441,14 +1461,17 @@ class PokeBattle_Move
        if target.status == PBStatuses::NONE
          case spore2
          when 0
-           target.status = PBStatuses::PARALYSIS
-           @battle.pbDisplay(_INTL("{1} was paralyzed!",target.pbThis))
+           target.status = PBStatuses::PARALYSIS if pbCanParalyze?(target,nil)
+           @battle.pbDisplay(_INTL("{1} was paralyzed!",target.pbThis)) if pbCanParalyze?(target,nil)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !pbCanParalyze?(target,nil)
          when 3
-           target.status = PBStatuses::POISON
-           @battle.pbDisplay(_INTL("{1} was poisoned!",target.pbThis))
+           target.status = PBStatuses::POISON if pbCanPoison?(target,nil)
+           @battle.pbDisplay(_INTL("{1} was poisoned!",target.pbThis)) if pbCanPoison?(target,nil)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !pbCanPoison?(target,nil)
          when 6
-           target.status = PBStatuses::SLEEP
-           @battle.pbDisplay(_INTL("{1} fell asleep!",target.pbThis))
+           target.status = PBStatuses::SLEEP if pbCanSleep?(target,nil)
+           @battle.pbDisplay(_INTL("{1} fell asleep!",target.pbThis)) if pbCanSleep?(target,nil)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !pbCanSleep?(target,nil)
          when 1,2,4,5,7,8,9
            @battle.pbDisplay(_INTL("The spores had no effect on {1}!",target.pbThis)) if $test_trigger == false
          end
@@ -1458,12 +1481,13 @@ class PokeBattle_Move
      end
    end
  when PBFieldEffects::JetStream
+   priority = @battle.pbPriority(true)
    if target.affectedByJetStream?
      multipliers[DEF_MULT] *= 1.2 if physicalMove?
    end
    case type
    when getConst(PBTypes,:FIRE),getConst(PBTypes,:ELECTRIC),getConst(PBTypes,:ICE),getConst(PBTypes,:ROCK)
-     multipliers[FINAL_DMG_MULT] *= 0.8
+     multipliers[FINAL_DMG_MULT] *= 0.75
      @battle.pbDisplay(_INTL("The Jet Stream weakened the attack.")) if $test_trigger == false
    end
  end
