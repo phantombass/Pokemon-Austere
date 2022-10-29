@@ -385,10 +385,6 @@ PBAI::ScoreHandler.add do |score, ai, user, target, move|
       if ai.battle.pbSideSize(0) == 2
         score += 200
         PBAI.log("+ 200 for being in a Double battle")
-        if target.flags[:will_be_faked_out]
-          score = 0
-          PBAI.log("* 0 for not faking out the same target")
-        end
       end
     elsif user.turnCount != 0 && move.function == "012"
       score = 0

@@ -576,8 +576,6 @@ class PBAI
 					target.flags[:will_be_disabled] = true
 				elsif move.function == "0BC"
 					target.flags[:will_be_encored] = true
-				elsif move.function == "012"
-					target.flags[:will_be_faked_out] = true
         end
     		return [choice[0], choice[2]]
       end
