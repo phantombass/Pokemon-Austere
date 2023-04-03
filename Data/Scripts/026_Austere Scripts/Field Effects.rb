@@ -1,9 +1,9 @@
 begin
   module PBFieldEffects
-    None        = 0   # None must be 0 (preset RMXP weather)
-    EchoChamber        = 1   # Rain must be 1 (preset RMXP weather)
-    Desert       = 2   # Storm must be 2 (preset RMXP weather)
-    Lava        = 3   # Snow must be 3 (preset RMXP weather)
+    None        = 0 
+    EchoChamber        = 1 
+    Desert       = 2 
+    Lava        = 3
     ToxicFumes    = 4
     Wildfire   = 5
     Swamp   = 6
@@ -25,7 +25,7 @@ begin
          _INTL("Swamp"),
          _INTL("City"),
          _INTL("Ruins"),
-         _INTL("Garden"),
+         _INTL("Grassy"),
          _INTL("Jet Stream")
       ]
       return names[id]
@@ -1388,6 +1388,7 @@ class PokeBattle_Move
    end
    if soundMove?
      priority.each do |pkmn|
+       next if pkmn.hasActiveAbility?(:SOUNDPROOF)
        confuse = rand(100)
        if confuse > 85
          @battle.pbDisplay(_INTL("The noise of the city was too much for {1}!",pkmn.name))
@@ -1441,17 +1442,17 @@ class PokeBattle_Move
        if user.status == PBStatuses::NONE
          case spore
          when 0
-           user.status = PBStatuses::PARALYSIS if pbCanParalyze?(user,nil)
-           @battle.pbDisplay(_INTL("{1} was paralyzed!",user.pbThis)) if pbCanParalyze?(user,nil)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !pbCanParalyze?(user,nil)
+           user.status = PBStatuses::PARALYSIS if pbCanParalyze?(user,true)
+           @battle.pbDisplay(_INTL("{1} was paralyzed!",user.pbThis)) if pbCanParalyze?(user,true)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !pbCanParalyze?(user,true)
          when 3
-           user.status = PBStatuses::POISON if pbCanPoison?(user,nil)
-           @battle.pbDisplay(_INTL("{1} was poisoned!",user.pbThis)) if pbCanPoison?(user,nil)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !pbCanPoison?(user,nil)
+           user.status = PBStatuses::POISON if pbCanPoison?(user,true)
+           @battle.pbDisplay(_INTL("{1} was poisoned!",user.pbThis)) if pbCanPoison?(user,true)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !pbCanPoison?(user,true)
          when 6
-           user.status = PBStatuses::SLEEP if pbCanSleep?(user,nil)
-           @battle.pbDisplay(_INTL("{1} fell asleep!",user.pbThis)) if pbCanSleep?(user,nil)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !pbCanSleep?(user,nil)
+           user.status = PBStatuses::SLEEP if pbCanSleep?(user,true)
+           @battle.pbDisplay(_INTL("{1} fell asleep!",user.pbThis)) if pbCanSleep?(user,true)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !pbCanSleep?(user,true)
          when 1,2,4,5,7,8,9
            @battle.pbDisplay(_INTL("The spores had no effect on {1}!",user.pbThis)) if $test_trigger == false
          end
@@ -1461,17 +1462,17 @@ class PokeBattle_Move
        if target.status == PBStatuses::NONE
          case spore2
          when 0
-           target.status = PBStatuses::PARALYSIS if pbCanParalyze?(target,nil)
-           @battle.pbDisplay(_INTL("{1} was paralyzed!",target.pbThis)) if pbCanParalyze?(target,nil)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !pbCanParalyze?(target,nil)
+           target.status = PBStatuses::PARALYSIS if pbCanParalyze?(target,true)
+           @battle.pbDisplay(_INTL("{1} was paralyzed!",target.pbThis)) if pbCanParalyze?(target,true)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !pbCanParalyze?(target,true)
          when 3
-           target.status = PBStatuses::POISON if pbCanPoison?(target,nil)
-           @battle.pbDisplay(_INTL("{1} was poisoned!",target.pbThis)) if pbCanPoison?(target,nil)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !pbCanPoison?(target,nil)
+           target.status = PBStatuses::POISON if pbCanPoison?(target,true)
+           @battle.pbDisplay(_INTL("{1} was poisoned!",target.pbThis)) if pbCanPoison?(target,true)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !pbCanPoison?(target,true)
          when 6
-           target.status = PBStatuses::SLEEP if pbCanSleep?(target,nil)
-           @battle.pbDisplay(_INTL("{1} fell asleep!",target.pbThis)) if pbCanSleep?(target,nil)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !pbCanSleep?(target,nil)
+           target.status = PBStatuses::SLEEP if pbCanSleep?(target,true)
+           @battle.pbDisplay(_INTL("{1} fell asleep!",target.pbThis)) if pbCanSleep?(target,true)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !pbCanSleep?(target,true)
          when 1,2,4,5,7,8,9
            @battle.pbDisplay(_INTL("The spores had no effect on {1}!",target.pbThis)) if $test_trigger == false
          end
