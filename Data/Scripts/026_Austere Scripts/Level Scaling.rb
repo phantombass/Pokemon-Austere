@@ -40,10 +40,10 @@ class Level_Scaling
         #notice that such species have cevo==-1 and wouldn't pass the last check
         #to avoid it we set evoflag to 1 (with some randomness) so that
         #pokemon may have its second evolution (Raichu, for example)
-        if evo && cevo < 1
+        if (evo && cevo < 1)
           if evo[0] != 1
           newspecies = evo[2]
-             if evoflag == 0
+             if evoflag == 0 && $trainer.numbadges > 2
                evoflag=1
              else
                evoflag=0
@@ -113,7 +113,7 @@ Events.onTrainerPartyLoad+=proc {|_sender, e |
         if Level_Scaling.gym_leader?
           level = levelcap
         elsif Level_Scaling.boss_battle?
-          level = levelcap - 1
+          level = mlv - 1
         else
           level = mlv - 2 -rand(2)
         end

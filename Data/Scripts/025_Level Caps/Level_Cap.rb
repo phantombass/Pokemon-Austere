@@ -25,7 +25,7 @@ class PokemonSystem
   def level_caps;  return @level_caps || 0;    end
 end
 
-LEVEL_CAP = [9,20,28,34]
+LEVEL_CAP = [9,15,20,25]
 
 def pbLevelCapToggle
   $PokemonSystem.level_caps == 1 ? $PokemonSystem.level_caps = 0 : $PokemonSystem.level_caps = 1

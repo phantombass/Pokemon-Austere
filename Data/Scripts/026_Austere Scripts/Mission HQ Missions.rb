@@ -122,6 +122,7 @@ class Mission_Database
       miss = "M#{j}"
       miss = miss.to_sym
       mi = getConst(Mission_Data,miss)
+      mi = mi.flatten
       if j == 1
         chosen = true if $game_switches[mi[0][:Chosen_Switch]] == true
       else

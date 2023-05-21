@@ -12,16 +12,17 @@ module PBRoles
   TOXICSTALLER   = 10
   CLERIC   = 11
   SPEEDCONTROL = 12
-  PIVOT   = 13
+  DEFENSIVEPIVOT   = 13
   SCREENS   = 14
   HAZARDREMOVAL  = 15
   PHYSICALWALL    = 16
   TARGETALLY   = 17
   REDIRECTION = 18
   TRICKROOMSETTER = 19
+  OFFENSIVEPIVOT = 20
 
-  def self.maxValue; 19; end
-  def self.getCount; 20; end
+  def self.maxValue; 20; end
+  def self.getCount; 21; end
   def self.getName(id)
     id = getID(PBRoles,id)
     names = [
@@ -38,56 +39,68 @@ module PBRoles
        _INTL("Toxic Staller"),
        _INTL("Cleric"),
        _INTL("Speed Control"),
-       _INTL("Pivot"),
+       _INTL("Offensive Pivot"),
        _INTL("Screens"),
        _INTL("Hazard Removal"),
        _INTL("Physical Wall"),
        _INTL("Target Ally"),
        _INTL("Redirection"),
-       _INTL("Trick Room Setter")
+       _INTL("Trick Room Setter"),
+       _INTL("Defensive Pivot")
     ]
     return names[id]
   end
 end
 
 class PokeBattle_Pokemon
-  attr_accessor :role
-  def role
-    return @role || PBRoles::NONE
+  attr_accessor :roles
+  def roles
+    return @roles || [PBRoles::NONE]
   end
   def setRole(value)
-    @role = getID(PBRoles,value)
+    role = getID(PBRoles,value)
+    self.roles.push(getID(PBRoles,value))
     calcStats
   end
-  def hasRole?(value=-1)
-    r = self.role
-    return r>=0 if value<0
-    return r==getID(PBRoles,value)
+  def hasRole?(role=-1)
+    x = []
+    for i in self.roles
+      x.push(i)
+      if role.is_a?(Array)
+        if role.include?(getID(PBRoles,i))
+          return true
+        end
+      end
+    end
+    return x.include?(role) && !role.is_a?(Array)
   end
 end
 
 class PokeBattle_Battler
-  attr_accessor :role
-  def role;       return @pokemon ? getID(PBRoles,@pokemon.role) : 0;       end
+  attr_accessor :roles
+  def roles
+    @roles.push(:NONE) if (@roles == [] || @roles == nil)
+    return @roles
+  end
   def role=(value)
-    @role = 0 if !value
+    @roles = [0] if !value
     @pokemon.setRole(value) if @pokemon
   end
 
   alias init_role pbInitBlank
   def pbInitBlank
     init_role
-    @role = 0
+    @roles = []
   end
   alias pbInitRole pbInitPokemon
   def pbInitPokemon(pkmn, idxParty)
     pbInitRole(pkmn, idxParty)
-    @role = pkmn.role
+    @roles = pkmn.roles
   end
 end
 
 
-TPROLE = 16
+TPROLES = 16
 module TrainersMetadata
   InfoTypes = {
     "Items"     => [0,           "eEEEEEEE", :PBItems, :PBItems, :PBItems, :PBItems,
@@ -101,7 +114,7 @@ module TrainersMetadata
     "Form"      => [TPFORM,      "u"],
     "Shiny"     => [TPSHINY,     "b"],
     "Nature"    => [TPNATURE,    "e", :PBNatures],
-    "Role"      => [TPROLE,    "e", :PBRoles],
+    "Roles"      => [TPROLES,    "*e", :PBRoles],
     "IV"        => [TPIV,        "uUUUUU"],
     "Happiness" => [TPHAPPINESS, "u"],
     "Name"      => [TPNAME,      "s"],
@@ -163,8 +176,16 @@ def pbLoadTrainer(trainerid,trainername,partyid=0)
       (poke[TPSHINY]) ? pokemon.makeShiny : pokemon.makeNotShiny
       n = (poke[TPNATURE]) ? poke[TPNATURE] : (pokemon.species+opponent.trainertype)%(PBNatures.maxValue+1)
       pokemon.setNature(n)
-      r = poke[TPROLE] ? poke[TPROLE] : 0
-      pokemon.setRole(r)
+      roles = poke[TPROLES]
+      role_ids = []
+      for r in roles
+        if r == nil || r == []
+          pokemon.roles = [PBRoles::NONE]
+        else
+          role_ids.push(getID(PBRoles,r))
+        end
+      end
+      pokemon.roles = role_ids
       for i in 0...6
         if poke[TPIV] && poke[TPIV].length>0
           pokemon.iv[i] = (i<poke[TPIV].length) ? poke[TPIV][i] : poke[TPIV][0]

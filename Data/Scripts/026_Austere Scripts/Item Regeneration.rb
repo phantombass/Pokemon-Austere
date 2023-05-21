@@ -2,6 +2,7 @@ class PokeBattle_Battle
   def pbStartBattleCore
     # Set up the battlers on each side
     pbAustereClauses if Level_Scaling.gym_leader?
+    $qol_toggle = false
     @field.field_effects = $game_screen.field_effects
     $field_effect_bg = backdrop
     $orig_water = false
@@ -176,6 +177,7 @@ class PokeBattle_Battle
     end
     Level_Scaling.boss_battle = false
     Level_Scaling.gym_leader = false
+    $qol_toggle = true
     return @decision
   end
 end

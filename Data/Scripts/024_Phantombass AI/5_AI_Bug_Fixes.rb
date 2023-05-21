@@ -8,3 +8,12 @@ class PokeBattle_AI
     return mod1*mod2   # Normal effectiveness is 64 here
   end
 end
+
+class PokeBattle_Battler
+  def trappedInBattle?
+    return true if @effects[PBEffects::Trapping] > 0
+    return true if @effects[PBEffects::MeanLook] >= 0
+    return true if @effects[PBEffects::Ingrain]
+    return true if @battle.field.effects[PBEffects::FairyLock] > 0
+  end
+end
