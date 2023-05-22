@@ -40,10 +40,10 @@ class Level_Scaling
         #notice that such species have cevo==-1 and wouldn't pass the last check
         #to avoid it we set evoflag to 1 (with some randomness) so that
         #pokemon may have its second evolution (Raichu, for example)
-        if (evo && cevo < 1)
+        if (evo && cevo < 1) && $Trainer.numbadges > 2
           if evo[0] != 1
           newspecies = evo[2]
-             if evoflag == 0 && $trainer.numbadges > 2
+             if evoflag == 0
                evoflag=1
              else
                evoflag=0

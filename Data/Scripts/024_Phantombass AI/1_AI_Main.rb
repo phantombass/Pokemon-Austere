@@ -869,6 +869,7 @@ class PBAI
       $d_switch = 0
       $d_switch = 1 if $doubles_switch != nil
       $target_strong_moves = false
+      p self.hasRole?(PBRoles::NONE)
       if self.hasRole?(PBRoles::NONE)
       	switch = false
       else

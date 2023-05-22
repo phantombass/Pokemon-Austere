@@ -39,14 +39,14 @@ module PBRoles
        _INTL("Toxic Staller"),
        _INTL("Cleric"),
        _INTL("Speed Control"),
-       _INTL("Offensive Pivot"),
+       _INTL("Defensive Pivot"),
        _INTL("Screens"),
        _INTL("Hazard Removal"),
        _INTL("Physical Wall"),
        _INTL("Target Ally"),
        _INTL("Redirection"),
        _INTL("Trick Room Setter"),
-       _INTL("Defensive Pivot")
+       _INTL("Offensive Pivot")
     ]
     return names[id]
   end
@@ -55,7 +55,7 @@ end
 class PokeBattle_Pokemon
   attr_accessor :roles
   def roles
-    return @roles || [PBRoles::NONE]
+    return @roles || [0]
   end
   def setRole(value)
     role = getID(PBRoles,value)
@@ -79,7 +79,7 @@ end
 class PokeBattle_Battler
   attr_accessor :roles
   def roles
-    @roles.push(:NONE) if (@roles == [] || @roles == nil)
+    @roles.push(0) if (@roles == [] || @roles == nil)
     return @roles
   end
   def role=(value)
@@ -178,12 +178,16 @@ def pbLoadTrainer(trainerid,trainername,partyid=0)
       pokemon.setNature(n)
       roles = poke[TPROLES]
       role_ids = []
-      for r in roles
-        if r == nil || r == []
-          pokemon.roles = [PBRoles::NONE]
-        else
-          role_ids.push(getID(PBRoles,r))
+      if roles != nil
+        for r in roles
+          if r == nil || r == []
+            pokemon.roles = [0]
+          else
+            role_ids.push(getID(PBRoles,r))
+          end
         end
+      else
+        pokemon.roles = [0]
       end
       pokemon.roles = role_ids
       for i in 0...6
@@ -261,6 +265,9 @@ def pbCompileTrainers
           raise _INTL("Bad level: {1} (must be 1-{2})\r\n{3}",record[1],mLevel,FileLineData.linereport)
         end
       when "Moves"
+        record = [record] if record.is_a?(Integer)
+        record.compact!
+      when "Roles"
         record = [record] if record.is_a?(Integer)
         record.compact!
       when "Ability"
