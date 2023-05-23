@@ -32,13 +32,11 @@ class PBAI
     def self.trigger(list, score, ai, user, target, move)
       return score if list.nil?
       list = [list] if !list.is_a?(Array)
-      $test_trigger = true
       list.each do |code|
         next if code.nil?
         newscore = code.call(score, ai, user, target, move)
         score = newscore if newscore.is_a?(Numeric)
       end
-      $test_trigger = false
       return score
     end
 

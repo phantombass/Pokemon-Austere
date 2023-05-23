@@ -461,6 +461,7 @@ class PBAI
         next if proj == self || proj.nil?
         targets << proj
       end
+      $test_trigger = true
       targets.each do |target|
         next if target.nil?
         PBAI.log("Moves for #{@battler.pokemon.name} against #{target.pokemon.name}")
@@ -586,6 +587,7 @@ class PBAI
 						target.flags[:will_be_encored] = true
 	        end
 	      end
+	      $test_trigger = false
     		return [choice[0], choice[2]]
       end
       # No choice could be made
@@ -612,6 +614,7 @@ class PBAI
         # Move score calculation will only continue if the target is not an ally,
         # or if it is an ally, then the move must be Heal Pulse (0DF).
       end
+      $test_trigger = true
       if move.statusMove?
         # Start status moves off with a score of 30.
         # Since this makes status moves unlikely to be chosen when the other moves
@@ -634,6 +637,7 @@ class PBAI
       end
       # Trigger move-specific score modifier code
       score = PBAI::ScoreHandler.trigger_move(move, score, @ai, self, target)
+      $test_trigger = false
       # Prefer a different move if this move would also hit the user's ally and it is super effective against the ally
       # The target is not an ally to begin with (to exclude Heal Pulse and any other good ally-targeting moves)
       if target.side != @side
@@ -869,7 +873,6 @@ class PBAI
       $d_switch = 0
       $d_switch = 1 if $doubles_switch != nil
       $target_strong_moves = false
-      p self.hasRole?(PBRoles::NONE)
       if self.hasRole?(PBRoles::NONE)
       	switch = false
       else
@@ -884,6 +887,8 @@ class PBAI
           next if i[1] != self
           if i[0] >= 0 && self.turnCount == 0
             return [0,0]
+          elsif i[0] >= 400
+          	return [0,0]
           end
         end
         availscores = scores.select { |e| !e[1].fainted? }
