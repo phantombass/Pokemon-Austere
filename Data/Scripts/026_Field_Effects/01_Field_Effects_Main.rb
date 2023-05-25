@@ -1,3 +1,54 @@
+def deep_copy(obj)
+  Marshal.load(Marshal.dump(obj))
+end
+
+def pbHashConverter(mod,hash)
+  newhash = {}
+  hash.each {|key, value|
+      for i in value
+          newhash[mod.const_get(i.to_sym)]=key
+      end
+  }
+  return newhash
+end
+
+def pbHashForwardizer(hash) #one-stop shop for your hash debackwardsing needs!
+  return if !hash.is_a?(Hash)
+  newhash = {}
+  hash.each {|key, value|
+      for i in value
+          newhash[i]=key
+      end
+  }
+  return newhash
+end
+
+def arrayToConstant(mod,array)
+  newarray = []
+  for symbol in array
+    const = mod.const_get(symbol.to_sym) rescue nil
+    newarray.push(const) if const
+  end
+  return newarray
+end
+
+def hashToConstant(mod,hash)
+  for key in hash.keys
+    const = mod.const_get(hash[key].to_sym) rescue nil
+    hash.merge!(key=>const) if const
+  end
+  return hash
+end
+
+def hashArrayToConstant(mod,hash)
+  for key in hash.keys
+    array = hash[key]
+    newarray = arrayToConstant(mod,array)
+    hash.merge!(key=>newarray) if !newarray.empty?
+  end
+  return hash
+end
+
 begin
   module PBFieldEffects
     None        = 0 
@@ -11,24 +62,25 @@ begin
     Ruins         = 8
     Grassy = 9
     JetStream = 10
-    Mountain = 11
-    SnowMountain = 12
-    Water = 13
-    Underwater = 14
-    Psychic = 15
-    Misty = 16
-    Electric = 17
-    Digital = 18
-    Space = 19
-    Monsoon = 20
-    Graveyard = 21
-    Foundry = 22
-    Forest = 23
+	  Outage = 11
+    Forest = 12
+    Mountain = 13
+    SnowMountain = 14
+    Water = 15
+    Underwater = 16
+    Psychic = 17
+    Misty = 18
+    Electric = 19
+    Digital = 20
+    Space = 21
+    Monsoon = 22
+    Graveyard = 23
+    Foundry = 24
 
-    def PBFieldEffects.maxValue; return 24; end
+    def PBFieldEffects.maxValue; return 25; end
     def self.getName(id)
       id = getID(PBFieldEffects,id)
-      names = [
+      names = [-
          _INTL("None"),
          _INTL("Echo Chamber"),
          _INTL("Desert"),
@@ -40,6 +92,8 @@ begin
          _INTL("Ruins"),
          _INTL("Grassy"),
          _INTL("Jet Stream"),
+		     _INTL("Outage"),
+         _INTL("Forest"),
          _INTL("Mountainside"),
          _INTL("Snowy Mountainside"),
          _INTL("Water"),
@@ -48,11 +102,11 @@ begin
          _INTL("Misty"),
          _INTL("Electric"),
          _INTL("Digital"),
-         _INTL("Deep Space"),
+         _INTL("Space"),
          _INTL("Monsoon"),
          _INTL("Graveyard"),
-         _INTL("Foundry"),
-         _INTL("Forest"),
+         _INTL("Foundry")
+
       ]
       return names[id]
     end
@@ -62,6 +116,34 @@ rescue Exception
   if $!.is_a?(SystemExit) || "#{$!.class}"=="Reset"
     raise $!
   end
+end
+
+class Fields
+  sound = []
+  pulse = []
+  moves = pbLoadMovesData
+  for move in moves
+    next if move == nil
+    m = move[1].to_sym
+    mv = PokeBattle_Move.pbFromPBMove(@battle,PBMove.new(getConst(PBMoves,m)))
+    sound.push(m) if mv.flags[/k/]
+    pulse.push(m) if mv.flags[/m/]
+  end
+  def self.ignite?
+      return false if [PBWeather::Rain,PBWeather::AcidRain,PBWeather::HeavyRain].include?($weather)
+      return true
+  end
+  ECHO_MOVES = arrayToConstant(PBMoves,[:FAKEOUT,:STOMP,:SMELLINGSALTS])
+  LIGHT_MOVES = arrayToConstant(PBMoves,[:LIGHTOFRUIN,:DAZZLINGGLEAM,:MOONBLAST,:PRISMATICLASER,:PHOTONGEYSER,:AURORABEAM,:SIGNALBEAM,:MISTBALL,:LUSTERPURGE,:FLASHCANNON,:MIRRORSHOT])
+  #Ember added for testing purposes only
+  IGNITE_MOVES = arrayToConstant(PBMoves,[:EMBER,:FLAMEBURST,:HEATWAVE,:LAVAPLUME,:MAGMASTORM,:ERUPTION])
+  WIND_MOVES = arrayToConstant(PBMoves,[:HURRICANE,:OMINOUSWIND,:AIRCUTTER,:AIRSLASH,:SILVERWIND,:DEFOG,:TAILWIND,:DOLDRUMS,:GUST,:RAZORWIND])
+  SWAMP_CHANGERS = arrayToConstant(PBMoves,[:STONEEDGE,:POWERGEM,:METEORBEAM,:ROCKSLIDE])
+  QUAKE_MOVES = arrayToConstant(PBMoves,[:EARTHQUAKE,:STOMPINGTANTRUM,:BULLDOZE,:FISSURE])
+  HEALING_MOVES = arrayToConstant(PBMoves,[:RECOVER,:MOONLIGHT,:MORNINGSUN,:SYNTHESIS,:ROOST,:SLACKOFF,:MILKDRINK,:SOFTBOILED,:HEALORDER,:LIFEDEW,:JUNGLEHEALING])
+  SOUND_MOVES = arrayToConstant(PBMoves,sound)
+  PULSE_MOVES = arrayToConstant(PBMoves,pulse)
+  HAMMER_MOVES = arrayToConstant(PBMoves,[:HAMMERARM,:DRAGONHAMMER])
 end
 
 begin
@@ -154,18 +236,10 @@ begin
     Ruins       = 26
     Grassy      = 27
     JetStream   = 28
-    Mountain = 29
-    SnowMountain = 30
-    Psychic = 31
-    Misty = 32
-    Electric = 33
-    Digital = 34
-    Monsoon = 35
-    Graveyard = 36
-    Foundry = 37
+	Outage 		= 29
 
 
-    def self.maxValue; return 38; end
+    def self.maxValue; return 30; end
   end
 
 rescue Exception
@@ -198,9 +272,19 @@ class PokeBattle_ActiveField
   end
 end
 
+class PokeBattle_Battler
+	alias init_field pbInitEffects
+	def pbInitEffects(*args)
+		init_field(*args)
+		@effects[PBEffects::Cinders] = 0
+		@effects[PBEffects::Singed] = false
+	end
+end
+
 module PBEffects
-  EchoChamber = 113
-  Singed = 114
+  EchoChamber = 200
+  Singed = 201
+  Cinders = 202
 end
 
 class PokemonTemp
@@ -232,52 +316,9 @@ class PokemonTemp
     else
       raise _INTL("Battle rule \"{1}\" does not exist.",rule)
     end
-    case rules["defaultField"]
-    when PBFieldEffects::None
-      rules["backdrop"] = "general"
-      $game_screen.field_effect(PBFieldEffects::None)
-    when PBFieldEffects::EchoChamber
-      rules["environment"] = PBEnvironment::EchoChamber
-      rules["backdrop"] = "EchoChamber"
-      $game_screen.field_effect(PBFieldEffects::EchoChamber)
-    when PBFieldEffects::Desert
-      rules["environment"] = PBEnvironment::Desert
-      rules["backdrop"] = "Desert"
-      $game_screen.field_effect(PBFieldEffects::Desert)
-    when PBFieldEffects::Lava
-      rules["environment"] = PBEnvironment::Lava
-      rules["backdrop"] = "Lava"
-      $game_screen.field_effect(PBFieldEffects::Lava)
-    when PBFieldEffects::ToxicFumes
-      rules["environment"] = PBEnvironment::ToxicFumes
-      rules["backdrop"] = "ToxicFumes"
-      $game_screen.field_effect(PBFieldEffects::ToxicFumes)
-    when PBFieldEffects::Wildfire
-      rules["environment"] = PBEnvironment::Wildfire
-      rules["backdrop"] = "Wildfire"
-      $game_screen.field_effect(PBFieldEffects::Wildfire)
-    when PBFieldEffects::Swamp
-      rules["environment"] = PBEnvironment::Swamp
-      rules["backdrop"] = "Swamp"
-      $game_screen.field_effect(PBFieldEffects::Swamp)
-    when PBFieldEffects::City
-      rules["environment"] = PBEnvironment::City
-      rules["backdrop"] = "City"
-      $game_screen.field_effect(PBFieldEffects::City)
-    when PBFieldEffects::Ruins
-      rules["environment"] = PBEnvironment::Ruins
-      rules["backdrop"] = "Ruins"
-      $game_screen.field_effect(PBFieldEffects::Ruins)
-    when PBFieldEffects::Grassy
-      rules["environment"] = PBEnvironment::Grassy
-      rules["backdrop"] = "Grassy"
-      $game_screen.field_effect(PBFieldEffects::Grassy)
-    when PBFieldEffects::JetStream
-      rules["environment"] = PBEnvironment::JetStream
-      rules["backdrop"] = "JetStream"
-      $game_screen.field_effect(PBFieldEffects::JetStream)
-    end
-    $field_effect_bg = rules["backdrop"]
+	  rules["backdrop"] = FIELD_EFFECTS[rules["defaultField"]][:field_gfx]
+	  $game_screen.field_effect(rules["defaultField"])
+	  $field_effect_bg = rules["backdrop"]
   end
 end
 
@@ -428,10 +469,10 @@ class PokeBattle_Battle
   def pbEORFieldDamage(battler)
     return if battler.fainted?
     amt = -1
-    if $cinders > 0 && battler.affectedByCinders?
+    if battler.effects[PBEffects::Cinders] > 0 && battler.affectedByCinders?
       pbDisplay(_INTL("{1} is hurt by the cinders!", battler.pbThis))
       amt = battler.totalhp / 16
-      $cinders -= 1
+      battler.effects[PBEffects::Cinders] -= 1
     end
     case battler.effectiveField
     when PBFieldEffects::Lava
@@ -937,7 +978,7 @@ class PokeBattle_Battle
   def pbEORTerrainHealing(battler)
     return if battler.fainted?
     # Grassy Terrain (healing)
-    if @field.terrain == PBFieldEffects::Grassy && battler.affectedByTerrain? && battler.canHeal?
+    if @field.field_effects == PBFieldEffects::Grassy && battler.affectedByTerrain? && battler.canHeal?
       PBDebug.log("[Lingering effect] Grassy Terrain heals #{battler.pbThis(true)}")
       battler.pbRecoverHP(battler.totalhp / 16)
       pbDisplay(_INTL("{1}'s HP was restored.", battler.pbThis))
@@ -951,36 +992,13 @@ class PokeBattle_Battle
 
   def pbStartFieldEffect(user, newField)
     return if @field.field_effects == newField
-    @field.field_effects = newField
-    pbHideAbilitySplash(user) if user
-    case @field.field_effects
-    when PBFieldEffects::EchoChamber
-      pbDisplay(_INTL("A dull echo hums."))
-    when PBFieldEffects::Desert
-      pbDisplay(_INTL("Sand...it gets everywhere..."))
-    when PBFieldEffects::Lava
-      pbDisplay(_INTL("Hot lava flows around the battlefield."))
-    when PBFieldEffects::ToxicFumes
-      pbDisplay(_INTL("Poisonous gases fill the area."))
-    when PBFieldEffects::Wildfire
-      pbDisplay(_INTL("The field is ablaze."))
-    when PBFieldEffects::Swamp
-      pbDisplay(_INTL("The field is swampy."))
-    when PBFieldEffects::City
-      $field_effect_bg = "City"
-      @scene.pbRefreshEverything
-      pbDisplay(_INTL("The city hums with activity."))
-    when PBFieldEffects::Ruins
-      pbDisplay(_INTL("There's an odd feeling in these ruins..."))
-    when PBFieldEffects::Grassy
-      $field_effect_bg = "Grassy"
-      @scene.pbRefreshEverything
-      pbDisplay(_INTL("Grass covers the field."))
-    when PBFieldEffects::JetStream
-      pbDisplay(_INTL("A strong wind blows through."))
-      $field_effect_bg = "JetStream"
-      @scene.pbRefreshEverything
-    end
+	@field.field_effects = newField
+	pbHideAbilitySplash(user) if user
+  	msg = FIELD_EFFECTS[newField][:intro_message]
+  	bg = FIELD_EFFECTS[newField][:field_gfx]
+  	pbDisplay(_INTL(msg))
+  	$field_effect_bg = bg
+  	@scene.pbRefreshEverything
     # Check for abilities/items that trigger upon the terrain changing
 #    allBattlers.each { |b| b.pbAbilityOnTerrainChange }
 #    allBattlers.each { |b| b.pbItemTerrainStatBoostCheck }
@@ -1051,6 +1069,13 @@ class PokeBattle_Battler
       return false
     end
   end
+  def affectedBySpore?
+    if pbHasType?(:GRASS) || hasActiveAbility?(:OVERCOAT) || hasActiveItem?(:SAFETYGOGGLES)
+      return false
+    else
+      return true
+    end
+  end
   def affectedByJetStream?
     if pbHasType?(:FLYING) || pbHasType?(:DRAGON) || pbHasType?(:BUG)
       return true
@@ -1068,6 +1093,7 @@ class PokeBattle_Move
       ret *= 2 if user.hasActiveAbility?(:SERENEGRACE) ||
                   user.pbOwnSide.effects[PBEffects::Rainbow]>0
     end
+	fe_info = FIELD_EFFECTS[@battle.field.field_effects]
     ret = 100 if @battle.field.field_effects == PBFieldEffects::Desert && @function == "500"
     ret = 100 if $DEBUG && Input.press?(Input::CTRL)
     return ret
@@ -1079,6 +1105,7 @@ class PokeBattle_Move
     $orig_flying = false
     $orig_type_ice = false
     ret = pbBaseType(user)
+	fe = FIELD_EFFECTS[@battle.field.field_effects]
     return ret if !ret || ret<0
     if hasConst?(PBTypes,:ELECTRIC)
       if @battle.field.effects[PBEffects::IonDeluge] && isConst?(ret,PBTypes,:NORMAL)
@@ -1090,35 +1117,21 @@ class PokeBattle_Move
         @powerBoost = false
       end
     end
-    if getConst(PBTypes,:WATER)
-      if @battle.field.field_effects == PBFieldEffects::Lava && isConst?(ret,PBTypes,:ICE)
-        @battle.field.field_effects = PBFieldEffects::None
-        ret = getConst(PBTypes,:WATER)
-        $orig_type_ice = true
-        @powerBoost = false
-      end
-    end
-    if getConst(PBTypes,:POISON)
-      if @battle.field.field_effects == PBFieldEffects::ToxicFumes && isConst?(ret,PBTypes,:WATER)
-        ret = getConst(PBTypes,:POISON)
-        $orig_water = true
-        @powerBoost = false
-      end
-    end
-    if getConst(PBTypes,:FIRE)
-      if @battle.field.field_effects == PBFieldEffects::Wildfire && isConst?(ret,PBTypes,:GRASS)
-        ret = getConst(PBTypes,:FIRE)
-        $orig_flying = false
-        $orig_grass = true
-        @powerBoost = false
-      end
-      if @battle.field.field_effects == PBFieldEffects::Wildfire && isConst?(ret,PBTypes,:FLYING) && specialMove?
-        ret = getConst(PBTypes,:FIRE)
-        $orig_grass = false
-        $orig_flying = true
-        @powerBoost = false
-      end
-    end
+	#New Field Effect Modifier Method
+	if fe[:type_type_mod].keys != nil
+		for type_mod in fe[:type_type_mod].keys
+			if isConst?(ret,PBTypes,type_mod)
+				ret = getConst(PBTypes,fe[:type_type_mod][type_mod])
+				for message in fe[:type_change_message].keys
+					if fe[:type_change_message][message].include?(type_mod)
+						msg = message
+					end
+				end
+				@battle.pbDisplay(_INTL(msg))
+				@powerBoost = false
+			end
+		end
+	end
     return ret
   end
   def pbCalcDamageMultipliers(user,target,numTargets,type,baseDmg,multipliers)
@@ -1182,14 +1195,6 @@ class PokeBattle_Move
    end
    if user.effects[PBEffects::Charge]>0 && isConst?(type,PBTypes,:ELECTRIC)
      multipliers[BASE_DMG_MULT] *= 2
-   end
-   if $orig_type_ice
-     @battle.pbDisplay(_INTL("The lava melted the ice!"))
-     $field_effect_bg = "rocky"
-     @battle.scene.pbRefreshEverything
-     @battle.pbDisplay(_INTL("The melted ice cooled the lava!"))
-     multipliers[FINAL_DMG_MULT] *= 0.8
-     $orig_type_ice = false
    end
    # Mud Sport
    if isConst?(type,PBTypes,:ELECTRIC)
@@ -1281,147 +1286,114 @@ class PokeBattle_Move
      multipliers[DEF_MULT] *= 1.5
    end
  end
+ #New Attempt to get Field Effects streamlined
+	 fe = FIELD_EFFECTS[@battle.field.field_effects]
+	 trigger = false
+	 mesg = false
+	 if fe[:type_damage_change] != nil
+		 for key in fe[:type_damage_change].keys
+			 if @battle.field.field_effects != PBFieldEffects::None
+				if fe[:type_damage_change][key].is_a?(Array)
+					for j in fe[:type_damage_change][key]
+						multipliers[FINAL_DMG_MULT] *= key if j == type
+						mesg = true if j == type
+					end
+				elsif type == getConst(PBTypes,fe[:type_damage_change][key])
+					multipliers[FINAL_DMG_MULT] *= key
+					mesg = true
+				end
+				if mesg == true
+					for message in fe[:type_messages].keys
+						if fe[:type_messages][message].is_a?(Array)
+							for i in fe[:type_messages][message]
+								msg = message if getConst(PBTypes,i) == type
+							end
+						else
+							msg =  message if getConst(PBTypes,fe[:type_messages][message]) == type
+						end
+					end
+					@battle.pbDisplay(INTL(msg)) if $test_trigger == false
+				end
+			 end
+		 end
+	 end
+	 if fe[:field_changers] != nil
+		 priority = @battle.pbPriority(true)
+		 msg = nil
+		 for key in fe[:field_changers].keys
+			if @battle.field.field_effects != PBFieldEffects::None
+				if type == getConst(PBTypes,fe[:field_changers][key]) || fe[:field_changers][key].include?(self.id)
+					@battle.field.field_effects = key
+					fe = FIELD_EFFECTS[@battle.field.field_effects]
+					$field_effect_bg = fe[:field_gfx]
+					for message in fe[:change_message].keys
+						msg = message if getConst(PBTypes,fe[:change_message][message]) == type
+					end
+					@battle.pbDisplay(INTL(msg)) if msg != nil
+					priority.each do |pkmn|
+						if pkmn.hasActiveAbility?([fe[:abilities]])
+							for key in fe[:ability_effects].keys
+								if pkmn.ability != key
+									abil = nil
+								else
+									abil = fe[:ability_effects][pkmn.ability]
+								end
+								if pkmn.ability == key && abil.is_a?(Array)
+									trigger = true
+								end
+							end
+							BattleHandlers.triggerAbilityOnSwitchIn(key,pkmn,@battle) if trigger
+							pkmn.pbRaiseStatStage(abil[0],abil[1],user) if abil != nil && !trigger
+						end
+					end
+				end
+			end
+			end
+	  end
+ #Additional Effects of Field Effects
  case @battle.field.field_effects
  when PBFieldEffects::Desert
    priority = @battle.pbPriority(true)
-   case type
-   when isConst?(type,PBTypes,:FIRE), isConst?(type,PBTypes,:GROUND)
-     multipliers[FINAL_DMG_MULT] *= 1.2
-     @battle.pbDisplay(_INTL("The desert strengthened the attack!")) if $test_trigger == false
-   when getConst(PBTypes,:WATER), getConst(PBTypes,:GRASS)
-     multipliers[FINAL_DMG_MULT] *= 0.75
-     @battle.pbDisplay(_INTL("The desert weakened the attack!")) if $test_trigger == false
-   when getConst(PBTypes,:FLYING)
+   if Fields::WIND_MOVES.include?(self.id)
      if user.effectiveWeather != :Sandstorm
        @battle.field.weather = :Sandstorm
        @battle.field.weatherDuration = user.hasActiveItem?(:SMOOTHROCK) ? 8 : 5
        @battle.pbDisplay(_INTL("The winds kicked up a Sandstorm!")) if $test_trigger == false
      end
    end
- when PBFieldEffects::Lava
-   priority = @battle.pbPriority(true)
-   case type
-   when getConst(PBTypes,:FIRE)
-     multipliers[FINAL_DMG_MULT] *= 1.2
-     @battle.pbDisplay(_INTL("The lava strengthened the attack!")) if $test_trigger == false
-   end
  when PBFieldEffects::ToxicFumes
    priority = @battle.pbPriority(true)
-   case type
-   when getConst(PBTypes,:FIRE)
-     multipliers[FINAL_DMG_MULT] *= 1.2
-     if @battle.pbWeather == PBWeather::Rain
-       @battle.pbDisplay(_INTL("The fumes strengthened the attack!")) if $test_trigger == false
-     else
-       @battle.pbDisplay(_INTL("The fumes strengthened the attack!")) if $test_trigger == false
-       @battle.pbDisplay(_INTL("The field caught fire!")) if $test_trigger == false
-       $field_effect_bg = "Wildfire"
-       @battle.scene.pbRefreshEverything
-       @battle.field.field_effects = PBFieldEffects::Wildfire
-       priority.each do |pkmn|
-         BattleHandlers.triggerAbilityOnSwitchIn(:FLASHFIRE,pkmn,@battle) if pkmn.hasActiveAbility?(:FLASHFIRE)
-       end
-       @battle.pbDisplay(_INTL("The field is ablaze.")) if $test_trigger == false
-     end
-   when getConst(PBTypes,:POISON)
-     multipliers[FINAL_DMG_MULT] *= 1.2
-     if $orig_water == false
-       @battle.pbDisplay(_INTL("The fumes strengthened the attack!")) if $test_trigger == false
-     else
-       @battle.pbDisplay(_INTL("The fumes corroded and strengthened the attack!")) if $test_trigger == false
-     end
-     $orig_water = false
-   end
  when PBFieldEffects::Wildfire
    priority = @battle.pbPriority(true)
    case type
    when getConst(PBTypes,:FIRE)
-     multipliers[FINAL_DMG_MULT] *= 1.2
-     if $orig_grass == false && $orig_flying == false
-       @battle.pbDisplay(_INTL("The wildfire strengthened the attack!")) if $test_trigger == false
-     elsif $orig_grass == true
-       @battle.pbDisplay(_INTL("The plants caught fire and strengthened the attack!")) if $test_trigger == false
-       $orig_grass = false
-     elsif $orig_flying == true
+     if Fields::WIND_MOVES.include?(self.id)
        @battle.pbDisplay(_INTL("The winds kicked up cinders!")) if $test_trigger == false
-       if $cinders == 0
-         $cinders = 3
+       if target.effects[PBEffects::Cinders] == 0 && target.affectedByCinders?
+         target.effects[PBEffects::Cinders] = 3
        end
-       $orig_flying = false
      end
    when getConst(PBTypes,:WATER)
-     multipliers[FINAL_DMG_MULT] *= 0.75
-     @battle.pbDisplay(_INTL("The wildfire weakened the attack!")) if $test_trigger == false
    end
  when PBFieldEffects::Swamp
    priority = @battle.pbPriority(true)
    case type
    when getConst(PBTypes,:ROCK)
-     multipliers[FINAL_DMG_MULT] *= 0.75
-     @battle.pbDisplay(_INTL("The swamp weakened the attack!")) if $test_trigger == false
-     if self.baseDamage >= 80
-       @battle.pbDisplay(_INTL("The swamp filled with rocks!")) if $test_trigger == false
-       $field_effect_bg = "Rubble"
-       @battle.scene.pbRefreshEverything
-       @battle.field.field_effects = PBFieldEffects::None
-     end
    when getConst(PBTypes,:FIRE),getConst(PBTypes,:FIGHTING)
-     multipliers[FINAL_DMG_MULT] *= 0.75
-     @battle.pbDisplay(_INTL("The swamp weakened the attack!")) if $test_trigger == false
    when getConst(PBTypes,:POISON),getConst(PBTypes,:WATER),getConst(PBTypes,:GRASS)
-     multipliers[FINAL_DMG_MULT] *= 1.2
-     @battle.pbDisplay(_INTL("The swamp strengthened the attack!")) if $test_trigger == false
    end
  when PBFieldEffects::City
    priority = @battle.pbPriority(true)
    case type
    when getConst(PBTypes,:NORMAL),getConst(PBTypes,:POISON)
-     multipliers[FINAL_DMG_MULT] *= 1.2
-     @battle.pbDisplay(_INTL("The city strengthened the attack!")) if $test_trigger == false
    when getConst(PBTypes,:FIRE)
-     if self.baseDamage >= 70 && specialMove? && @battle.pbWeather != PBWeather::Rain && @battle.pbWeather != PBWeather::HeavyRain && @battle.pbWeather != PBWeather::AcidRain
-       @battle.pbDisplay(_INTL("The city caught fire!")) if $test_trigger == false
-       $field_effect_bg = "Wildfire"
-       @battle.field.field_effects = PBFieldEffects::Wildfire
-       @battle.scene.pbRefreshEverything
-       priority.each do |pkmn|
-         BattleHandlers.triggerAbilityOnSwitchIn(:FLASHFIRE,pkmn,@battle) if pkmn.hasActiveAbility?(:FLASHFIRE)
-       end
-       @battle.pbDisplay(_INTL("The field is ablaze.")) if $test_trigger == false
-     end
    when getConst(PBTypes,:GROUND)
-     if name == "Bulldoze" || name == "Earthquake" || name == "Stomping Tantrum"
-       @battle.pbDisplay(_INTL("The city came crashing down!")) if $test_trigger == false
-       $field_effect_bg = "Rubble"
-       @battle.scene.pbRefreshEverything
-       @battle.field.field_effects = PBFieldEffects::None
-       user.pbOwnSide.effects[PBEffects::StealthRock] = true if user.pbOwnSide.effects[PBEffects::StealthRock] == false
-       target.pbOwnSide.effects[PBEffects::StealthRock] = true if target.pbOwnSide.effects[PBEffects::StealthRock] == false
-       @battle.pbDisplay(_INTL("City rubble and rocks are scattered across each side!")) if $test_trigger == false
-     end
    when getConst(PBTypes,:ELECTRIC)
-     if $outage == false
-       multipliers[FINAL_DMG_MULT] *= 1.2
-       @battle.pbDisplay(_INTL("The attack drew power from the city!")) if $test_trigger == false
-       $field_effect_bg = "City_Night"
-       @battle.scene.pbRefreshEverything
-       @battle.pbDisplay(_INTL("Power outage!")) if $test_trigger == false
        user.eachOpposing do |pkmn|
          pkmn.pbLowerStatStage(PBStats::ACCURACY,1,user) if !pkmn.pbHasType?(:ELECTRIC)
        end
-       $outage = true
      end
-   when getConst(PBTypes,:DARK),getConst(PBTypes,:GHOST)
-     if $outage == true
-       multipliers[FINAL_DMG_MULT] *= 1.2
-       if type == :DARK
-         @battle.pbDisplay(_INTL("The city's darkness powered the attack!")) if $test_trigger == false
-       else
-         @battle.pbDisplay(_INTL("The shadows powered the attack!")) if $test_trigger == false
-       end
-     end
-   end
-   if soundMove?
+	if soundMove?
      priority.each do |pkmn|
        next if pkmn.hasActiveAbility?(:SOUNDPROOF)
        confuse = rand(100)
@@ -1431,18 +1403,16 @@ class PokeBattle_Move
        end
      end
    end
+  when PBFieldEffects::Outage
+	case type
+	when getConst(PBTypes,:DARK),getConst(PBTypes,:GHOST)
+	end
  when PBFieldEffects::Ruins
    priority = @battle.pbPriority(true)
    case type
    when getConst(PBTypes,:FIRE), getConst(PBTypes,:WATER), getConst(PBTypes,:GRASS)
-     multipliers[FINAL_DMG_MULT] *= 1.2
-     @battle.pbDisplay(_INTL("The ruins strengthened the attack!")) if $test_trigger == false
    when getConst(PBTypes,:DRAGON)
-     multipliers[FINAL_DMG_MULT] *= 1.2
-     @battle.pbDisplay(_INTL("The ruins strengthened the attack!")) if $test_trigger == false
    when getConst(PBTypes,:GHOST)
-     multipliers[FINAL_DMG_MULT] *= 1.2
-     @battle.pbDisplay(_INTL("The ruins strengthened the attack!")) if $test_trigger == false
    end
    if target.pbHasType?(:GHOST) && target.hp == target.totalhp
      multipliers[FINAL_DMG_MULT] /= 2
@@ -1452,29 +1422,12 @@ class PokeBattle_Move
    if target.pbHasType?(:BUG)
      multipliers[DEF_MULT] *= 1.2
    end
-   case type
-   when getConst(PBTypes,:FAIRY),getConst(PBTypes,:BUG),getConst(PBTypes,:GRASS)
-     multipliers[FINAL_DMG_MULT] *= 1.2
-     @battle.pbDisplay(_INTL("The grass strengthened the attack!")) if $test_trigger == false
-   when getConst(PBTypes,:FIRE)
-     if @battle.pbWeather != PBWeather::Rain && @battle.pbWeather != PBWeather::HeavyRain && @battle.pbWeather != PBWeather::AcidRain
-       @battle.pbDisplay(_INTL("The grass caught fire!")) if $test_trigger == false
-       $field_effect_bg = "Wildfire"
-       $orig_grass = false
-       $orig_flying = false
-       @battle.field.field_effects = PBFieldEffects::Wildfire
-       @battle.scene.pbRefreshEverything
-       priority.each do |pkmn|
-         BattleHandlers.triggerAbilityOnSwitchIn(:FLASHFIRE,pkmn,@battle) if pkmn.hasActiveAbility?(:FLASHFIRE)
-       end
-       @battle.pbDisplay(_INTL("The field is ablaze.")) if $test_trigger == false
-     end
-   when getConst(PBTypes,:FLYING)
+   if Fields::WIND_MOVES.include?(self.id)
      if @battle.pbWeather != PBWeather::Rain && @battle.pbWeather != PBWeather::HeavyRain && @battle.pbWeather != PBWeather::AcidRain
        @battle.pbDisplay(_INTL("The attack kicked up spores!")) if $test_trigger == false
        spore = rand(10)
        spore2 = rand(10)
-       if user.status == PBStatuses::NONE
+       if user.status == PBStatuses::NONE && user.affectedByPowder?
          case spore
          when 0
            user.status = PBStatuses::PARALYSIS if user.pbCanParalyze?(user,true)
@@ -1494,20 +1447,20 @@ class PokeBattle_Move
        else
          @battle.pbDisplay(_INTL("But {1} was already statused.",user.pbThis)) if $test_trigger == false
        end
-       if target.status == PBStatuses::NONE
+       if target.status == PBStatuses::NONE && target.affectedByPowder?
          case spore2
          when 0
-           target.status = PBStatuses::PARALYSIS if user.pbCanParalyze?(target,true)
-           @battle.pbDisplay(_INTL("{1} was paralyzed!",target.pbThis)) if user.pbCanParalyze?(target,true)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !user.pbCanParalyze?(target,true)
+           target.status = PBStatuses::PARALYSIS if target.pbCanParalyze?(target,true)
+           @battle.pbDisplay(_INTL("{1} was paralyzed!",target.pbThis)) if target.pbCanParalyze?(target,true)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !target.pbCanParalyze?(target,true)
          when 3
-           target.status = PBStatuses::POISON if user.pbCanPoison?(target,true)
-           @battle.pbDisplay(_INTL("{1} was poisoned!",target.pbThis)) if user.pbCanPoison?(target,true)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !user.pbCanPoison?(target,true)
+           target.status = PBStatuses::POISON if target.pbCanPoison?(target,true)
+           @battle.pbDisplay(_INTL("{1} was poisoned!",target.pbThis)) if target.pbCanPoison?(target,true)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !target.pbCanPoison?(target,true)
          when 6
-           target.status = PBStatuses::SLEEP if user.pbCanSleep?(target,true)
-           @battle.pbDisplay(_INTL("{1} fell asleep!",target.pbThis)) if user.pbCanSleep?(target,true)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !user.pbCanSleep?(target,true)
+           target.status = PBStatuses::SLEEP if target.pbCanSleep?(target,true)
+           @battle.pbDisplay(_INTL("{1} fell asleep!",target.pbThis)) if target.pbCanSleep?(target,true)
+           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !target.pbCanSleep?(target,true)
          when 1,2,4,5,7,8,9
            @battle.pbDisplay(_INTL("The spores had no effect on {1}!",target.pbThis)) if $test_trigger == false
          end
@@ -1523,8 +1476,6 @@ class PokeBattle_Move
    end
    case type
    when getConst(PBTypes,:FIRE),getConst(PBTypes,:ELECTRIC),getConst(PBTypes,:ICE),getConst(PBTypes,:ROCK)
-     multipliers[FINAL_DMG_MULT] *= 0.75
-     @battle.pbDisplay(_INTL("The Jet Stream weakened the attack.")) if $test_trigger == false
    end
  end
    # Critical hits
