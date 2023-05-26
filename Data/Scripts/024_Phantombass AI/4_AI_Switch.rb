@@ -189,7 +189,7 @@ PBAI::SwitchHandler.add_type(:GROUND) do |score,ai,battler,proj,target|
 	    PBAI.log("+ 200")
 	  end
 	  for i in target.moves
-	  	if battler.calculate_move_matchup(i.id) < 1 && i.function == "0CA"
+	  	if i.function == "0CA"
 	  		dig = true
 	  	end
 	  end
@@ -318,10 +318,12 @@ PBAI::SwitchHandler.add_out do |switch,ai,battler,target|
 		if calc <= 0
 			flag1 = true
 		end
-		for i in battler.moves
-	    dmg = battler.get_move_damage(target, i)
-	    damage += 1 if dmg >= target.totalhp/2
-	  end
+		if !battler.fainted?
+			for i in battler.moves
+		    dmg = battler.nil? ? 0 : battler.get_move_damage(target, i)
+		    damage += 1 if dmg >= target.totalhp/2
+		  end
+		end
 	  if damage == 0
 	  	flag2 = true
 	  end

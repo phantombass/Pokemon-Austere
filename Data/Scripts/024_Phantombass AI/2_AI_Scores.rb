@@ -1089,10 +1089,10 @@ PBAI::ScoreHandler.add("103", "104", "105") do |score, ai, user, target, move|
     add *= 3 / 4.0 if user.opposing_side.effects[PBEffects::ToxicSpikes] == 1 && move.function == "104"
     score += add
     PBAI.log("+ #{add} for there are #{inactive} pokemon to be sent out at some point")
-    if [PBRoles::HAZARDLEAD,PBRoles::PHYSICALWALL,PBRoles::SPECIALWALL].include?(user.role)
+    if user.hasRole?([PBRoles::HAZARDLEAD,PBRoles::PHYSICALWALL,PBRoles::SPECIALWALL])#.include?(user.role)
       plus = 0
       plus += user.hasRole?(PBRoles::HAZARDLEAD) ? 100 : 60
-      PBAI.log("+ #{plus} for being a #{user.role}")
+      PBAI.log("+ #{plus}")
     end
   end
   next score
@@ -1394,7 +1394,7 @@ PBAI::ScoreHandler.add("0D5", "0D6", "0D7") do |score, ai, user, target, move|
       PBAI.log("+ #{add} for we will likely die without healing")
       if user.hasRole?([PBRoles::PHYSICALWALL,PBRoles::SPECIALWALL,PBRoles::TOXICSTALLER,PBRoles::DEFENSIVEPIVOT,PBRoles::CLERIC])#.include?(user.role.id)
         score += 40
-        PBAI.log("+ 40 for being #{PBRoles.getName(user.role)}")
+        PBAI.log("+ 40")
       end
     else
       add = (factor * 125).round
@@ -1402,7 +1402,7 @@ PBAI::ScoreHandler.add("0D5", "0D6", "0D7") do |score, ai, user, target, move|
       PBAI.log("+ #{add} for we have lost some hp")
       if user.hasRole?([PBRoles::PHYSICALWALL,PBRoles::SPECIALWALL,PBRoles::TOXICSTALLER,PBRoles::DEFENSIVEPIVOT,PBRoles::CLERIC])#.include?(user.role.id)
         score += 40
-        PBAI.log("+ 40 for being #{PBRoles.getName(user.role)}")
+        PBAI.log("+ 40")
       end
     end
   else

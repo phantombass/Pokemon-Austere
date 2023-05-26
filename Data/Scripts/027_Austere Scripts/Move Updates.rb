@@ -112,3 +112,11 @@ class PokeBattle_Move_500 < PokeBattle_BurnMove
     target.pbBurn(user) if target.pbCanBurn?(user,false,self)
   end
 end
+
+class PokeBattle_Move_18C < PokeBattle_Move
+  def pbPriority(user)
+    ret = super
+    ret += 1 if @battle.field.field_effects == PBEffects::Grassy && user.affectedByGarden?
+    return ret
+  end
+end

@@ -1427,9 +1427,11 @@ class PBAI
     end
 
     def get_move_damage(target, move)
+    	$test_trigger = true
       calcType = move.pbCalcType(@battler)
       target.battler.damageState.typeMod = move.pbCalcTypeMod(calcType, @battler, target.battler)
       move.pbCalcDamage(@battler, target.battler)
+      $test_trigger = false
       return target.battler.damageState.calcDamage
     end
 

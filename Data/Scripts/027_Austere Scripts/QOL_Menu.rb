@@ -8,6 +8,9 @@ module Graphics
     if Input.trigger?(Input::V) && $game_temp.in_menu == false && $game_temp.message_window_showing == false && $qol_toggle
       pbQOLMenu
     end
+    if Input.trigger?(Input::D) && $game_temp.in_menu == false && $game_temp.message_window_showing == false && $qol_toggle
+      pbQuickSave
+    end
   end
 end
 
@@ -17,10 +20,23 @@ module Input
   end
 
   V = 52
+  D = 53
 
   def self.buttonToKey(btn)
     return [0x56] if btn == Input::V
+    return [0x44] if btn == Input::D
     time_changer_button_to_key(btn)
+  end
+end
+
+def pbQuickSave
+  save = pbConfirmMessage(_INTL("Would you like to save the game?"))
+  if save
+    pbSave
+    pbMessage(_INTL("{1} saved the game!\\me[GUI save game]",$Trainer.name))
+  else
+    pbPlayCloseMenuSE
+    break
   end
 end
 
