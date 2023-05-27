@@ -1892,7 +1892,7 @@ end
 
 #Grassy Glide
 PBAI::ScoreHandler.add("18C") do |score, ai, user, target, move|
-  if ai.battle.field.terrain == PBBattleTerrains::Grassy
+  if ai.battle.field.field_effects == PBFieldEffects::Grassy
     pri = 0
     for i in target.used_moves
       pri += 1 if i.priority > 0 && i.damagingMove?
@@ -2218,4 +2218,38 @@ PBAI::ScoreHandler.add("036") do |score, ai, user, target, move|
       end
     end
   next score
+end
+
+#Consider Moves Boosted by Field
+PBAI::ScoreHandler.add do |score, ai, user, target, move|
+  $test_trigger = true
+    fe = FIELD_EFFECTS[ai.battle.field.field_effects]
+    for key in fe[:type_damage_change].keys
+        if (fe[:type_damage_change][key].is_a?(Array) && fe[:type_damage_change][key].include?(move.type)) || (fe[:type_damage_change][key] == move.type)
+            change = key < 1.0 ? -100 : key*75
+            score += change
+            change > 0 ? PBAI.log("+ #{change} to take advantage of the field") : PBAI.log("#{change} to avoid being nerfed")
+        end
+    end
+    $test_trigger = false
+    next score
+end
+
+#Consider Moves that Change the Field to benefit us
+PBAI::ScoreHandler.add do |score, ai, user, target, move|
+  $test_trigger = true
+    fe = FIELD_EFFECTS[ai.battle.field.field_effects]
+    for key in fe[:field_changers].keys
+        if fe[:field_changers][key].include?(move.id)
+          for dmg in FIELD_EFFECTS[key][:type_damage_change]
+            if (FIELD_EFFECTS[key][:type_damage_change][dmg].is_a?(Array) && FIELD_EFFECTS[key][:type_damage_change][dmg].include?(move.type)) || FIELD_EFFECTS[key][:type_damage_change][key] == move.type
+              change = dmg < 1.0 ? -100 : dmg*75
+              score += change
+              change > 0 ? PBAI.log("+ #{change} to change the field to an advantageous one") : PBAI.log("#{change} to avoid being nerfed")
+            end
+          end
+        end
+    end
+    $test_trigger = false
+    next score
 end

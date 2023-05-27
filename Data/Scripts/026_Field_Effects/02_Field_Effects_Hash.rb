@@ -66,7 +66,7 @@ FIELD_EFFECTS = {
 			:move_type_change => {},
 			:move_accuracy_change => {},
 			:defensive_modifiers => {
-			1.2 => [PBTypes::BUG,nil]
+			1.5 => [PBTypes::BUG,nil]
 			},
 			:type_damage_change => {
 			1.2 => [PBTypes::GRASS,PBTypes::DARK],
@@ -124,8 +124,12 @@ FIELD_EFFECTS = {
 			:field_gfx => "Lava",
 			:nature_power => PBMoves::LAVAPLUME,
 			:mimicry => PBTypes::FIRE,
-			:abilities => [PBAbilities::FLASHFIRE],
-			:ability_effects => {},
+			:abilities => [PBAbilities::FLASHFIRE,PBAbilities::HEATPROOF,PBAbilities::FLASHFIRE,PBAbilities::FLAMEBODY,PBAbilities::MAGMAARMOR,PBAbilities::STEAMENGINE],
+			:ability_effects => {
+			PBAbilities::HEATPROOF => [PBStats::SPDEF,1],
+			PBAbilities::FLAMEBODY => [PBStats::DEFENSE,1],
+			PBAbilities::MAGMAARMOR => [PBStats::DEFENSE,1]
+			},
 			:move_damage_boost => {},
 			:move_messages => {},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
@@ -195,12 +199,18 @@ FIELD_EFFECTS = {
 			:field_gfx => "Wildfire",
 			:nature_power => PBMoves::FLAMETHROWER,
 			:mimicry => PBTypes::FIRE,
-			:abilities => [PBAbilities::FLASHFIRE],
-			:ability_effects => {},
-			:move_damage_boost => {},
+			:abilities => [PBAbilities::FLASHFIRE,PBAbilities::HEATPROOF,PBAbilities::FLASHFIRE,PBAbilities::FLAMEBODY,PBAbilities::MAGMAARMOR,PBAbilities::STEAMENGINE],
+			:ability_effects => {
+			PBAbilities::HEATPROOF => [PBStats::SPDEF,1],
+			PBAbilities::FLAMEBODY => [PBStats::DEFENSE,1],
+			PBAbilities::MAGMAARMOR => [PBStats::DEFENSE,1]
+			},
+			:move_damage_boost => {
+				1.2 => Fields::WIND_MOVES
+			},
 			:move_messages => {"The wind fueled the fire!" => Fields::WIND_MOVES},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
-			:move_type_change => {:FIRE => [Fields::WIND_MOVES]},
+			:move_type_change => {},
 			:move_accuracy_change => {},
 			:defensive_modifiers => {},
 			:type_damage_change => {
@@ -280,12 +290,12 @@ FIELD_EFFECTS = {
 			:field_changers => {
 			PBFieldEffects::None => Fields::QUAKE_MOVES,
 			PBFieldEffects::Wildfire => Fields::IGNITE_MOVES,
-			PBFieldEffects::Outage => PBTypes::ELECTRIC
+			PBFieldEffects::Outage => Fields::OUTAGE_MOVES
 			},
 			:change_message => {
 			"The city came crashing down!" => Fields::QUAKE_MOVES,
 			"The city caught fire!" => Fields::IGNITE_MOVES,
-			"Power outage!" => PBTypes::ELECTRIC
+			"Power outage!" => Fields::OUTAGE_MOVES
 			},
 			:field_change_conditions => {PBFieldEffects::Wildfire => Fields.ignite?}
 		},
@@ -303,7 +313,7 @@ FIELD_EFFECTS = {
 			:move_type_change => {},
 			:move_accuracy_change => {},
 			:defensive_modifiers => {
-			2 => [PBTypes::GHOST,"fullhp"]
+			2.0 => [PBTypes::GHOST,"fullhp"]
 			},
 			:type_damage_change => {
 			1.2 => [PBTypes::DRAGON,PBTypes::GHOST,PBTypes::GRASS,PBTypes::FIRE,PBTypes::WATER]
@@ -329,13 +339,17 @@ FIELD_EFFECTS = {
 			PBAbilities::LEAFGUARD => [PBStats::DEFENSE,1],
 			PBAbilities::FLOWERVEIL => [PBStats::DEFENSE,1]
 			},
-			:move_damage_boost => {},
-			:move_messages => {},
+			:move_damage_boost => {
+			1.2 => Fields::WIND_MOVES
+			},
+			:move_messages => {
+			"The wind blows through the grass." => Fields::WIND_MOVES
+			},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
 			:move_type_change => {},
 			:move_accuracy_change => {},
 			:defensive_modifiers => {
-			1.2 => [PBTypes::BUG,nil]
+			1.5 => [PBTypes::BUG,nil]
 			},
 			:type_damage_change => {
 			1.2 => [PBTypes::GRASS,PBTypes::FAIRY,PBTypes::BUG]
@@ -343,7 +357,7 @@ FIELD_EFFECTS = {
 			:type_messages => {"The grass strengthened the attack!" => [PBTypes::GRASS,PBTypes::FAIRY,PBTypes::BUG]},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
-			:side_effects => {"spore" => Fields::WIND_MOVES},
+			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::GROWTH],
 			:field_changers => {PBFieldEffects::Wildfire => Fields::IGNITE_MOVES},
@@ -454,7 +468,7 @@ FIELD_EFFECTS = {
 			0.8 => [PBTypes::FIRE]
 			},
 			:move_messages => {
-			"The water's surface boosted the attack." => [PBTypes::WATER],
+			"The attack rode the current." => [PBTypes::WATER],
 			"The water weakened the attack." => [PBTypes::FIRE]
 			},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
@@ -487,7 +501,7 @@ FIELD_EFFECTS = {
 			0.0 => [PBTypes::FIRE]
 			},
 			:move_messages => {
-			"The water boosted the attack." => [PBTypes::WATER,Fields::PULSE_MOVES,Fields::SOUND_MOVES],
+			"The depths boosted the attack." => [PBTypes::WATER,Fields::PULSE_MOVES,Fields::SOUND_MOVES],
 			"The water put the fire out." => [PBTypes::FIRE]
 			},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
@@ -632,6 +646,69 @@ FIELD_EFFECTS = {
 			:change_message => {},
 			:field_change_conditions => {}
 		},
+		PBFieldEffects::Machine => {
+			:field_name => "Machine",
+			:intro_message => "Machines surround the area.",
+			:field_gfx => nil,
+			:nature_power => PBMoves::CHARGEBEAM,
+			:mimicry => PBTypes::ELECTRIC,
+			:abilities => [PBAbilities::VOLTABSORB,PBAbilities::LIGHTNINGROD,PBAbilities::MOTORDRIVE,PBAbilities::PLUS,PBAbilities::MINUS,PBAbilities::DOWNLOAD],
+			:ability_effects => {
+			PBAbilities::PLUS => [PBStats::SPATK,2],
+			PBAbilities::MINUS => [PBStats::SPATK,2]
+			},
+			:move_damage_boost => {},
+			:move_messages => {},
+			:move_type_mod => {}, #if a move adds a second type to the damage done
+			:move_type_change => {},
+			:move_accuracy_change => {},
+			:defensive_modifiers => {},
+			:type_damage_change => {
+			1.2 => [PBTypes::ELECTRIC,PBTypes::STEEL]
+			},
+			:type_messages => {
+			"The attack drew power from the machines!" => [PBTypes::ELECTRIC],
+			"The machinery joined the attack!" => [PBTypes::STEEL]
+			},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_change_message => {},
+			:side_effects => {},
+			:side_effect_message => {},
+			:status_move_boost => [],
+			:field_changers => {PBFieldEffects::ShortOut => Fields::OUTAGE_MOVES},
+			:change_message => {"The field shorted out!" => Fields::OUTAGE_MOVES},
+			:field_change_conditions => {}
+		},
+		PBFieldEffects::ShortOut => {
+			:field_name => "Short Out",
+			:intro_message => "The machines are silent.",
+			:field_gfx => nil,
+			:nature_power => PBMoves::DARKPULSE,
+			:mimicry => PBTypes::DARK,
+			:abilities => [PBAbilities::JUSTIFIED,PBAbilities::RATTLED],
+			:ability_effects => {},
+			:move_damage_boost => {},
+			:move_messages => {},
+			:move_type_mod => {}, #if a move adds a second type to the damage done
+			:move_type_change => {},
+			:move_accuracy_change => {},
+			:defensive_modifiers => {},
+			:type_damage_change => {
+			1.2 => [PBTypes::DARK,PBTypes::GHOST]
+			},
+			:type_messages => {
+			"The city's darkness powered the attack!" => [PBTypes::DARK],
+			"The shadows powered the attack!" => [PBTypes::GHOST]
+			},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_change_message => {},
+			:side_effects => {},
+			:side_effect_message => {},
+			:status_move_boost => [],
+			:field_changers => {PBFieldEffects::City => Fields::CHARGE_MOVES},
+			:change_message => {"The electricity powered up the city!" => Fields::CHARGE_MOVES},
+			:field_change_conditions => {}
+		},
 		PBFieldEffects::Outage => {
 			:field_name => "Outage",
 			:intro_message => "The city is dark.",
@@ -658,8 +735,8 @@ FIELD_EFFECTS = {
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
-			:field_changers => {},
-			:change_message => {},
+			:field_changers => {PBFieldEffects::City => Fields::CHARGE_MOVES},
+			:change_message => {"The electricity powered up the city!" => Fields::CHARGE_MOVES},
 			:field_change_conditions => {}
 		},
 		PBFieldEffects::Space => {
@@ -681,11 +758,11 @@ FIELD_EFFECTS = {
 			:move_accuracy_change => {},
 			:defensive_modifiers => {},
 			:type_damage_change => {
-			1.2 => [PBTypes::DARK,PBTypes::GHOST]
+			1.2 => [PBTypes::DARK,PBTypes::GHOST],
+			0.0 => [PBTypes::GROUND,Fields::SOUND_MOVES]
 			},
 			:type_messages => {
-			"The city's darkness powered the attack!" => [PBTypes::DARK],
-			"The shadows powered the attack!" => [PBTypes::GHOST]
+			"The darkness powered the attack!" => [PBTypes::DARK,PBTypes::GHOST]
 			},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
@@ -705,40 +782,112 @@ FIELD_EFFECTS = {
 			:abilities => [PBAbilities::RAINDISH,PBAbilities::STORMDRAIN,PBAbilities::DRYSKIN,PBAbilities::WATERABSORB,PBAbilities::WATERCOMPACTION],
 			:ability_effects => {},
 			:move_damage_boost => {
-			1.2 => [Fields::WIND_MOVES,PBTypes::WATER,PBTypes::ROCK],
-			0.0 => [PBTypes::FIRE]
+			1.2 => Fields::WIND_MOVES
 			},
 			:move_messages => {
-			"The winds picked up!" => [Fields::WIND_MOVES],
-			"The rocks flew around!" => [PBTypes::ROCK],
-			"The water whipped in the wind!" => [PBTypes::WATER],
-			"The fire fizzled out!" => [PBTypes::FIRE]
+			"The winds picked up!" => Fields::WIND_MOVES
 			},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
 			:move_type_change => {},
 			:move_accuracy_change => {
-			100 => PBMoves::HURRICANE
+			100 => [PBMoves::HURRICANE,PBMoves::THUNDER]
 			},
 			:defensive_modifiers => {},
 			:type_damage_change => {
-			1.2 => [PBTypes::DARK,PBTypes::GHOST]
+			1.2 => [PBTypes::WATER,PBTypes::ROCK],
+			0.0 => [PBTypes::FIRE]
 			},
 			:type_messages => {
-			"The city's darkness powered the attack!" => [PBTypes::DARK],
-			"The shadows powered the attack!" => [PBTypes::GHOST]
+			"The rocks flew around!" => [PBTypes::ROCK],
+			"The water whipped in the wind!" => [PBTypes::WATER],
+			"The fire fizzled out!" => [PBTypes::FIRE]
+			},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_change_message => {},
+			:side_effects => {},
+			:side_effect_message => {},
+			:status_move_boost => [],
+			:field_changers => {},
+			:change_message => {},
+			:field_change_conditions => {}
+		}, 
+	    PBFieldEffects::Graveyard => {
+			:field_name => "Graveyard",
+			:intro_message => "The headstones are creepy...",
+			:field_gfx => "Graveyard",
+			:nature_power => PBMoves::SHADOWBALL,
+			:mimicry => PBTypes::GHOST,
+			:abilities => [PBAbilities::CURSEDBODY,PBAbilities::RATTLED,PBAbilities::PERISHBODY,PBAbilities::SHADOWSHIELD],
+			:ability_effects => {
+			PBAbilities::CURSEDBODY => [PBStats::DEFENSE,1],
+			PBAbilities::PERISHBODY => [PBStats::DEFENSE,1],
+			PBAbilities::SHADOWSHIELD => [PBStats::DEFENSE,1]
+			},
+			:move_damage_boost => {},
+			:move_messages => {},
+			:move_type_mod => {}, #if a move adds a second type to the damage done
+			:move_type_change => {},
+			:move_accuracy_change => {},
+			:defensive_modifiers => {
+			2.0 => [PBTypes::GHOST,"fullhp"]
+			},
+			:type_damage_change => {
+			1.2 => [PBTypes::GHOST]
+			},
+			:type_messages => {
+			"The spirits joined the attack!" => [PBTypes::GHOST]
 			},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::MOONLIGHT],
-			:field_changers => {},
-			:change_message => {},
+			:field_changers => {PBFieldEffects::None => Fields::QUAKE_MOVES},
+			:change_message => {"The graves were razed!" => Fields::QUAKE_MOVES},
 			:field_change_conditions => {}
 		}, 
-	   # Graveyard
-	   # Foundry
-	   # Forest
+	    PBFieldEffects::Foundry => {
+			:field_name => "Foundry",
+			:intro_message => "Machinery hums in the background.",
+			:field_gfx => "Foundry",
+			:nature_power => PBMoves::FLASHCANNON,
+			:mimicry => PBTypes::STEEL,
+			:abilities => [PBAbilities::STEELWORKER,PBAbilities::IRONFIST,PBAbilities::HEATPROOF,PBAbilities::FLASHFIRE,PBAbilities::FLAMEBODY,PBAbilities::MAGMAARMOR],
+			:ability_effects => {
+			PBAbilities::STEELWORKER => [PBStats::ATTACK,1],
+			PBAbilities::IRONFIST => [PBStats::ATTACK,1],
+			PBAbilities::HEATPROOF => [PBStats::SPDEF,1],
+			PBAbilities::MAGMAARMOR => [PBStats::DEFENSE,1],
+			PBAbilities::FLAMEBODY => [PBStats::DEFENSE,1],
+			},
+			:move_damage_boost => {
+			1.2 => [Fields::LIGHT_MOVES]
+			},
+			:move_messages => {
+			"The light is blinding!" => [Fields::LIGHT_MOVES]
+			},
+			:move_type_mod => {}, #if a move adds a second type to the damage done
+			:move_type_change => {},
+			:move_accuracy_change => {},
+			:defensive_modifiers => {},
+			:type_damage_change => {
+			1.2 => [PBTypes::STEEL,PBTypes::FIRE],
+			0.8 => [PBTypes::WATER]
+			},
+			:type_messages => {
+			"The foundry fortfied the attack!" => [PBTypes::STEEL],
+			"The foundry intensified the heat!" => [PBTypes::FIRE],
+			"The heat from the foundry weakened the attack!" => [PBTypes::WATER]
+			},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_change_message => {},
+			:side_effects => {"disturb" => Fields::KICKING_MOVES},
+			:side_effect_message => {},
+			:status_move_boost => [PBMoves::MOONLIGHT],
+			:field_changers => {PBFieldEffects::Lava => Fields::QUAKE_MOVES},
+			:change_message => {"The foundry collapsed and molten metal spilled!" => Fields::QUAKE_MOVES},
+			:field_change_conditions => {}
+		}
 	}
 	
 #Saving these methods in case stuff doesn't work
@@ -776,7 +925,7 @@ FIELD_EFFECTS = {
  case @battle.field.field_effects
  when PBFieldEffects::Desert
    priority = @battle.pbPriority(true)
-   if Fields::WIND_MOVES.include?(Fields.id)
+   if Fields::WIND_MOVES.include?(self.id)
      if user.effectiveWeather != PBWeather::Sandstorm
        @battle.field.weather = PBWeather::Sandstorm
        @battle.field.weatherDuration = user.hasActiveItem?(:SMOOTHROCK) ? 8 : 5
@@ -789,7 +938,7 @@ FIELD_EFFECTS = {
    priority = @battle.pbPriority(true)
    case type
    when getConst(PBTypes,:FIRE)
-     if Fields::WIND_MOVES.include?(Fields.id)
+     if Fields::WIND_MOVES.include?(self.id)
        @battle.pbDisplay(_INTL("The winds kicked up cinders!")) if $test_trigger == false
        if target.effects[PBEffects::Cinders] == 0 && target.affectedByCinders?
          target.effects[PBEffects::Cinders] = 3
@@ -844,7 +993,7 @@ FIELD_EFFECTS = {
    if target.pbHasType?(:BUG)
      multipliers[DEF_MULT] *= 1.2
    end
-   if Fields::WIND_MOVES.include?(Fields.id)
+   if Fields::WIND_MOVES.include?(self.id)
      if @battle.pbWeather != PBWeather::Rain && @battle.pbWeather != PBWeather::HeavyRain && @battle.pbWeather != PBWeather::AcidRain
        @battle.pbDisplay(_INTL("The attack kicked up spores!")) if $test_trigger == false
        spore = rand(10)

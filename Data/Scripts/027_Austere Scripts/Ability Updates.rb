@@ -23,6 +23,30 @@ BattleHandlers::AbilityOnSwitchIn.add(:SAPSIPPER,
   }
 )
 
+BattleHandlers::AbilityOnSwitchIn.add(:LIGHTNINGROD,
+  proc { |ability,battler,battle|
+    next if ![PBFieldEffects::Machine,PBFieldEffects::Electric,PBFieldEffects::Digital].include?(battle.field.field_effects)
+    stat = PBStats::SPATK
+    battler.pbRaiseStatStageByAbility(stat,1,battler)
+  }
+)
+
+BattleHandlers::AbilityOnSwitchIn.add(:MOTORDRIVE,
+  proc { |ability,battler,battle|
+    next if ![PBFieldEffects::Machine,PBFieldEffects::Electric,PBFieldEffects::Digital].include?(battle.field.field_effects)
+    stat = PBStats::SPEED
+    battler.pbRaiseStatStageByAbility(stat,1,battler)
+  }
+)
+
+BattleHandlers::AbilityOnSwitchIn.add(:LIGHTNINGROD,
+  proc { |ability,battler,battle|
+    next if ![PBFieldEffects::Machine,PBFieldEffects::Electric,PBFieldEffects::Digital].include?(battle.field.field_effects)
+    stat = PBStats::SPATK
+    battler.pbRaiseStatStageByAbility(stat,1,battler)
+  }
+)
+
 BattleHandlers::AbilityOnSwitchIn.add(:FLASHFIRE,
   proc { |ability,battler,battle|
     next false if ![PBFieldEffects::Wildfire,PBFieldEffects::Lava].include?(battle.field.field_effects)

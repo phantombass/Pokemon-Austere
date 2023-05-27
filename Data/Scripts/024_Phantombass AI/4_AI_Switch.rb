@@ -189,7 +189,7 @@ PBAI::SwitchHandler.add_type(:GROUND) do |score,ai,battler,proj,target|
 	    PBAI.log("+ 200")
 	  end
 	  for i in target.moves
-	  	if i.function == "0CA"
+	  	if battler.calculate_move_matchup(i.id) < 1 && i.function == "0CA"
 	  		dig = true
 	  	end
 	  end
@@ -310,6 +310,7 @@ PBAI::SwitchHandler.add_out do |switch,ai,battler,target|
 	flag1 = false
 	flag2 = false
 	battler.opposing_side.battlers.each do |target|
+		next if target.nil?
 	  next if ai.battle.wildBattle?
 	  next if target_moves == nil
 		for i in target_moves
@@ -318,12 +319,10 @@ PBAI::SwitchHandler.add_out do |switch,ai,battler,target|
 		if calc <= 0
 			flag1 = true
 		end
-		if !battler.fainted?
-			for i in battler.moves
-		    dmg = battler.nil? ? 0 : battler.get_move_damage(target, i)
-		    damage += 1 if dmg >= target.totalhp/2
-		  end
-		end
+		for i in battler.moves
+	    dmg = battler.get_move_damage(target, i)
+	    damage += 1 if dmg >= target.totalhp/2
+	  end
 	  if damage == 0
 	  	flag2 = true
 	  end
@@ -405,6 +404,7 @@ PBAI::SwitchHandler.add_out do |switch,ai,battler,target|
 	calc = 0
 	battler.opposing_side.battlers.each do |target|
 	  next if ai.battle.wildBattle?
+	  next if target.nil?
 	  for i in battler.moves
 	    dmg = battler.get_move_damage(target, i)
 	    calc += 1 if dmg >= target.totalhp/3
@@ -570,6 +570,7 @@ PBAI::SwitchHandler.add_out do |switch,ai,battler,target|
 	pivot = nil
 	if target.bad_against?(battler)
 		battler.opposing_side.battlers.each do |target|
+			next if target.nil?
 		  next if ai.battle.wildBattle?
 			for i in target_moves
 				next if target_moves == nil
@@ -578,6 +579,7 @@ PBAI::SwitchHandler.add_out do |switch,ai,battler,target|
 			end
 		end
 		battler.opposing_side.battlers.each do |target|
+			next if target.nil?
 		  next if ai.battle.wildBattle?
 		  for i in battler.moves
 		    dmg = battler.get_move_damage(target, i)

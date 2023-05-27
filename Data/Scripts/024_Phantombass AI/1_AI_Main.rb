@@ -333,6 +333,7 @@ class PBAI
 	  end
 
     def faster_than?(target)
+    	return true if target.nil?
       return self.effective_speed >= target.effective_speed
     end
 
@@ -637,7 +638,6 @@ class PBAI
       end
       # Trigger move-specific score modifier code
       score = PBAI::ScoreHandler.trigger_move(move, score, @ai, self, target)
-      $test_trigger = false
       # Prefer a different move if this move would also hit the user's ally and it is super effective against the ally
       # The target is not an ally to begin with (to exclude Heal Pulse and any other good ally-targeting moves)
       if target.side != @side
@@ -673,6 +673,7 @@ class PBAI
         score = 0
         PBAI.log("* 0 for the move being disabled")
       end
+      $test_trigger = false
       PBAI.log("= #{score}")
       return score
     end
@@ -884,12 +885,14 @@ class PBAI
       PBAI.log("\nShould switch = #{switch}")
       if switch == true
         for i in scores
-          next if i[1] != self
-          if i[0] >= 0 && self.turnCount == 0
-            return [0,0]
-          elsif i[0] >= 400
-          	return [0,0]
-          end
+          if i[1] == self && i[0] > 0
+            next if i[1] != self
+            if i[0] >= 0 && self.turnCount == 0
+                return [0,0]
+             elsif i[0] <= 400
+          	    return [0,0]
+            end
+            end
         end
         availscores = scores.select { |e| !e[1].fainted? }
         # Switch to a dark type instead of the best type matchup
@@ -1428,11 +1431,15 @@ class PBAI
 
     def get_move_damage(target, move)
     	$test_trigger = true
-      calcType = move.pbCalcType(@battler)
-      target.battler.damageState.typeMod = move.pbCalcTypeMod(calcType, @battler, target.battler)
-      move.pbCalcDamage(@battler, target.battler)
-      $test_trigger = false
-      return target.battler.damageState.calcDamage
+    	if !target.nil?
+	      calcType = move.pbCalcType(@battler)
+	      target.battler.damageState.typeMod = move.pbCalcTypeMod(calcType, @battler, target.battler)
+	      move.pbCalcDamage(@battler, target.battler)
+	      $test_trigger = false
+      	return target.battler.damageState.calcDamage
+      else
+      	return 0
+      end
     end
 
     # Calculates the combined type effectiveness of all user and target types

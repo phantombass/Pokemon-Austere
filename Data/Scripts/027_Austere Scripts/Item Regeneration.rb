@@ -3,13 +3,9 @@ class PokeBattle_Battle
     # Set up the battlers on each side
     pbAustereClauses if Level_Scaling.gym_leader?
     $qol_toggle = false
+    fe =FIELD_EFFECTS[@field.field_effects]
     @field.field_effects = $game_screen.field_effects
     $field_effect_bg = backdrop
-    $orig_water = false
-    $orig_type_ice = false
-    $orig_flying = false
-    $cinders = 0
-    $outage = false
     sendOuts = pbSetUpSides
     olditems = []
     pbParty(0).each_with_index do |pkmn,i|

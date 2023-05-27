@@ -1,9 +1,11 @@
 class Level_Scaling
   attr_accessor :gym_leader
   attr_accessor :boss_battle
+  attr_accessor :partner
   def initialize
     @gym_leader = false
     @boss_battle = false
+    @partner = false
   end
 
   def self.gym_leader=(value)
@@ -22,6 +24,15 @@ class Level_Scaling
 
   def self.boss_battle?
     return @boss_battle
+  end
+
+  def self.partner=(value)
+    @partner = value
+    return @partner
+  end
+
+  def self.partner?
+    return @partner
   end
 
   def self.evolve(pokemon,level,levelcap)
@@ -84,6 +95,10 @@ def pbGymBattle
   Level_Scaling.gym_leader = true
 end
 
+def pbTagBattle
+  Level_Scaling.partner = true
+end
+
 module Level_Scale
   Active = 901
 
@@ -112,7 +127,7 @@ Events.onTrainerPartyLoad+=proc {|_sender, e |
         level=1 if level<1
         if Level_Scaling.gym_leader?
           level = levelcap
-        elsif Level_Scaling.boss_battle?
+        elsif Level_Scaling.boss_battle? || Level_Scaling.partner?
           level = mlv - 1
         else
           level = mlv - 2 -rand(2)
@@ -120,7 +135,7 @@ Events.onTrainerPartyLoad+=proc {|_sender, e |
         level = 1 if level<1
         party[i].level = level
         party[i].calcStats
-        if !Level_Scaling.gym_leader? && !Level_Scaling.boss_battle?
+        if !Level_Scaling.gym_leader? && !Level_Scaling.boss_battle? && !Level_Scaling.partner?
           party[i].species = Level_Scaling.evolve(party[i],level,levelcap)
           party[i].resetMoves
         end

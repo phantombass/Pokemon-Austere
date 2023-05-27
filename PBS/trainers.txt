@@ -102,6 +102,83 @@ Pokemon = CLEFABLE,15
 	Ability = 1
 	Roles = WINCON
 #-------------------------------
+# SHOFAR CORP
+#-------------------------------
+[LEADER_Janine,WENDY]
+LoseText = "Truly amazing!"
+Pokemon = STARAVIA,13
+	Moves = WINGATTACK,QUICKATTACK,TAILWIND,ROOST
+	IV = 31,31,31,31,31,31
+	EV = 252,4,252,0,0,0
+	Item = BERRYJUICE
+	Nature = IMPISH
+	Ability = 0
+	Roles = PHYSICALWALL,SPEEDCONTROL
+Pokemon = EMOLGA,13
+	Moves = AIRCUTTER,SHOCKWAVE,PROTECT,ENERGYBALL
+	IV = 31,31,31,31,31,31
+	EV = 0,0,0,252,252,4
+	Item = CHARTIBERRY
+	Nature = TIMID
+	Ability = 2
+	Roles = SPECIALBREAKER
+Pokemon = ARCHEN,13
+	Moves = PLUCK,UTURN,BULLDOZE,ROOST
+	IV = 31,31,31,31,31,31
+	EV = 0,252,0,252,0,4
+	Item = BERRYJUICE
+	Nature = JOLLY
+	Ability = 0
+	Roles = PHYSICALBREAKER
+Pokemon = DRIFLOON,13
+	Moves = PROTECT,HEX,DOLDRUMS,ROOST
+	IV = 31,0,31,31,31,31
+	EV = 4,0,0,252,252,0
+	Item = FLAMEORB
+	Nature = TIMID
+	Ability = 2
+	Roles = SPECIALBREAKER
+Pokemon = SKARMORY,13
+	Moves = WHIRLWIND,AERIALACE,TOXIC,ROOST
+	IV = 31,31,31,31,31,31
+	EV = 252,4,0,0,0,252
+	Item = LEFTOVERS
+	Nature = CAREFUL
+	Ability = 1
+	Roles = SPECIALWALL,TOXICSTALLER
+Pokemon = GLIGAR,13
+	Moves = WINGATTACK,SWORDSDANCE,BULLDOZE,ROOST
+	IV = 31,31,31,31,31,31
+	EV = 252,4,0,252,0,0
+	Item = FOCUSSASH
+	Nature = JOLLY
+	Ability = 2
+	Roles = WINCON
+#-------------------------------
+[ROCKETGRUNT_F,MAY]
+LoseText = "But you did."
+Pokemon = VOLTORB,10
+Pokemon = KLINK,11
+#-------------------------------
+[ROCKETGRUNT_F,JUNE]
+LoseText = "Ugh."
+Pokemon = PLUSLE,10
+Pokemon = MINUN,11
+#-------------------------------
+[ROCKETGRUNT_M,AL]
+LoseText = "But you did."
+Pokemon = ELECTRIKE,10
+	Ability = 2
+Pokemon = CHINCHOU,11
+	Ability = 0
+#-------------------------------
+[ROCKETGRUNT_M,BOB]
+LoseText = "Ugh."
+Pokemon = PIKACHU,10
+	Ability = 2
+Pokemon = BLITZLE,11
+	Ability = 1
+#-------------------------------
 # TERCER GYM
 #-------------------------------
 [BIRDKEEPER,BOB]
@@ -116,7 +193,7 @@ Pokemon = BUTTERFREE,10
 Pokemon = FLETCHLING,11
 Pokemon = WINGULL,11
 #-------------------------------
-[LEADER_Janine,WENDY]
+[LEADER_Janine,WENDY,1]
 LoseText = "Truly amazing!"
 Pokemon = STARAVIA,15
 	Moves = WINGATTACK,QUICKATTACK,TAILWIND,ROOST

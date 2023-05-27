@@ -62,7 +62,7 @@ begin
     Ruins         = 8
     Grassy = 9
     JetStream = 10
-	  Outage = 11
+	Outage = 11
     Forest = 12
     Mountain = 13
     SnowMountain = 14
@@ -76,8 +76,10 @@ begin
     Monsoon = 22
     Graveyard = 23
     Foundry = 24
+    Machine = 25
+    ShortOut = 26
 
-    def PBFieldEffects.maxValue; return 25; end
+    def PBFieldEffects.maxValue; return 27; end
     def self.getName(id)
       id = getID(PBFieldEffects,id)
       names = [-
@@ -254,7 +256,7 @@ class Fields
   ECHO_MOVES = arrayToConstant(PBMoves,[:FAKEOUT,:STOMP,:SMELLINGSALTS])
   LIGHT_MOVES = arrayToConstant(PBMoves,[:LIGHTOFRUIN,:DAZZLINGGLEAM,:MOONBLAST,:PRISMATICLASER,:PHOTONGEYSER,:AURORABEAM,:SIGNALBEAM,:MISTBALL,:LUSTERPURGE,:FLASHCANNON,:MIRRORSHOT])
   #Ember added for testing purposes only
-  IGNITE_MOVES = arrayToConstant(PBMoves,[:EMBER,:FLAMEBURST,:HEATWAVE,:LAVAPLUME,:MAGMASTORM,:ERUPTION])
+  IGNITE_MOVES = arrayToConstant(PBMoves,[:FLAREBLITZ,:OVERHEAT,:FLAMEWHEEL,:BURNUP,:FLAMEBURST,:HEATWAVE,:LAVAPLUME,:MAGMASTORM,:ERUPTION])
   WIND_MOVES = arrayToConstant(PBMoves,[:HURRICANE,:OMINOUSWIND,:AIRCUTTER,:AIRSLASH,:SILVERWIND,:DEFOG,:TAILWIND,:DOLDRUMS,:GUST,:RAZORWIND])
   SWAMP_CHANGERS = arrayToConstant(PBMoves,[:STONEEDGE,:POWERGEM,:METEORBEAM,:ROCKSLIDE])
   QUAKE_MOVES = arrayToConstant(PBMoves,[:EARTHQUAKE,:STOMPINGTANTRUM,:BULLDOZE,:FISSURE])
@@ -262,6 +264,9 @@ class Fields
   SOUND_MOVES = arrayToConstant(PBMoves,sound)
   PULSE_MOVES = arrayToConstant(PBMoves,pulse)
   HAMMER_MOVES = arrayToConstant(PBMoves,[:HAMMERARM,:DRAGONHAMMER])
+  CHARGE_MOVES = arrayToConstant(PBMoves,[:THUNDERWAVE,:ZINGZAP,:THUNDERPUNCH,:CHARGE,:DISCHARGE,:SHOCKWAVE,:CHARGEBEAM,:PARABOLICCHARGE,:THUNDERBOLT,:THUNDER,:WILDCHARGE,:VOLTTACKLE,:OVERDRIVE,:PLASMAFISTS])
+  KICKING_MOVES = arrayToConstant(PBMoves,[:JUMPKICK,:HIGHJUMPKICK,:MEGAKICK,:TROPKICK,:DOUBLEKICK,:STOMP,:BLAZEKICK,:TRIPLEKICK,:LOWKICK,:ROLLINGKICK,:LOWSWEEP,:THUNDEROUSKICK,:HIGHHORSEPOWER])
+  OUTAGE_MOVES = arrayToConstant(PBMoves,[:DISCHARGE,:OVERDRIVE,:ZAPCANNON,:PLASMAFISTS,:POLARITYPULSE,:SHOCKWAVE])
 end
 
 class Game_Screen
@@ -408,28 +413,7 @@ def pbPrepareBattle(battle)
     battle.defaultWeather = battleRules["defaultWeather"]
   end
   if battleRules["defaultField"].nil?
-    case @battle.field.field_effects
-    when PBFieldEffects::EchoChamber
-      battle.defaultField = PBFieldEffects::EchoChamber
-    when PBFieldEffects::Desert
-      battle.defaultField = PBFieldEffects::Desert
-    when PBFieldEffects::Lava
-      battle.defaultField = PBFieldEffects::Lava
-    when PBFieldEffects::ToxicFumes
-      battle.defaultField = PBFieldEffects::ToxicFumes
-    when PBFieldEffects::Wildfire
-      battle.defaultField = PBFieldEffects::Wildfire
-    when PBFieldEffects::Swamp
-      battle.defaultField = PBFieldEffects::Swamp
-    when PBFieldEffects::City
-      battle.defaultField = PBFieldEffects::City
-    when PBFieldEffects::Ruins
-      battle.defaultField = PBFieldEffects::Ruins
-    when PBFieldEffects::Grassy
-      battle.defaultField = PBFieldEffects::Grassy
-    when PBFieldEffects::JetStream
-      battle.defaultField = PBFieldEffects::JetStream
-    end
+    battle.defaultField = @battle.field.field_effects
   else
     battle.defaultField = battleRules["defaultField"]
   end
@@ -482,6 +466,25 @@ def pbPrepareBattle(battle)
 end
 
 class PokeBattle_Battle
+  
+  def pbSendOut(sendOuts,startBattle=false)
+     fe = FIELD_EFFECTS[@field.field_effects]
+    sendOuts.each { |b| @peer.pbOnEnteringBattle(self,b[1]) }
+    @scene.pbSendOutBattlers(sendOuts,startBattle)
+    sendOuts.each do |b|
+      @scene.pbResetMoveIndex(b[0])
+      pbSetSeen(@battlers[b[0]])
+      @usedInBattle[b[0]&1][b[0]/2] = true
+      for key in fe[:ability_effects].keys
+        if @battlers[b[0]].hasActiveAbility?(key)
+          pbShowAbilitySplash(@battlers[b[0]])
+          @battlers[b[0]].pbRaiseStatStage(fe[:ability_effects][key][0],fe[:ability_effects][key][1],@battlers[b[0]])
+          pbHideAbilitySplash(@battlers[b[0]])
+        end
+      end
+    end
+  end
+  
   def pbEORFieldDamage(battler)
     return if battler.fainted?
     amt = -1
@@ -513,6 +516,7 @@ class PokeBattle_Battle
   def pbEndOfRoundPhase
     PBDebug.log("")
     PBDebug.log("[End of round]")
+    $test_trigger = false
     @endOfRound = true
     @scene.pbBeginEndOfRoundPhase
     pbCalculatePriority           # recalculate speeds
@@ -995,10 +999,17 @@ class PokeBattle_Battle
   def pbEORTerrainHealing(battler)
     return if battler.fainted?
     # Grassy Terrain (healing)
+    fe = FIELD_EFFECTS[@field.field_effects]
     if @field.field_effects == PBFieldEffects::Grassy && battler.affectedByTerrain? && battler.canHeal?
       PBDebug.log("[Lingering effect] Grassy Terrain heals #{battler.pbThis(true)}")
       battler.pbRecoverHP(battler.totalhp / 16)
       pbDisplay(_INTL("{1}'s HP was restored.", battler.pbThis))
+    end
+    if [PBFieldEffects::Electric,PBFieldEffects::Machine,PBFieldEffects::Digital].include?(@field.field_effects)
+      if battler.hasActiveAbility?(:VOLTABSORB)
+        battler.pbRecoverHP(battler.totalhp / 16)
+        pbDisplay(_INTL("{1}'s HP was restored.", battler.pbThis))
+      end
     end
   end
 
@@ -1048,7 +1059,7 @@ class PokeBattle_Battler
     return ret
   end
   def can_singe?
-	return false if pbHasType?(:FIRE) || hasActiveAbility?([:FLASHFIRE,:WATERBUBBLE,:WATERVEIL,:FLAMEBODY,:HEATPROOF,:THICKFAT,:MAGMAARMOR])
+	 return false if pbHasType?(:FIRE) || hasActiveAbility?([:FLASHFIRE,:WATERBUBBLE,:WATERVEIL,:FLAMEBODY,:HEATPROOF,:THICKFAT,:MAGMAARMOR])
   end
   def takesLavaDamage?
     return false if !takesIndirectDamage?
@@ -1114,11 +1125,50 @@ class PokeBattle_Move
       ret *= 2 if user.hasActiveAbility?(:SERENEGRACE) ||
                   user.pbOwnSide.effects[PBEffects::Rainbow]>0
     end
-	fe_info = FIELD_EFFECTS[@battle.field.field_effects]
+	  fe_info = FIELD_EFFECTS[@battle.field.field_effects]
     ret = 100 if @battle.field.field_effects == PBFieldEffects::Desert && @function == "500"
     ret = 100 if $DEBUG && Input.press?(Input::CTRL)
     return ret
   end
+
+  def pbAccuracyCheck(user,target)
+    # "Always hit" effects and "always hit" accuracy
+    fe = FIELD_EFFECTS[@battle.field.field_effects]
+    return true if target.effects[PBEffects::Telekinesis]>0
+    return true if target.effects[PBEffects::Minimize] && tramplesMinimize?(1)
+    baseAcc = pbBaseAccuracy(user,target)
+    for key in fe[:move_accuracy_change].keys
+      if (fe[:move_accuracy_change][key].is_a?(Array) && fe[:move_accuracy_change][key].include?(self.id)) || fe[:move_accuracy_change][key] == self.id
+        baseAcc = key
+      end
+    end
+    return true if baseAcc==0
+    # Calculate all multiplier effects
+    modifiers = []
+    modifiers[BASE_ACC]  = baseAcc
+    modifiers[ACC_STAGE] = user.stages[PBStats::ACCURACY]
+    modifiers[EVA_STAGE] = target.stages[PBStats::EVASION]
+    modifiers[ACC_MULT]  = 1.0
+    modifiers[EVA_MULT]  = 1.0
+    pbCalcAccuracyModifiers(user,target,modifiers)
+    # Check if move can't miss
+    return true if modifiers[BASE_ACC]==0
+    # Calculation
+    accStage = [[modifiers[ACC_STAGE],-6].max,6].min + 6
+    evaStage = [[modifiers[EVA_STAGE],-6].max,6].min + 6
+    stageMul = [3,3,3,3,3,3, 3, 4,5,6,7,8,9]
+    stageDiv = [9,8,7,6,5,4, 3, 3,3,3,3,3,3]
+    accuracy = 100.0 * stageMul[accStage] / stageDiv[accStage]
+    evasion  = 100.0 * stageMul[evaStage] / stageDiv[evaStage]
+    accuracy = (accuracy * modifiers[ACC_MULT]).round
+    evasion  = (evasion  * modifiers[EVA_MULT]).round
+    evasion = 1 if evasion<1
+    # Calculation/Blunder Policy
+    ret = @battle.pbRandom(100) < modifiers[BASE_ACC] * accuracy / evasion
+    user.effects[PBEffects::BlunderPolicy]=true if !ret
+    return ret
+  end
+
   def pbCalcType(user)
     @powerBoost = false
     $orig_grass = false
@@ -1308,19 +1358,18 @@ class PokeBattle_Move
    end
  end
 	 #Field Effect Changing
-fe = FIELD_EFFECTS[@battle.field.field_effects]
+   fe = FIELD_EFFECTS[@battle.field.field_effects]
 	 if fe[:field_changers] != nil
 		 priority = @battle.pbPriority(true)
-		 msg = nil
+		 cmsg = nil
 		 for fc in fe[:field_changers].keys
 			if @battle.field.field_effects != PBFieldEffects::None
-				if ((!fe[:field_changers][fc].is_a?(Array) && type == getConst(PBTypes,fe[:field_changers][fc])) || (fe[:field_changers][fc].include?(self.id) && fe[:field_changers][fc].is_a?(Array) && (fe[:field_change_conditions][fc] != nil && fe[:field_change_conditions][fc])))
-					
+				if fe[:field_changers][fc].include?(self.id) && (fe[:field_change_conditions][fc] != nil && fe[:field_change_conditions][fc])	&& $test_trigger == false		
 					for message in fe[:change_message].keys
-						msg = message if fe[:change_message][message].include?(self.id)
+						cmsg = message if fe[:change_message][message].include?(self.id)
 					end
-					@battle.pbDisplay(_INTL(msg)) if msg != nil
-                    @battle.field.field_effects = fc
+					@battle.pbDisplay(_INTL(cmsg)) if cmsg != nil
+          @battle.field.field_effects = fc
 					fe = FIELD_EFFECTS[@battle.field.field_effects]
 					$field_effect_bg = fe[:field_gfx]
 					@battle.scene.pbRefreshEverything
@@ -1346,8 +1395,9 @@ fe = FIELD_EFFECTS[@battle.field.field_effects]
 	  end
  #Field Effect Type Boosts
 	 trigger = false
-	 mesg = false
 	 if fe[:type_damage_change] != nil
+    mesg = false
+     msg = nil
 		 for key in fe[:type_damage_change].keys
 			 if @battle.field.field_effects != PBFieldEffects::None
 				if fe[:type_damage_change][key].is_a?(Array)
@@ -1364,7 +1414,7 @@ fe = FIELD_EFFECTS[@battle.field.field_effects]
 						if fe[:type_messages][key].is_a?(Array)
 								msg = key if fe[:type_messages][key].include?(type)
 						else
-							msg =  key if getConst(PBTypes,fe[:type_messages][key]) == type
+							msg = key if getConst(PBTypes,fe[:type_messages][key]) == type
 						end
 					end
 					@battle.pbDisplay(_INTL(msg)) if $test_trigger == false
@@ -1374,12 +1424,14 @@ fe = FIELD_EFFECTS[@battle.field.field_effects]
 	 end
 	 #Field Effect Specific Move Boost
 	 if fe[:move_damage_boost] != nil
+    mesg = false
+    msg = nil
 		 for dmg in fe[:move_damage_boost].keys
 			 if @battle.field.field_effects != PBFieldEffects::None
 				if fe[:move_damage_boost][dmg].is_a?(Array)
-					for j in fe[:move_damage_boost][dmg]
-						multipliers[FINAL_DMG_MULT] *= dmg if j == type
-						mesg = true if j == type
+					if fe[:move_damage_boost][dmg].include?(self.id)
+						multipliers[FINAL_DMG_MULT] *= dmg 
+						mesg = true
 					end
 				elsif type == getConst(PBTypes,fe[:move_damage_boost][dmg])
 					multipliers[FINAL_DMG_MULT] *= dmg
@@ -1388,14 +1440,12 @@ fe = FIELD_EFFECTS[@battle.field.field_effects]
 				if mesg == true
 					for mess in fe[:move_messages].keys
 						if fe[:move_messages][mess].is_a?(Array)
-							for i in fe[:move_messages][mess]
-								msg = mess if getConst(PBTypes,i) == type
-							end
+							msg = mess if fe[:move_messages][mess].include?(self.id)
 						else
 							msg = mess if getConst(PBTypes,fe[:move_messages][mess]) == type
 						end
 					end
-					@battle.pbDisplay(INTL(msg)) if $test_trigger == false
+					@battle.pbDisplay(_INTL(msg)) if $test_trigger == false
 				end
 			 end
 		 end
@@ -1431,57 +1481,12 @@ fe = FIELD_EFFECTS[@battle.field.field_effects]
               @battle.field.weatherDuration = user.hasActiveItem?(:SMOOTHROCK) ? 8 : 5
             @battle.pbDisplay(_INTL("The wind kicked up sand!")) if $test_trigger == false
           end
-        
         when "cinders"
           priority = @battle.pbPriority(true)
           priority.each do |target|
             target.effects[PBEffects::Cinders] = 3 if target.effects[PBEffects::Cinders] == 0 && target.affectedByCinders?
           end
           @battle.pbDisplay(_INTL("The wind kicked up cinders!")) if $test_trigger == false
-        
-        when "spore"
-          priority = @battle.pbPriority(true)
-          if @battle.pbWeather != PBWeather::Rain && @battle.pbWeather != PBWeather::HeavyRain && @battle.pbWeather != PBWeather::AcidRain && spore_done == false
-             @battle.pbDisplay(_INTL("The attack kicked up spores!")) if $test_trigger == false
-             spore_done = false
-             priority.each do |pkmn|
-              next if pkmn.fainted?
-              spore = rand(10)
-              spore2 = rand(10)
-               if pkmn.status == PBStatuses::NONE && pkmn.affectedByPowder?
-                 case spore
-                 when 0
-                   if pkmn.pbCanParalyze?(pkmn,true)
-                    pkmn.status = PBStatuses::PARALYSIS
-                    @battle.pbDisplay(_INTL("{1} was paralyzed!",pkmn.pbThis)) if $test_trigger == false
-                   else
-                    @battle.pbDisplay(_INTL("The spores did not affect {1}!",pkmn.pbThis)) if $test_trigger == false
-                   end
-                 when 3
-                  if pkmn.pbCanPoison?(pkmn,true)
-                   pkmn.status = PBStatuses::POISON
-                   @battle.pbDisplay(_INTL("{1} was poisoned!",pkmn.pbThis)) if $test_trigger == false
-                  else
-                   @battle.pbDisplay(_INTL("The spores did not affect {1}!",pkmn.pbThis)) if $test_trigger == false
-                  end
-                 when 6
-                  if pkmn.pbCanSleep?(pkmn,true)
-                   pkmn.status = PBStatuses::SLEEP
-                   @battle.pbDisplay(_INTL("{1} fell asleep!",pkmn.pbThis)) if $test_trigger == false
-                  else
-                   @battle.pbDisplay(_INTL("The spores did not affect {1}!",pkmn.pbThis)) if $test_trigger == false
-                  end
-                 when 1,2,4,5,7,8,9
-                   @battle.pbDisplay(_INTL("The spores had no effect on {1}!",pkmn.pbThis)) if $test_trigger == false
-                 end
-               elsif pkmn.status == PBStatuses::NONE && !pkmn.affectedByPowder?
-                @battle.pbDisplay(_INTL("The spores had no effect on {1}!",pkmn.pbThis)) if $test_trigger == false
-               else
-                @battle.pbDisplay(_INTL("But {1} was already statused.",pkmn.pbThis)) if $test_trigger == false
-               end
-            end
-            spore_done = true
-          end
         
         when "outage"
           priority = @battle.pbPriority(true)
@@ -1495,16 +1500,20 @@ fe = FIELD_EFFECTS[@battle.field.field_effects]
              next if pkmn.hasActiveAbility?(:SOUNDPROOF)
              confuse = rand(100)
              if confuse > 85
-             @battle.pbDisplay(_INTL("The noise of the city was too much for {1}!",pkmn.name))
-             pkmn.pbConfuse if pkmn.pbCanConfuse?
+				 @battle.pbDisplay(_INTL("The noise of the city was too much for {1}!",pkmn.name))
+				 pkmn.pbConfuse if pkmn.pbCanConfuse?
              end
            end
+  		 when "disturb"
+    			dist = rand(10)
+    			if user.pbCanFreeze?(user,true) && dist > 7
+    				user.pbFreeze
+    				@battle.pbDisplay(_INTL("The spirits awoke and chilled {1} to the bone!",user.name))
+    			end
          end
        end
-				msg = fe[:side_effect_message][key] if fe[:side_effect_message].include?(key)
-				@battle.pbDisplay(INTL(msg)) if msg != nil
-			end
-		end
+	end
+end
 		
    # Critical hits
    if target.damageState.critical

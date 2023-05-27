@@ -319,6 +319,7 @@ class PokeBattle_Battle
   #=============================================================================
   # Called at the start of battle only.
   def pbOnActiveAll
+    fe = FIELD_EFFECTS[@field.field_effects]
     # Neutralizing Gas activates before anything. 
 	pbPriorityNeutralizingGas
     # Weather-inducing abilities, Trace, Imposter, etc.
