@@ -127,3 +127,43 @@ class PokeBattle_Move_18D < PokeBattle_Move
     return baseDmg
   end
 end
+
+BattleHandlers::TerrainStatBoostItem.add(:ELECTRICSEED,
+  proc { |item,battler,battle|
+    next false if ![PBFieldEffects::Electric,PBFieldEffects::Machine,PBFieldEffects::Digital].include?(battle.field.field_effects)
+    next false if !battler.pbCanRaiseStatStage?(PBStats::DEFENSE,battler)
+    itemName = PBItems.getName(item)
+    battle.pbCommonAnimation("UseItem",battler)
+    next battler.pbRaiseStatStageByCause(PBStats::DEFENSE,1,battler,itemName)
+  }
+)
+
+BattleHandlers::TerrainStatBoostItem.add(:GRASSYSEED,
+  proc { |item,battler,battle|
+    next false if battle.field.field_effects!=PBFieldEffects::Grassy
+    next false if !battler.pbCanRaiseStatStage?(PBStats::DEFENSE,battler)
+    itemName = PBItems.getName(item)
+    battle.pbCommonAnimation("UseItem",battler)
+    next battler.pbRaiseStatStageByCause(PBStats::DEFENSE,1,battler,itemName)
+  }
+)
+
+BattleHandlers::TerrainStatBoostItem.add(:MISTYSEED,
+  proc { |item,battler,battle|
+    next false if battle.field.field_effects!=PBFieldEffects::Misty
+    next false if !battler.pbCanRaiseStatStage?(PBStats::SPDEF,battler)
+    itemName = PBItems.getName(item)
+    battle.pbCommonAnimation("UseItem",battler)
+    next battler.pbRaiseStatStageByCause(PBStats::SPDEF,1,battler,itemName)
+  }
+)
+
+BattleHandlers::TerrainStatBoostItem.add(:PSYCHICSEED,
+  proc { |item,battler,battle|
+    next false if battle.field.field_effects!=PBFieldEffects::Psychic
+    next false if !battler.pbCanRaiseStatStage?(PBStats::SPDEF,battler)
+    itemName = PBItems.getName(item)
+    battle.pbCommonAnimation("UseItem",battler)
+    next battler.pbRaiseStatStageByCause(PBStats::SPDEF,1,battler,itemName)
+  }
+)
