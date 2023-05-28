@@ -115,39 +115,15 @@ Pokemon = STARAVIA,13
 	Ability = 0
 	Roles = PHYSICALWALL,SPEEDCONTROL
 Pokemon = EMOLGA,13
-	Moves = AIRCUTTER,SHOCKWAVE,PROTECT,ENERGYBALL
+	Moves = AIRCUTTER,SHOCKWAVE,ROOST,ENERGYBALL
 	IV = 31,31,31,31,31,31
 	EV = 0,0,0,252,252,4
 	Item = CHARTIBERRY
 	Nature = TIMID
 	Ability = 2
 	Roles = SPECIALBREAKER
-Pokemon = ARCHEN,13
-	Moves = PLUCK,UTURN,BULLDOZE,ROOST
-	IV = 31,31,31,31,31,31
-	EV = 0,252,0,252,0,4
-	Item = BERRYJUICE
-	Nature = JOLLY
-	Ability = 0
-	Roles = PHYSICALBREAKER
-Pokemon = DRIFLOON,13
-	Moves = PROTECT,HEX,DOLDRUMS,ROOST
-	IV = 31,0,31,31,31,31
-	EV = 4,0,0,252,252,0
-	Item = FLAMEORB
-	Nature = TIMID
-	Ability = 2
-	Roles = SPECIALBREAKER
-Pokemon = SKARMORY,13
-	Moves = WHIRLWIND,AERIALACE,TOXIC,ROOST
-	IV = 31,31,31,31,31,31
-	EV = 252,4,0,0,0,252
-	Item = LEFTOVERS
-	Nature = CAREFUL
-	Ability = 1
-	Roles = SPECIALWALL,TOXICSTALLER
 Pokemon = GLIGAR,13
-	Moves = WINGATTACK,SWORDSDANCE,BULLDOZE,ROOST
+	Moves = WINGATTACK,SWORDSDANCE,DUSTYDASH,ROOST
 	IV = 31,31,31,31,31,31
 	EV = 252,4,0,252,0,0
 	Item = FOCUSSASH
@@ -158,26 +134,120 @@ Pokemon = GLIGAR,13
 [ROCKETGRUNT_F,MAY]
 LoseText = "But you did."
 Pokemon = VOLTORB,10
+	Moves = CHARGEBEAM,ECHOEDVOICE,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
 Pokemon = KLINK,11
+	Moves = CHARGEBEAM,MIRRORSHOT,MIRRORRUSH
+	IV = 31,31,31,31,31,31
 #-------------------------------
 [ROCKETGRUNT_F,JUNE]
 LoseText = "Ugh."
 Pokemon = PLUSLE,10
+	Moves = CHARGEBEAM,QUICKATTACK,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
 Pokemon = MINUN,11
+	Moves = CHARGEBEAM,QUICKATTACK,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
 #-------------------------------
 [ROCKETGRUNT_M,AL]
-LoseText = "But you did."
+LoseText = "Punk."
 Pokemon = ELECTRIKE,10
+	Moves = DISCHARGE,FLAMEBURST,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
 	Ability = 2
 Pokemon = CHINCHOU,11
+	Moves = DISCHARGE,BUBBLEBEAM,ICYWIND
+	IV = 31,31,31,31,31,31
 	Ability = 0
 #-------------------------------
 [ROCKETGRUNT_M,BOB]
-LoseText = "Ugh."
+LoseText = "Oof."
 Pokemon = PIKACHU,10
+	Moves = FAKEOUT,QUICKATTACK,HIDDENPOWERICE,CHARGEBEAM
+	IV = 31,31,31,31,31,31
 	Ability = 2
 Pokemon = BLITZLE,11
+	Moves = CHARGEBEAM,QUICKATTACK,FLAMEBURST
+	IV = 31,31,31,31,31,31
 	Ability = 1
+#-------------------------------
+[ROCKETGRUNT_F,APRIL]
+LoseText = "Sheesh."
+Pokemon = MAGNEMITE,10
+	Moves = CHARGEBEAM,MIRRORRUSH,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+Pokemon = MAREEP,11
+	Moves = CHARGEBEAM,HIDDENPOWERICE,THUNDERWAVE
+	IV = 31,31,31,31,31,31
+	Roles = SPEEDCONTROL
+	Ability = 2
+#-------------------------------
+[ROCKETGRUNT_F,WEDNESDAY]
+LoseText = "Ugh."
+Pokemon = DEDENNE,10
+	Moves = CHARGEBEAM,DRAININGKISS,HIDDENPOWERICE
+	Ability = 2
+	IV = 31,31,31,31,31,31
+Pokemon = MINUN,11
+	Moves = CHARGEBEAM,QUICKATTACK,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_M,CAL]
+LoseText = "But you did."
+Pokemon = PACHIRISU,10
+	Moves = DISCHARGE,FAKEOUT,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+	Ability = 2
+Pokemon = TOGEDEMARU,11
+	Moves = CHARGEBEAM,MIRRORRUSH,HIDDENPOWERICE,FAKEOUT
+	IV = 31,31,31,31,31,31
+	Ability = 1
+#-------------------------------
+[ROCKETGRUNT_M,PHIL]
+LoseText = "Ugh."
+Pokemon = PINCURCHIN,10
+	Moves = CHARGEBEAM,HIDDENPOWERICE,RECOVER
+	IV = 31,31,31,31,31,31
+Pokemon = ELEKID,11
+	Moves = MACHPUNCH,DISCHARGE,FIREPUNCH
+	Ability = 2
+#-------------------------------
+[ROCKETEXEC_F,ARIANA]
+LoseText = "Ugh."
+Pokemon = FLAAFFY,10
+	Moves = CHARGEBEAM,HIDDENPOWERICE,SIGNALBEAM
+	Item = BERRYJUICE
+	IV = 31,31,31,31,31,31
+	EV = 252,0,0,0,252,4
+	Nature = MODEST
+	Ability = 2
+	Role = SPECIALBREAKER
+Pokemon = GOLDEEN,11
+	Moves = BUBBLEBEAM,ICYWIND,PSYBEAM,HIDDENPOWERELECTRIC
+	Item = BERRYJUICE
+	IV = 31,31,31,31,31,31
+	EV = 0,0,0,252,252,4
+	Nature = MODEST
+	Role = WINCON
+#-------------------------------
+[ROCKETEXEC_M,ARCHER]
+LoseText = "Good grief."
+Pokemon = STUNFISK,10
+	Moves = DISCHARGE,MUDSHOT,BUBBLEBEAM,SLACKOFF
+	Item = BERRYJUICE
+	IV = 31,31,31,31,31,31
+	EV = 252,0,0,0,4,252
+	Nature = MODEST
+	Ability = 1
+	Role = SPECIALWALL
+Pokemon = PIKACHU,11
+	Moves = FAKEOUT,QUICKATTACK,CHARGEBEAM,HIDDENPOWERICE
+	Item = LIGHTBALL
+	IV = 31,31,31,31,31,31
+	EV = 0,0,0,252,252,4
+	Nature = MODEST
+	Role = WINCON
+#-------------------------------
 #-------------------------------
 # TERCER GYM
 #-------------------------------

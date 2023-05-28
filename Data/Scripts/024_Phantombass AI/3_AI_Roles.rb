@@ -62,17 +62,8 @@ class PokeBattle_Pokemon
     self.roles.push(getID(PBRoles,value))
     calcStats
   end
-  def hasRole?(role=-1)
-    x = []
-    for i in self.roles
-      x.push(i)
-      if role.is_a?(Array)
-        if role.include?(getID(PBRoles,i))
-          return true
-        end
-      end
-    end
-    return x.include?(role) && !role.is_a?(Array)
+  def hasRole?(role=0)
+    return self.roles.include?(getID(PBRoles,role))
   end
 end
 

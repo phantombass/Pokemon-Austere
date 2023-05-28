@@ -569,42 +569,46 @@ PBAI::SwitchHandler.add_out do |switch,ai,battler,target|
 	damage = 0
 	pivot = nil
 	if target.bad_against?(battler)
-		battler.opposing_side.battlers.each do |target|
-			next if target.nil?
+		battler.opposing_side.battlers.each do |t|
+			next if t.nil?
 		  next if ai.battle.wildBattle?
 			for i in target_moves
 				next if target_moves == nil
-			  dmg = target.get_move_damage(battler, i)
+			  dmg = t.get_move_damage(battler, i)
 			  calc += 1 if (dmg >= battler.hp/2)
 			end
 		end
-		battler.opposing_side.battlers.each do |target|
-			next if target.nil?
+		battler.opposing_side.battlers.each do |tar|
+			next if tar.nil?
 		  next if ai.battle.wildBattle?
 		  for i in battler.moves
-		    dmg = battler.get_move_damage(target, i)
-		    damage += 1 if (dmg >= target.hp/2)
+		    dmg = battler.get_move_damage(tar, i)
+		    damage += 1 if (dmg >= tar.hp/2)
 		  end
 		end
-		if battler.faster_than?(target) && damage > 0 && calc == 0
+		if !target.nil?
+			if battler.faster_than?(target) && damage > 0 && calc == 0
+				switch = false
+			end
+			if battler.faster_than?(target) && damage == 0 && calc > 0
+				switch = true
+			end
+			if target.faster_than?(battler) && damage > 0 && calc == 0
+				switch = false
+			end
+			if target.faster_than?(battler) && calc > 0
+				switch = true
+			end
+			for i in battler.moves
+				move += 1 if target.calculate_move_matchup(i.id) > 1
+			end	
+			if move > 0 && battler.faster_than?(target)
+				switch = false
+			elsif move == 0
+				switch = true
+			end
+		else
 			switch = false
-		end
-		if battler.faster_than?(target) && damage == 0 && calc > 0
-			switch = true
-		end
-		if target.faster_than?(battler) && damage > 0 && calc == 0
-			switch = false
-		end
-		if target.faster_than?(battler) && calc > 0
-			switch = true
-		end
-		for i in battler.moves
-			move += 1 if target.calculate_move_matchup(i.id) > 1
-		end	
-		if move > 0 && battler.faster_than?(target)
-			switch = false
-		elsif move == 0
-			switch = true
 		end
 	elsif target.bad_against?(battler) && target_moves == nil
 		switch = false

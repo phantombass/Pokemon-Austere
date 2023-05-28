@@ -223,6 +223,7 @@ rescue Exception
 end
 
 class Fields
+  #pbCompileAllData(true) { |msg| pbSetWindowText(msg) } #This is here in case compiling fails at any point
   $effect_flag = {}
   sound = []
   pulse = []
@@ -238,20 +239,8 @@ class Fields
       return false if [PBWeather::Rain,PBWeather::AcidRain,PBWeather::HeavyRain].include?($weather)
       return true
   end
-  def self.set_sand
-	$effect_flag[:sand] = true
-  end
-  def self.cinders
-	$effect_flag[:cinders] = true
-  end
-  def self.outage
-	$effect_flag[:outage] = true
-  end
-  def self.sound_confuse
-	$effect_flag[:sound_confuse] = true
-  end
-  def self.set_spore
-   $effect_flag[:spore] = true
+  def self.recharge?
+    return $recharge == false
   end
   ECHO_MOVES = arrayToConstant(PBMoves,[:FAKEOUT,:STOMP,:SMELLINGSALTS])
   LIGHT_MOVES = arrayToConstant(PBMoves,[:LIGHTOFRUIN,:DAZZLINGGLEAM,:MOONBLAST,:PRISMATICLASER,:PHOTONGEYSER,:AURORABEAM,:SIGNALBEAM,:MISTBALL,:LUSTERPURGE,:FLASHCANNON,:MIRRORSHOT])
@@ -266,7 +255,8 @@ class Fields
   HAMMER_MOVES = arrayToConstant(PBMoves,[:HAMMERARM,:DRAGONHAMMER])
   CHARGE_MOVES = arrayToConstant(PBMoves,[:THUNDERWAVE,:ZINGZAP,:THUNDERPUNCH,:CHARGE,:DISCHARGE,:SHOCKWAVE,:CHARGEBEAM,:PARABOLICCHARGE,:THUNDERBOLT,:THUNDER,:WILDCHARGE,:VOLTTACKLE,:OVERDRIVE,:PLASMAFISTS])
   KICKING_MOVES = arrayToConstant(PBMoves,[:JUMPKICK,:HIGHJUMPKICK,:MEGAKICK,:TROPKICK,:DOUBLEKICK,:STOMP,:BLAZEKICK,:TRIPLEKICK,:LOWKICK,:ROLLINGKICK,:LOWSWEEP,:THUNDEROUSKICK,:HIGHHORSEPOWER])
-  OUTAGE_MOVES = arrayToConstant(PBMoves,[:DISCHARGE,:OVERDRIVE,:ZAPCANNON,:PLASMAFISTS,:POLARITYPULSE,:SHOCKWAVE])
+  OUTAGE_MOVES = arrayToConstant(PBMoves,[:DISCHARGE,:OVERDRIVE,:ZAPCANNON,:PLASMAFISTS,:SHOCKWAVE])
+  MACHINE_MOVES = arrayToConstant(PBMoves,[:ZINGZAP,:THUNDERPUNCH,:PARABOLICCHARGE,:THUNDERBOLT,:THUNDER,:WILDCHARGE,:VOLTTACKLE])
 end
 
 class Game_Screen
@@ -417,6 +407,7 @@ def pbPrepareBattle(battle)
   else
     battle.defaultField = battleRules["defaultField"]
   end
+  $recharge = false
   # Environment
   if battleRules["environment"].nil?
     battle.environment = pbGetEnvironment
@@ -467,22 +458,94 @@ end
 
 class PokeBattle_Battle
   
-  def pbSendOut(sendOuts,startBattle=false)
-     fe = FIELD_EFFECTS[@field.field_effects]
-    sendOuts.each { |b| @peer.pbOnEnteringBattle(self,b[1]) }
-    @scene.pbSendOutBattlers(sendOuts,startBattle)
-    sendOuts.each do |b|
-      @scene.pbResetMoveIndex(b[0])
-      pbSetSeen(@battlers[b[0]])
-      @usedInBattle[b[0]&1][b[0]/2] = true
-      for key in fe[:ability_effects].keys
-        if @battlers[b[0]].hasActiveAbility?(key)
-          pbShowAbilitySplash(@battlers[b[0]])
-          @battlers[b[0]].pbRaiseStatStage(fe[:ability_effects][key][0],fe[:ability_effects][key][1],@battlers[b[0]])
-          pbHideAbilitySplash(@battlers[b[0]])
+  def pbOnActiveOne(battler)
+    return false if battler.fainted?
+    fe = FIELD_EFFECTS[@field.field_effects]
+    # Introduce Shadow Pokémon
+    if battler.opposes? && battler.shadowPokemon?
+      pbCommonAnimation("Shadow",battler)
+      pbDisplay(_INTL("Oh!\nA Shadow Pokémon!"))
+    end
+    # Record money-doubling effect of Amulet Coin/Luck Incense
+    if !battler.opposes? && (isConst?(battler.item,PBItems,:AMULETCOIN) ||
+                             isConst?(battler.item,PBItems,:LUCKINCENSE))
+      @field.effects[PBEffects::AmuletCoin] = true
+    end
+    # Update battlers' participants (who will gain Exp/EVs when a battler faints)
+    eachBattler { |b| b.pbUpdateParticipants }
+  # Healing Wish / Lunar Dance
+  pbActivateHealingWish(battler)
+    # Entry hazards
+    # Stealth Rock
+    if battler.pbOwnSide.effects[PBEffects::StealthRock] && battler.takesIndirectDamage? &&
+       !battler.hasActiveItem?(:HEAVYDUTYBOOTS)
+      aType = getConst(PBTypes,:ROCK) || 0
+      bTypes = battler.pbTypes(true)
+      eff = PBTypes.getCombinedEffectiveness(aType,bTypes[0],bTypes[1],bTypes[2])
+      if !PBTypes.ineffective?(eff)
+        eff = eff.to_f/PBTypeEffectiveness::NORMAL_EFFECTIVE
+        oldHP = battler.hp
+        battler.pbReduceHP(battler.totalhp*eff/8,false)
+        pbDisplay(_INTL("Pointed stones dug into {1}!",battler.pbThis))
+        battler.pbItemHPHealCheck
+        if battler.pbAbilitiesOnDamageTaken(oldHP)   # Switched out
+          return pbOnActiveOne(battler)   # For replacement battler
         end
       end
     end
+    # Spikes
+    if battler.pbOwnSide.effects[PBEffects::Spikes]>0 && battler.takesIndirectDamage? &&
+       !battler.airborne? && !battler.hasActiveItem?(:HEAVYDUTYBOOTS)
+      spikesDiv = [8,6,4][battler.pbOwnSide.effects[PBEffects::Spikes]-1]
+      oldHP = battler.hp
+      battler.pbReduceHP(battler.totalhp/spikesDiv,false)
+      pbDisplay(_INTL("{1} is hurt by the spikes!",battler.pbThis))
+      battler.pbItemHPHealCheck
+      if battler.pbAbilitiesOnDamageTaken(oldHP)   # Switched out
+        return pbOnActiveOne(battler)   # For replacement battler
+      end
+    end
+    # Toxic Spikes
+    if battler.pbOwnSide.effects[PBEffects::ToxicSpikes]>0 && !battler.fainted? &&
+       !battler.airborne?
+      if battler.pbHasType?(:POISON)
+        battler.pbOwnSide.effects[PBEffects::ToxicSpikes] = 0
+        pbDisplay(_INTL("{1} absorbed the poison spikes!",battler.pbThis))
+      elsif battler.pbCanPoison?(nil,false) && !battler.hasActiveItem?(:HEAVYDUTYBOOTS)
+        if battler.pbOwnSide.effects[PBEffects::ToxicSpikes]==2
+          battler.pbPoison(nil,_INTL("{1} was badly poisoned by the poison spikes!",battler.pbThis),true)
+        else
+          battler.pbPoison(nil,_INTL("{1} was poisoned by the poison spikes!",battler.pbThis))
+        end
+      end
+    end
+    # Sticky Web
+    if battler.pbOwnSide.effects[PBEffects::StickyWeb] && !battler.fainted? &&
+       !battler.airborne? && !battler.hasActiveItem?(:HEAVYDUTYBOOTS)
+      pbDisplay(_INTL("{1} was caught in a sticky web!",battler.pbThis))
+      if battler.pbCanLowerStatStage?(PBStats::SPEED)
+      stickyuser = (battler.pbOwnSide.effects[PBEffects::StickyWebUser] > -1 ? 
+      battlers[battler.pbOwnSide.effects[PBEffects::StickyWebUser]] : nil)
+        battler.pbLowerStatStage(PBStats::SPEED,1,stickyuser)
+        battler.pbItemStatRestoreCheck
+      end
+    end
+    # Battler faints if it is knocked out because of an entry hazard above
+    if battler.fainted?
+      battler.pbFaint
+      pbGainExp
+      pbJudge
+      return false
+    end
+    battler.pbCheckForm
+    for key in fe[:ability_effects].keys
+        if battler.hasActiveAbility?(key)
+          pbShowAbilitySplash(battler)
+          battler.pbRaiseStatStage(fe[:ability_effects][key][0],fe[:ability_effects][key][1],battler)
+          pbHideAbilitySplash(battler)
+        end
+      end
+    return true
   end
   
   def pbEORFieldDamage(battler)
@@ -1025,7 +1088,7 @@ class PokeBattle_Battle
   	bg = FIELD_EFFECTS[newField][:field_gfx]
   	pbDisplay(_INTL(msg))
   	$field_effect_bg = bg
-	pbHideAbilitySplash(user) if user
+	 pbHideAbilitySplash(user) if user
   	@scene.pbRefreshEverything
     # Check for abilities/items that trigger upon the terrain changing
 #    allBattlers.each { |b| b.pbAbilityOnTerrainChange }
@@ -1364,31 +1427,34 @@ class PokeBattle_Move
 		 cmsg = nil
 		 for fc in fe[:field_changers].keys
 			if @battle.field.field_effects != PBFieldEffects::None
-				if fe[:field_changers][fc].include?(self.id) && (fe[:field_change_conditions][fc] != nil && fe[:field_change_conditions][fc])	&& $test_trigger == false		
+        p fe[:field_change_conditions][fc]
+				if fe[:field_changers][fc].include?(self.id) && (fe[:field_change_conditions][fc] == true)
 					for message in fe[:change_message].keys
 						cmsg = message if fe[:change_message][message].include?(self.id)
 					end
-					@battle.pbDisplay(_INTL(cmsg)) if cmsg != nil
-          @battle.field.field_effects = fc
-					fe = FIELD_EFFECTS[@battle.field.field_effects]
-					$field_effect_bg = fe[:field_gfx]
-					@battle.scene.pbRefreshEverything
-					priority.each do |pkmn|
-						if pkmn.hasActiveAbility?([fe[:abilities]])
-							for key in fe[:ability_effects].keys
-								if pkmn.ability != fc
-									abil = nil
-								else
-									abil = fe[:ability_effects][pkmn.ability]
-								end
-								if pkmn.ability == fc && abil.is_a?(Array)
-									trigger = true
-								end
-							end
-							BattleHandlers.triggerAbilityOnSwitchIn(fc,pkmn,@battle) if trigger
-							pkmn.pbRaiseStatStage(abil[0],abil[1],user) if abil != nil && !trigger
-						end
-					end
+          if $test_trigger == false
+  					@battle.pbDisplay(_INTL(cmsg)) if cmsg != nil
+            @battle.field.field_effects = fc
+  					fe = FIELD_EFFECTS[@battle.field.field_effects]
+  					$field_effect_bg = fe[:field_gfx]
+  					@battle.scene.pbRefreshEverything
+  					priority.each do |pkmn|
+  						if pkmn.hasActiveAbility?([fe[:abilities]])
+  							for key in fe[:ability_effects].keys
+  								if pkmn.ability != fc
+  									abil = nil
+  								else
+  									abil = fe[:ability_effects][pkmn.ability]
+  								end
+  								if pkmn.ability == fc && abil.is_a?(Array)
+  									trigger = true
+  								end
+  							end
+  							BattleHandlers.triggerAbilityOnSwitchIn(fc,pkmn,@battle) if trigger
+  							pkmn.pbRaiseStatStage(abil[0],abil[1],user) if abil != nil && !trigger
+  						end
+  					end
+          end
 				end
 			end
 			end
@@ -1510,8 +1576,12 @@ class PokeBattle_Move
     				user.pbFreeze
     				@battle.pbDisplay(_INTL("The spirits awoke and chilled {1} to the bone!",user.name))
     			end
-         end
+       when "short"
+          $recharge = true
+        when "recharge"
+          $recharge = false
        end
+     end
 	end
 end
 		

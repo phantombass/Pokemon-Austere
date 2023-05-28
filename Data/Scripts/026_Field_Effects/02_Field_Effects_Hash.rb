@@ -649,7 +649,7 @@ FIELD_EFFECTS = {
 		PBFieldEffects::Machine => {
 			:field_name => "Machine",
 			:intro_message => "Machines surround the area.",
-			:field_gfx => nil,
+			:field_gfx => "Machine",
 			:nature_power => PBMoves::CHARGEBEAM,
 			:mimicry => PBTypes::ELECTRIC,
 			:abilities => [PBAbilities::VOLTABSORB,PBAbilities::LIGHTNINGROD,PBAbilities::MOTORDRIVE,PBAbilities::PLUS,PBAbilities::MINUS,PBAbilities::DOWNLOAD],
@@ -657,32 +657,38 @@ FIELD_EFFECTS = {
 			PBAbilities::PLUS => [PBStats::SPATK,2],
 			PBAbilities::MINUS => [PBStats::SPATK,2]
 			},
-			:move_damage_boost => {},
-			:move_messages => {},
+			:move_damage_boost => {
+			1.2 => Fields::OUTAGE_MOVES,
+			1.2 => Fields::MACHINE_MOVES
+			},
+			:move_messages => {
+			"The attack drew power from the machinery!" => Fields::MACHINE_MOVES
+			},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
 			:move_type_change => {},
 			:move_accuracy_change => {},
 			:defensive_modifiers => {},
 			:type_damage_change => {
-			1.2 => [PBTypes::ELECTRIC,PBTypes::STEEL]
+			1.2 => [PBTypes::STEEL]
 			},
 			:type_messages => {
-			"The attack drew power from the machines!" => [PBTypes::ELECTRIC],
 			"The machinery joined the attack!" => [PBTypes::STEEL]
 			},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
-			:side_effects => {},
+			:side_effects => {
+			"recharge" => Fields::CHARGE_MOVES
+			},
 			:side_effect_message => {},
 			:status_move_boost => [],
 			:field_changers => {PBFieldEffects::ShortOut => Fields::OUTAGE_MOVES},
 			:change_message => {"The field shorted out!" => Fields::OUTAGE_MOVES},
-			:field_change_conditions => {}
+			:field_change_conditions => {PBFieldEffects::ShortOut => true}
 		},
 		PBFieldEffects::ShortOut => {
 			:field_name => "Short Out",
 			:intro_message => "The machines are silent.",
-			:field_gfx => nil,
+			:field_gfx => "Short",
 			:nature_power => PBMoves::DARKPULSE,
 			:mimicry => PBTypes::DARK,
 			:abilities => [PBAbilities::JUSTIFIED,PBAbilities::RATTLED],
@@ -702,12 +708,14 @@ FIELD_EFFECTS = {
 			},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
-			:side_effects => {},
+			:side_effects => {
+			"short" => Fields::OUTAGE_MOVES
+			},
 			:side_effect_message => {},
 			:status_move_boost => [],
-			:field_changers => {PBFieldEffects::City => Fields::CHARGE_MOVES},
-			:change_message => {"The electricity powered up the city!" => Fields::CHARGE_MOVES},
-			:field_change_conditions => {}
+			:field_changers => {PBFieldEffects::Machine => Fields::CHARGE_MOVES},
+			:change_message => {"The electricity powered up the machinery!" => Fields::CHARGE_MOVES},
+			:field_change_conditions => {PBFieldEffects::Machine => Fields.recharge?}
 		},
 		PBFieldEffects::Outage => {
 			:field_name => "Outage",

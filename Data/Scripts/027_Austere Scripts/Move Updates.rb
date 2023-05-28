@@ -120,3 +120,10 @@ class PokeBattle_Move_18C < PokeBattle_Move
     return ret
   end
 end
+
+class PokeBattle_Move_18D < PokeBattle_Move
+  def pbBaseDamage(baseDmg,user,target)
+    baseDmg *= 2 if [PBFieldEffects::Electric,PBFieldEffects::Machine,PBFieldEffects::Digital].include?(@battle.field.field_effects)
+    return baseDmg
+  end
+end

@@ -214,9 +214,10 @@ class PBAI
       return @battler.roles
     end
 
-		def hasRole?(id)
-			return @pokemon.hasRole?(id)
-		end
+		def hasRole?(role=0)
+			#return @pokemon.hasRole?(role)
+	    return self.roles.include?(getID(PBRoles,role))
+	  end
 
 		def defensive?
 			return true if @pokemon.hasRole?(PBRoles::SCREENS)
@@ -892,7 +893,7 @@ class PBAI
              elsif i[0] <= 400
           	    return [0,0]
             end
-            end
+          end
         end
         availscores = scores.select { |e| !e[1].fainted? }
         # Switch to a dark type instead of the best type matchup

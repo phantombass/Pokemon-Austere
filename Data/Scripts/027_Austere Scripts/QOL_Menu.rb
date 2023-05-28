@@ -36,7 +36,6 @@ def pbQuickSave
     pbMessage(_INTL("{1} saved the game!\\me[GUI save game]",$Trainer.name))
   else
     pbPlayCloseMenuSE
-    break
   end
 end
 

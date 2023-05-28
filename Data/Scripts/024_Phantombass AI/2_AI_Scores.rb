@@ -675,8 +675,8 @@ PBAI::ScoreHandler.add_damaging do |score, ai, user, target, move|
       PBAI.log("+ #{5 * (target.level - user.level - 5)} for preferring damaging moves due to being a low level")
     end
     if move.priority > 0
-      score += 30
-      PBAI.log("+ 30 for being a priority move and being and underdog")
+      score += 75
+      PBAI.log("+ 75 for being a priority move and being and underdog")
     end
   end
   next score
