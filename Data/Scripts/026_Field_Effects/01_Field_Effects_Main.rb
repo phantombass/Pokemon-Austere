@@ -223,8 +223,33 @@ rescue Exception
 end
 
 class Fields
+  attr_accessor :short
+  attr_accessor :recharge
+  def initialize
+    @short = false
+    @recharge = false
+  end
+  def update
+    @short = $game_screen.field_effects == PBFieldEffects::Machine
+    @recharge = $game_screen.field_effects == PBFieldEffects::ShortOut
+    field = $game_screen.field_effects
+    fe = FIELD_EFFECTS[field]
+    if field == PBFieldEffects::ShortOut
+      fe[:field_change_conditions][PBFieldEffects::Machine] = true
+      FIELD_EFFECTS[PBFieldEffects::Machine][:field_change_conditions][PBFieldEffects::ShortOut] = false
+    end
+    if field == PBFieldEffects::Machine
+      fe[:field_change_conditions][PBFieldEffects::ShortOut] = true
+      FIELD_EFFECTS[PBFieldEffects::ShortOut][:field_change_conditions][PBFieldEffects::Machine] = false
+    end
+  end
+  def short?
+    return @short
+  end
+  def recharge?
+    return @recharge
+  end
   #pbCompileAllData(true) { |msg| pbSetWindowText(msg) } #This is here in case compiling fails at any point
-  $effect_flag = {}
   sound = []
   pulse = []
   moves = pbLoadMovesData
@@ -238,9 +263,6 @@ class Fields
   def self.ignite?
       return false if [PBWeather::Rain,PBWeather::AcidRain,PBWeather::HeavyRain].include?($weather)
       return true
-  end
-  def self.recharge?
-    return $recharge == false
   end
   ECHO_MOVES = arrayToConstant(PBMoves,[:FAKEOUT,:STOMP,:SMELLINGSALTS])
   LIGHT_MOVES = arrayToConstant(PBMoves,[:LIGHTOFRUIN,:DAZZLINGGLEAM,:MOONBLAST,:PRISMATICLASER,:PHOTONGEYSER,:AURORABEAM,:SIGNALBEAM,:MISTBALL,:LUSTERPURGE,:FLASHCANNON,:MIRRORSHOT])
@@ -256,8 +278,10 @@ class Fields
   CHARGE_MOVES = arrayToConstant(PBMoves,[:THUNDERWAVE,:ZINGZAP,:THUNDERPUNCH,:CHARGE,:DISCHARGE,:SHOCKWAVE,:CHARGEBEAM,:PARABOLICCHARGE,:THUNDERBOLT,:THUNDER,:WILDCHARGE,:VOLTTACKLE,:OVERDRIVE,:PLASMAFISTS])
   KICKING_MOVES = arrayToConstant(PBMoves,[:JUMPKICK,:HIGHJUMPKICK,:MEGAKICK,:TROPKICK,:DOUBLEKICK,:STOMP,:BLAZEKICK,:TRIPLEKICK,:LOWKICK,:ROLLINGKICK,:LOWSWEEP,:THUNDEROUSKICK,:HIGHHORSEPOWER])
   OUTAGE_MOVES = arrayToConstant(PBMoves,[:DISCHARGE,:OVERDRIVE,:ZAPCANNON,:PLASMAFISTS,:SHOCKWAVE])
-  MACHINE_MOVES = arrayToConstant(PBMoves,[:ZINGZAP,:THUNDERPUNCH,:PARABOLICCHARGE,:THUNDERBOLT,:THUNDER,:WILDCHARGE,:VOLTTACKLE])
+  MACHINE_MOVES = arrayToConstant(PBMoves,[:ZINGZAP,:THUNDERPUNCH,:PARABOLICCHARGE,:THUNDERBOLT,:THUNDER,:WILDCHARGE,:VOLTTACKLE,:CHARGEBEAM])
 end
+
+$fields = Fields.new
 
 class Game_Screen
   attr_reader   :field_effects
@@ -290,6 +314,449 @@ class PokeBattle_Battler
 		@effects[PBEffects::Cinders] = 0
 		@effects[PBEffects::Singed] = false
 	end
+  def field_update
+    field = @battle.field.field_effects
+    fe = FIELD_EFFECTS[field]
+    if field == PBFieldEffects::ShortOut
+      fe[:field_change_conditions][PBFieldEffects::Machine] = true
+      FIELD_EFFECTS[PBFieldEffects::Machine][:field_change_conditions][PBFieldEffects::ShortOut] = false
+    end
+    if field == PBFieldEffects::Machine
+      fe[:field_change_conditions][PBFieldEffects::ShortOut] = true
+      FIELD_EFFECTS[PBFieldEffects::ShortOut][:field_change_conditions][PBFieldEffects::Machine] = false
+    end
+    if field == PBFieldEffects::Outage
+      fe[:field_change_conditions][PBFieldEffects::City] = true
+      FIELD_EFFECTS[PBFieldEffects::City][:field_change_conditions][PBFieldEffects::Outage] = false
+    end
+    if field == PBFieldEffects::City
+      fe[:field_change_conditions][PBFieldEffects::Outage] = true
+      FIELD_EFFECTS[PBFieldEffects::Outage][:field_change_conditions][PBFieldEffects::City] = false
+    end
+  end
+  def pbUseMove(choice,specialUsage=false)
+    # NOTE: This is intentionally determined before a multi-turn attack can
+    #       set specialUsage to true.
+    skipAccuracyCheck = (specialUsage && choice[2]!=@battle.struggle)
+    # Start using the move
+    pbBeginTurn(choice)
+    # Force the use of certain moves if they're already being used
+    if usingMultiTurnAttack?
+      choice[2] = PokeBattle_Move.pbFromPBMove(@battle,PBMove.new(@currentMove))
+      specialUsage = true
+    elsif @effects[PBEffects::Encore]>0 && choice[1]>=0 &&
+       @battle.pbCanShowCommands?(@index)
+      idxEncoredMove = pbEncoredMoveIndex
+      if idxEncoredMove>=0 && @battle.pbCanChooseMove?(@index,idxEncoredMove,false)
+        if choice[1]!=idxEncoredMove   # Change move if battler was Encored mid-round
+          choice[1] = idxEncoredMove
+          choice[2] = @moves[idxEncoredMove]
+          choice[3] = -1   # No target chosen
+        end
+      end
+    end
+    # Labels the move being used as "move"
+    move = choice[2]
+    return if !move || move.id==0   # if move was not chosen somehow
+    # Try to use the move (inc. disobedience)
+    @lastMoveFailed = false
+    if !pbTryUseMove(choice,move,specialUsage,skipAccuracyCheck)
+      @lastMoveUsed     = -1
+      @lastMoveUsedType = -1
+      if !specialUsage
+        @lastRegularMoveUsed   = -1
+        @lastRegularMoveTarget = -1
+      end
+      @battle.pbGainExp   # In case self is KO'd due to confusion
+      pbCancelMoves
+      pbEndTurn(choice)
+      return
+    end
+    move = choice[2]   # In case disobedience changed the move to be used
+    return if !move || move.id==0   # if move was not chosen somehow
+    # Subtract PP
+    if !specialUsage
+      if !pbReducePP(move)
+        @battle.pbDisplay(_INTL("{1}\nused {2}!",pbThis,move.name))
+        @battle.pbDisplay(_INTL("But there was no PP left for the move!"))
+        @lastMoveUsed          = -1
+        @lastMoveUsedType      = -1
+        @lastRegularMoveUsed   = -1
+        @lastRegularMoveTarget = -1
+        @lastMoveFailed        = true
+        pbCancelMoves
+        pbEndTurn(choice)
+        return
+      end
+    end
+    # Stance Change
+    if isSpecies?(:AEGISLASH) && isConst?(@ability,PBAbilities,:STANCECHANGE)
+      if move.damagingMove?
+        pbChangeForm(1,_INTL("{1} changed to Blade Forme!",pbThis))
+      elsif isConst?(move.id,PBMoves,:KINGSSHIELD)
+        pbChangeForm(0,_INTL("{1} changed to Shield Forme!",pbThis))
+      end
+    end
+    # Calculate the move's type during this usage
+    move.calcType = move.pbCalcType(self)
+    # Start effect of Mold Breaker
+    @battle.moldBreaker = hasMoldBreaker?
+    # Remember that user chose a two-turn move
+    if move.pbIsChargingTurn?(self)
+      # Beginning the use of a two-turn attack
+      @effects[PBEffects::TwoTurnAttack] = move.id
+      @currentMove = move.id
+    else
+      @effects[PBEffects::TwoTurnAttack] = 0   # Cancel use of two-turn attack
+    end
+    # Add to counters for moves which increase them when used in succession
+    move.pbChangeUsageCounters(self,specialUsage)
+    # Charge up Metronome item
+    if hasActiveItem?(:METRONOME) && !move.callsAnotherMove?
+      if @lastMoveUsed==move.id && !@lastMoveFailed
+        @effects[PBEffects::Metronome] += 1
+      else
+        @effects[PBEffects::Metronome] = 0
+      end
+    end
+    # Record move as having been used
+    @lastMoveUsed     = move.id
+    @lastMoveUsedType = move.calcType   # For Conversion 2
+    if !specialUsage
+      @lastRegularMoveUsed   = move.id   # For Disable, Encore, Instruct, Mimic, Mirror Move, Sketch, Spite
+      @lastRegularMoveTarget = choice[3]   # For Instruct (remembering original target is fine)
+      @movesUsed.push(move.id) if !@movesUsed.include?(move.id)   # For Last Resort
+    end
+    @battle.lastMoveUsed = move.id   # For Copycat
+    @battle.lastMoveUser = @index   # For "self KO" battle clause to avoid draws
+    @battle.successStates[@index].useState = 1   # Battle Arena - assume failure
+    # Find the default user (self or Snatcher) and target(s)
+    user = pbFindUser(choice,move)
+    user = pbChangeUser(choice,move,user)
+    targets = pbFindTargets(choice,move,user)
+    targets = pbChangeTargets(move,user,targets)
+    # Pressure
+    if !specialUsage
+      targets.each do |b|
+        next unless b.opposes?(user) && b.hasActiveAbility?(:PRESSURE)
+        PBDebug.log("[Ability triggered] #{b.pbThis}'s #{b.abilityName}")
+        user.pbReducePP(move)
+      end
+      if PBTargets.targetsFoeSide?(move.pbTarget(user))
+        @battle.eachOtherSideBattler(user) do |b|
+          next unless b.hasActiveAbility?(:PRESSURE)
+          PBDebug.log("[Ability triggered] #{b.pbThis}'s #{b.abilityName}")
+          user.pbReducePP(move)
+        end
+      end
+    end
+    # Dazzling/Queenly Majesty make the move fail here
+    @battle.pbPriority(true).each do |b|
+      next if !b || !b.abilityActive?
+      if BattleHandlers.triggerMoveBlockingAbility(b.ability,b,user,targets,move,@battle)
+        @battle.pbDisplayBrief(_INTL("{1}\nused {2}!",user.pbThis,move.name))
+        @battle.pbShowAbilitySplash(b)
+        @battle.pbDisplay(_INTL("{1} cannot use {2}!",user.pbThis,move.name))
+        @battle.pbHideAbilitySplash(b)
+        user.lastMoveFailed = true
+        pbCancelMoves
+        pbEndTurn(choice)
+        return
+      end
+    end
+    # "X used Y!" message
+    # Can be different for Bide, Fling, Focus Punch and Future Sight
+    # NOTE: This intentionally passes self rather than user. The user is always
+    #       self except if Snatched, but this message should state the original
+    #       user (self) even if the move is Snatched.
+    move.pbDisplayUseMessage(self)
+    # Snatch's message (user is the new user, self is the original user)
+    if move.snatched
+      @lastMoveFailed = true   # Intentionally applies to self, not user
+      @battle.pbDisplay(_INTL("{1} snatched {2}'s move!",user.pbThis,pbThis(true)))
+    end
+    # "But it failed!" checks
+    if move.pbMoveFailed?(user,targets)
+      PBDebug.log(sprintf("[Move failed] In function code %s's def pbMoveFailed?",move.function))
+      user.lastMoveFailed = true
+      pbCancelMoves
+      pbEndTurn(choice)
+      return
+    end
+    # Perform set-up actions and display messages
+    # Messages include Magnitude's number and Pledge moves' "it's a combo!"
+    move.pbOnStartUse(user,targets)
+    # Self-thawing due to the move
+    if user.status==PBStatuses::FROZEN && move.thawsUser?
+      user.pbCureStatus(false)
+      @battle.pbDisplay(_INTL("{1} melted the ice!",user.pbThis))
+    end
+    # Powder
+    if user.effects[PBEffects::Powder] && isConst?(move.calcType,PBTypes,:FIRE)
+      @battle.pbCommonAnimation("Powder",user)
+      @battle.pbDisplay(_INTL("When the flame touched the powder on the Pokémon, it exploded!"))
+      user.lastMoveFailed = true
+      w = @battle.pbWeather
+      if w!=PBWeather::Rain && w!=PBWeather::HeavyRain && user.takesIndirectDamage?
+        oldHP = user.hp
+        user.pbReduceHP((user.totalhp/4.0).round,false)
+        user.pbFaint if user.fainted?
+        @battle.pbGainExp   # In case user is KO'd by this
+        user.pbItemHPHealCheck
+        if user.pbAbilitiesOnDamageTaken(oldHP)
+          user.pbEffectsOnSwitchIn(true)
+        end
+      end
+      pbCancelMoves
+      pbEndTurn(choice)
+      return
+    end
+    # Primordial Sea, Desolate Land
+    if move.damagingMove?
+      case @battle.pbWeather
+      when PBWeather::HeavyRain
+        if isConst?(move.calcType,PBTypes,:FIRE)
+          @battle.pbDisplay(_INTL("The Fire-type attack fizzled out in the heavy rain!"))
+          user.lastMoveFailed = true
+          pbCancelMoves
+          pbEndTurn(choice)
+          return
+        end
+      when PBWeather::HarshSun
+        if isConst?(move.calcType,PBTypes,:WATER)
+          @battle.pbDisplay(_INTL("The Water-type attack evaporated in the harsh sunlight!"))
+          user.lastMoveFailed = true
+          pbCancelMoves
+          pbEndTurn(choice)
+          return
+        end
+      end
+    end
+    # Protean / Libero
+    if user.hasActiveAbility?(:PROTEAN) || user.hasActiveAbility?(:LIBERO) && !move.callsAnotherMove? && !move.snatched
+      if user.pbHasOtherType?(move.calcType) && !PBTypes.isPseudoType?(move.calcType)
+        @battle.pbShowAbilitySplash(user)
+        user.pbChangeTypes(move.calcType)
+        typeName = PBTypes.getName(move.calcType)
+        @battle.pbDisplay(_INTL("{1} transformed into the {2} type!",user.pbThis,typeName))
+        @battle.pbHideAbilitySplash(user)
+        # NOTE: The GF games say that if Curse is used by a non-Ghost-type
+        #       Pokémon which becomes Ghost-type because of Protean / Libero,
+        #       it should target and curse itself. I think this is silly, so
+        #       I'm making it choose a random opponent to curse instead.
+        if move.function=="10D" && targets.length==0   # Curse
+          choice[3] = -1
+          targets = pbFindTargets(choice,move,user)
+        end
+      end
+    end
+    # Redirect Dragon Darts first hit if necessary
+    if move.function=="17C" && @battle.pbSideSize(targets[0].index)>1
+      targets=pbChangeTargets(move,user,targets,0)
+    end
+    #---------------------------------------------------------------------------
+    magicCoater  = -1
+    magicBouncer = -1
+    if targets.length==0 && !PBTargets.noTargets?(move.pbTarget(user)) &&
+       !move.worksWithNoTargets?
+      # def pbFindTargets should have found a target(s), but it didn't because
+      # they were all fainted
+      # All target types except: None, User, UserSide, FoeSide, BothSides
+      @battle.pbDisplay(_INTL("But there was no target..."))
+      user.lastMoveFailed = true
+    else   # We have targets, or move doesn't use targets
+      # Reset whole damage state, perform various success checks (not accuracy)
+      user.initialHP = user.hp
+      targets.each do |b|
+        b.damageState.reset
+        b.damageState.initialHP = b.hp
+        if !pbSuccessCheckAgainstTarget(move,user,b)
+          b.damageState.unaffected = true
+        end
+      end
+      # Magic Coat/Magic Bounce checks (for moves which don't target Pokémon)
+      if targets.length==0 && move.canMagicCoat?
+        @battle.pbPriority(true).each do |b|
+          next if b.fainted? || !b.opposes?(user)
+          next if b.semiInvulnerable?
+          if b.effects[PBEffects::MagicCoat]
+            magicCoater = b.index
+            b.effects[PBEffects::MagicCoat] = false
+            break
+          elsif b.hasActiveAbility?(:MAGICBOUNCE) && !@battle.moldBreaker &&
+             !b.effects[PBEffects::MagicBounce]
+            magicBouncer = b.index
+            b.effects[PBEffects::MagicBounce] = true
+            break
+          end
+        end
+      end
+      # Get the number of hits
+      numHits = move.pbNumHits(user,targets)
+      # Process each hit in turn
+      realNumHits = 0
+      for i in 0...numHits
+        break if magicCoater>=0 || magicBouncer>=0
+        success = pbProcessMoveHit(move,user,targets,i,skipAccuracyCheck)
+        if !success
+          if i==0 && targets.length>0
+            hasFailed = false
+            targets.each do |t|
+              next if t.damageState.protected
+              hasFailed = t.damageState.unaffected
+              break if !t.damageState.unaffected
+            end
+            user.lastMoveFailed = hasFailed
+          end
+          break
+        end
+        realNumHits += 1
+        break if user.fainted?
+        break if user.status==PBStatuses::SLEEP || user.status==PBStatuses::FROZEN
+        # NOTE: If a multi-hit move becomes disabled partway through doing those
+        #       hits (e.g. by Cursed Body), the rest of the hits continue as
+        #       normal.
+        # All targets are fainted
+        # Don't stop using the move if Dragon Darts could still hit something
+        break if !targets.any? { |t| !t.fainted? } unless move.function=="17C" && realNumHits<numHits && !@battle.pbAllFainted?(user.idxOpposingSide)
+      end
+      # Battle Arena only - attack is successful
+      @battle.successStates[user.index].useState = 2
+      if targets.length>0
+        @battle.successStates[user.index].typeMod = 0
+        targets.each do |b|
+          next if b.damageState.unaffected
+          @battle.successStates[user.index].typeMod += b.damageState.typeMod
+        end
+      end
+      # Effectiveness message for multi-hit moves
+      # NOTE: No move is both multi-hit and multi-target, and the messages below
+      #       aren't quite right for such a hypothetical move.
+      if numHits>1
+        if move.damagingMove?
+          targets.each do |b|
+            next if b.damageState.unaffected || b.damageState.substitute
+            move.pbEffectivenessMessage(user,b,targets.length)
+          end
+        end
+        if realNumHits==1
+          @battle.pbDisplay(_INTL("Hit 1 time!"))
+        elsif realNumHits>1
+          @battle.pbDisplay(_INTL("Hit {1} times!",realNumHits))
+        end
+      end
+      # Magic Coat's bouncing back (move has targets)
+      targets.each do |b|
+        next if b.fainted?
+        next if !b.damageState.magicCoat && !b.damageState.magicBounce
+        @battle.pbShowAbilitySplash(b) if b.damageState.magicBounce
+        @battle.pbDisplay(_INTL("{1} bounced the {2} back!",b.pbThis,move.name))
+        @battle.pbHideAbilitySplash(b) if b.damageState.magicBounce
+        newChoice = choice.clone
+        newChoice[3] = user.index
+        newTargets = pbFindTargets(newChoice,move,b)
+        newTargets = pbChangeTargets(move,b,newTargets)
+        success = pbProcessMoveHit(move,b,newTargets,0,false)
+        b.lastMoveFailed = true if !success
+        targets.each { |otherB| otherB.pbFaint if otherB && otherB.fainted? }
+        user.pbFaint if user.fainted?
+      end
+      # Magic Coat's bouncing back (move has no targets)
+      if magicCoater>=0 || magicBouncer>=0
+        mc = @battle.battlers[(magicCoater>=0) ? magicCoater : magicBouncer]
+        if !mc.fainted?
+          user.lastMoveFailed = true
+          @battle.pbShowAbilitySplash(mc) if magicBouncer>=0
+          @battle.pbDisplay(_INTL("{1} bounced the {2} back!",mc.pbThis,move.name))
+          @battle.pbHideAbilitySplash(mc) if magicBouncer>=0
+          success = pbProcessMoveHit(move,mc,[],0,false)
+          mc.lastMoveFailed = true if !success
+          targets.each { |b| b.pbFaint if b && b.fainted? }
+          user.pbFaint if user.fainted?
+        end
+      end
+      # Move-specific effects after all hits
+      targets.each { |b| move.pbEffectAfterAllHits(user,b) }
+      # Faint if 0 HP
+      targets.each { |b| b.pbFaint if b && b.fainted? }
+      user.pbFaint if user.fainted?
+      # External/general effects after all hits. Eject Button, Shell Bell, etc.
+      pbEffectsAfterMove(user,targets,move,realNumHits)
+    end
+    # End effect of Mold Breaker
+    @battle.moldBreaker = false
+    # Gain Exp
+    @battle.pbGainExp
+    # Battle Arena only - update skills
+    @battle.eachBattler { |b| @battle.successStates[b.index].updateSkill }
+    # Shadow Pokémon triggering Hyper Mode
+    pbHyperMode if @battle.choices[@index][0]!=:None   # Not if self is replaced
+    # End of move usage
+    pbEndTurn(choice)
+    # Instruct
+    @battle.eachBattler do |b|
+      next if !b.effects[PBEffects::Instruct]
+      b.effects[PBEffects::Instruct] = false
+      idxMove = -1
+      b.eachMoveWithIndex { |m,i| idxMove = i if m.id==b.lastMoveUsed }
+      next if idxMove<0
+      oldLastRoundMoved = b.lastRoundMoved
+      @battle.pbDisplay(_INTL("{1} used the move instructed by {2}!",b.pbThis,user.pbThis(true)))
+      PBDebug.logonerr{
+        b.effects[PBEffects::Instructed] = true
+        b.pbUseMoveSimple(b.lastMoveUsed,b.lastRegularMoveTarget,idxMove,false)
+        b.effects[PBEffects::Instructed] = false
+      }
+      b.lastRoundMoved = oldLastRoundMoved
+      @battle.pbJudge
+      return if @battle.decision>0
+    end
+    # Dancer
+    if !@effects[PBEffects::Dancer] && !user.lastMoveFailed && realNumHits>0 &&
+       !move.snatched && magicCoater<0 && @battle.pbCheckGlobalAbility(:DANCER) &&
+       move.danceMove?
+      dancers = []
+      @battle.pbPriority(true).each do |b|
+        dancers.push(b) if b.index!=user.index && b.hasActiveAbility?(:DANCER)
+      end
+      while dancers.length>0
+        nextUser = dancers.pop
+        oldLastRoundMoved = nextUser.lastRoundMoved
+        # NOTE: Petal Dance being used because of Dancer shouldn't lock the
+        #       Dancer into using that move, and shouldn't contribute to its
+        #       turn counter if it's already locked into Petal Dance.
+        oldOutrage = nextUser.effects[PBEffects::Outrage]
+        nextUser.effects[PBEffects::Outrage] += 1 if nextUser.effects[PBEffects::Outrage]>0
+        oldCurrentMove = nextUser.currentMove
+        preTarget = choice[3]
+        preTarget = user.index if nextUser.opposes?(user) || !nextUser.opposes?(preTarget)
+        @battle.pbShowAbilitySplash(nextUser,true)
+        @battle.pbHideAbilitySplash(nextUser)
+        if !PokeBattle_SceneConstants::USE_ABILITY_SPLASH
+          @battle.pbDisplay(_INTL("{1} kept the dance going with {2}!",
+             nextUser.pbThis,nextUser.abilityName))
+        end
+        PBDebug.logonerr{
+          nextUser.effects[PBEffects::Dancer] = true
+          nextUser.pbUseMoveSimple(move.id,preTarget)
+          nextUser.effects[PBEffects::Dancer] = false
+        }
+        nextUser.lastRoundMoved = oldLastRoundMoved
+        nextUser.effects[PBEffects::Outrage] = oldOutrage
+        nextUser.currentMove = oldCurrentMove
+        @battle.pbJudge
+        return if @battle.decision>0
+      end
+    end
+    @battle.eachBattler do |b|
+      next if battle.field.effects[PBEffects::TrickRoom] == 0
+      next if !b.pbCanLowerStatStage?(PBStats::SPEED,b)
+      next if !b.hasActiveItem?(:ROOMSERVICE)
+      b.pbLowerStatStageByCause(PBStats::SPEED,1,b,b.itemName)
+      b.pbConsumeItem
+    end
+    field_update
+  end
 end
 
 module PBEffects
@@ -407,7 +874,6 @@ def pbPrepareBattle(battle)
   else
     battle.defaultField = battleRules["defaultField"]
   end
-  $recharge = false
   # Environment
   if battleRules["environment"].nil?
     battle.environment = pbGetEnvironment
@@ -457,6 +923,17 @@ def pbPrepareBattle(battle)
 end
 
 class PokeBattle_Battle
+  def pbOnActiveAll
+    fe = FIELD_EFFECTS[@field.field_effects]
+    # Neutralizing Gas activates before anything. 
+  pbPriorityNeutralizingGas
+    # Weather-inducing abilities, Trace, Imposter, etc.
+    pbCalculatePriority(true)
+    pbPriority(true).each { |b| b.pbEffectsOnSwitchIn(true) }
+    pbCalculatePriority
+    # Check forms are correct
+    eachBattler { |b| b.pbCheckForm }
+  end
   
   def pbOnActiveOne(battler)
     return false if battler.fainted?
@@ -558,15 +1035,17 @@ class PokeBattle_Battle
     end
     case battler.effectiveField
     when PBFieldEffects::Lava
-      return if !battler.takesLavaDamage?
-      pbDisplay(_INTL("{1} is hurt by the lava!", battler.pbThis))
-      amt = battler.totalhp / 16
+      if battler.takesLavaDamage?
+        pbDisplay(_INTL("{1} is hurt by the lava!", battler.pbThis))
+        amt = battler.totalhp / 16
+      end
     when PBFieldEffects::ToxicFumes
-      return if !battler.affectedByFumes?
-      fumes_rand = rand(100)
-      if fumes_rand > 85
-        pbDisplay(_INTL("{1} became confused by the toxic fumes!", battler.pbThis))
-        battler.pbConfuse
+      if battler.affectedByFumes?
+        fumes_rand = rand(100)
+        if fumes_rand > 85
+          pbDisplay(_INTL("{1} became confused by the toxic fumes!", battler.pbThis))
+          battler.pbConfuse
+        end
       end
     end
     return if amt < 0
@@ -1268,6 +1747,26 @@ class PokeBattle_Move
 	end
     return ret
   end
+  def field_update
+    field = @battle.field.field_effects
+    fe = FIELD_EFFECTS[field]
+    if field == PBFieldEffects::ShortOut
+      fe[:field_change_conditions][PBFieldEffects::Machine] = true
+      FIELD_EFFECTS[PBFieldEffects::Machine][:field_change_conditions][PBFieldEffects::ShortOut] = false
+    end
+    if field == PBFieldEffects::Machine
+      fe[:field_change_conditions][PBFieldEffects::ShortOut] = true
+      FIELD_EFFECTS[PBFieldEffects::ShortOut][:field_change_conditions][PBFieldEffects::Machine] = false
+    end
+    if field == PBFieldEffects::Outage
+      fe[:field_change_conditions][PBFieldEffects::City] = true
+      FIELD_EFFECTS[PBFieldEffects::City][:field_change_conditions][PBFieldEffects::Outage] = false
+    end
+    if field == PBFieldEffects::City
+      fe[:field_change_conditions][PBFieldEffects::Outage] = true
+      FIELD_EFFECTS[PBFieldEffects::Outage][:field_change_conditions][PBFieldEffects::City] = false
+    end
+  end
   def pbCalcDamageMultipliers(user,target,numTargets,type,baseDmg,multipliers)
    # Global abilities
    if (@battle.pbCheckGlobalAbility(:DARKAURA) && isConst?(type,PBTypes,:DARK)) ||
@@ -1427,7 +1926,6 @@ class PokeBattle_Move
 		 cmsg = nil
 		 for fc in fe[:field_changers].keys
 			if @battle.field.field_effects != PBFieldEffects::None
-        p fe[:field_change_conditions][fc]
 				if fe[:field_changers][fc].include?(self.id) && (fe[:field_change_conditions][fc] == true)
 					for message in fe[:change_message].keys
 						cmsg = message if fe[:change_message][message].include?(self.id)
@@ -1499,16 +1997,18 @@ class PokeBattle_Move
 						multipliers[FINAL_DMG_MULT] *= dmg 
 						mesg = true
 					end
-				elsif type == getConst(PBTypes,fe[:move_damage_boost][dmg])
+				elsif fe[:move_damage_boost][dmg] == self.id
 					multipliers[FINAL_DMG_MULT] *= dmg
 					mesg = true
 				end
 				if mesg == true
 					for mess in fe[:move_messages].keys
+            next if fe[:move_messages][mess].is_a?(Array) && fe[:move_messages][mess].include?(self.id)
+            next if !fe[:move_messages][mess].is_a?(Array) && fe[:move_messages][mess] != self.id
 						if fe[:move_messages][mess].is_a?(Array)
 							msg = mess if fe[:move_messages][mess].include?(self.id)
 						else
-							msg = mess if getConst(PBTypes,fe[:move_messages][mess]) == type
+							msg = mess if fe[:move_messages][mess] == self.id
 						end
 					end
 					@battle.pbDisplay(_INTL(msg)) if $test_trigger == false
@@ -1576,10 +2076,6 @@ class PokeBattle_Move
     				user.pbFreeze
     				@battle.pbDisplay(_INTL("The spirits awoke and chilled {1} to the bone!",user.name))
     			end
-       when "short"
-          $recharge = true
-        when "recharge"
-          $recharge = false
        end
      end
 	end
