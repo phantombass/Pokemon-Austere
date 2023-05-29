@@ -1992,26 +1992,18 @@ class PokeBattle_Move
     msg = nil
 		 for dmg in fe[:move_damage_boost].keys
 			 if @battle.field.field_effects != PBFieldEffects::None
-				if fe[:move_damage_boost][dmg].is_a?(Array)
 					if fe[:move_damage_boost][dmg].include?(self.id)
 						multipliers[FINAL_DMG_MULT] *= dmg 
 						mesg = true
 					end
-				elsif fe[:move_damage_boost][dmg] == self.id
-					multipliers[FINAL_DMG_MULT] *= dmg
-					mesg = true
-				end
 				if mesg == true
 					for mess in fe[:move_messages].keys
-            next if fe[:move_messages][mess].is_a?(Array) && fe[:move_messages][mess].include?(self.id)
-            next if !fe[:move_messages][mess].is_a?(Array) && fe[:move_messages][mess] != self.id
-						if fe[:move_messages][mess].is_a?(Array)
-							msg = mess if fe[:move_messages][mess].include?(self.id)
-						else
-							msg = mess if fe[:move_messages][mess] == self.id
-						end
+            next if !fe[:move_messages][mess].include?(self.id)
+            if fe[:move_messages][mess].include?(self.id)
+              msg = mess
+            end
+            @battle.pbDisplay(_INTL(msg)) if $test_trigger == false
 					end
-					@battle.pbDisplay(_INTL(msg)) if $test_trigger == false
 				end
 			 end
 		 end

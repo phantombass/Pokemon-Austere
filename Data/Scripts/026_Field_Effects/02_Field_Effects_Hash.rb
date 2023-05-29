@@ -382,7 +382,7 @@ FIELD_EFFECTS = {
 			:field_change_conditions => {PBFieldEffects::Wildfire => Fields.ignite?}
 		}, 
 		PBFieldEffects::JetStream => {
-			:field_name => "Jet Stream",
+			:field_name => "JetStream",
 			:intro_message => "A strong wind blows through.",
 			:field_gfx => "Jet Stream",
 			:nature_power => PBMoves::AIRSLASH,
@@ -484,20 +484,20 @@ FIELD_EFFECTS = {
 			:ability_effects => {
 			PBAbilities::WATERVEIL => [PBStats::EVASION,1]
 			},
-			:move_damage_boost => {
-			1.2 => [PBTypes::WATER],
-			0.8 => [PBTypes::FIRE]
-			},
-			:move_messages => {
-			"The attack rode the current." => [PBTypes::WATER],
-			"The water weakened the attack." => [PBTypes::FIRE]
-			},
+			:move_damage_boost => {},
+			:move_messages => {},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
 			:move_type_change => {},
 			:move_accuracy_change => {},
 			:defensive_modifiers => {},
-			:type_damage_change => {},
-			:type_messages => {},
+			:type_damage_change => {
+			1.2 => [PBTypes::WATER],
+			0.8 => [PBTypes::FIRE]
+			},
+			:type_messages => {
+			"The attack rode the current." => [PBTypes::WATER],
+			"The water weakened the attack." => [PBTypes::FIRE]
+			},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
 			:side_effects => {},
@@ -519,19 +519,23 @@ FIELD_EFFECTS = {
 			PBAbilities::WATERVEIL => [PBStats::EVASION,1]
 			},
 			:move_damage_boost => {
-			1.2 => [PBTypes::WATER,Fields::PULSE_MOVES,Fields::SOUND_MOVES],
-			0.0 => [PBTypes::FIRE]
+			1.2 => [Fields::PULSE_MOVES,Fields::SOUND_MOVES],
 			},
 			:move_messages => {
-			"The depths boosted the attack." => [PBTypes::WATER,Fields::PULSE_MOVES,Fields::SOUND_MOVES],
-			"The water put the fire out." => [PBTypes::FIRE]
+			"The depths boosted the attack." => [Fields::PULSE_MOVES,Fields::SOUND_MOVES],
 			},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
 			:move_type_change => {},
 			:move_accuracy_change => {},
 			:defensive_modifiers => {},
-			:type_damage_change => {},
-			:type_messages => {},
+			:type_damage_change => {
+			1.2 => [PBTypes::WATER],
+			0.0 => [PBTypes::FIRE]
+			},
+			:type_messages => {
+			"The depths boosted the attack." => [PBTypes::WATER],
+			"The water put the fire out." => [PBTypes::FIRE]
+			},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
 			:side_effects => {},
@@ -550,18 +554,18 @@ FIELD_EFFECTS = {
 			:intro_script => nil,
 			:abilities => [],
 			:ability_effects => {},
-			:move_damage_boost => {
-			1.2 => [PBTypes::PSYCHIC]
-			},
-			:move_messages => {
-			"The psychic terrain boosted the attack." => [PBTypes::PSYCHIC]
-			},
+			:move_damage_boost => {},
+			:move_messages => {},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
 			:move_type_change => {},
 			:move_accuracy_change => {},
 			:defensive_modifiers => {},
-			:type_damage_change => {},
-			:type_messages => {},
+			:type_damage_change => {
+			1.2 => [PBTypes::PSYCHIC]
+			},
+			:type_messages => {
+			"The psychic terrain boosted the attack." => [PBTypes::PSYCHIC]
+			},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
 			:side_effects => {},
@@ -583,14 +587,16 @@ FIELD_EFFECTS = {
 			PBAbilities::AROMAVEIL => [PBStats::DEFENSE,1],
 			PBAbilities::SWEETVEIL => [PBStats::SPDEF,1]
 			},
-			:move_damage_boost => {},
-			:move_messages => {},
+			:move_damage_boost => {
+			1.2 => Fields::LIGHT_MOVES
+			},
+			:move_messages => {"The misty terrain boosted the attack." => Fields::LIGHT_MOVES},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
 			:move_type_change => {},
 			:move_accuracy_change => {},
 			:defensive_modifiers => {},
 			:type_damage_change => {
-			1.2 => [PBTypes::FAIRY,Fields::LIGHT_MOVES],
+			1.2 => [PBTypes::FAIRY],
 			0.8 => [PBTypes::DRAGON]
 			},
 			:type_messages => {
@@ -790,7 +796,7 @@ FIELD_EFFECTS = {
 			1.2 => [Fields::LIGHT_MOVES]
 			},
 			:move_messages => {
-			"The light is blinding!" => [Fields::LIGHT_MOVES]
+			"The light is blinding!" => Fields::LIGHT_MOVES
 			},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
 			:move_type_change => {},
@@ -902,12 +908,8 @@ FIELD_EFFECTS = {
 			PBAbilities::MAGMAARMOR => [PBStats::DEFENSE,1],
 			PBAbilities::FLAMEBODY => [PBStats::DEFENSE,1],
 			},
-			:move_damage_boost => {
-			1.2 => [Fields::LIGHT_MOVES]
-			},
-			:move_messages => {
-			"The light is blinding!" => [Fields::LIGHT_MOVES]
-			},
+			:move_damage_boost => {},
+			:move_messages => {},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
 			:move_type_change => {},
 			:move_accuracy_change => {},

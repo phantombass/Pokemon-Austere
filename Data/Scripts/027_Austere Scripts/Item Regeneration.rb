@@ -42,28 +42,8 @@ class PokeBattle_Battle
     when PBBattleTerrains::Psychic
       pbDisplay(_INTL("The battlefield is weird!"))
     end
-    case @field.field_effects
-    when PBFieldEffects::EchoChamber
-      pbDisplay(_INTL("A dull echo hums."))
-    when PBFieldEffects::Desert
-      pbDisplay(_INTL("Sand...it gets everywhere..."))
-    when PBFieldEffects::Lava
-      pbDisplay(_INTL("Hot lava flows around the battlefield."))
-    when PBFieldEffects::ToxicFumes
-      pbDisplay(_INTL("Poisonous gases fill the area."))
-    when PBFieldEffects::Wildfire
-      pbDisplay(_INTL("The field is ablaze."))
-    when PBFieldEffects::Swamp
-      pbDisplay(_INTL("The field is swampy."))
-    when PBFieldEffects::City
-      pbDisplay(_INTL("The city hums with activity."))
-    when PBFieldEffects::Ruins
-      pbDisplay(_INTL("There's an odd feeling in these ruins..."))
-    when PBFieldEffects::Grassy
-      pbDisplay(_INTL("Grass covers the field."))
-    when PBFieldEffects::JetStream
-      pbDisplay(_INTL("A strong wind blows through."))
-    end
+    msg = fe[:intro_message]
+    pbDisplay(_INTL(msg))
     # Abilities upon entering battle
     pbOnActiveAll
     # Main battle loop
