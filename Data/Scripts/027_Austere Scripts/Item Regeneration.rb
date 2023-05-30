@@ -43,7 +43,7 @@ class PokeBattle_Battle
       pbDisplay(_INTL("The battlefield is weird!"))
     end
     msg = fe[:intro_message]
-    pbDisplay(_INTL(msg))
+    pbDisplay(_INTL(msg)) if msg != nil
     # Abilities upon entering battle
     pbOnActiveAll
     # Main battle loop

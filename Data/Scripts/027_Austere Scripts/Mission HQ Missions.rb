@@ -1,30 +1,30 @@
-module Mission_Data
+MISSION_DATA = {
 
-  M1 = {
+  1 => {
     :ID => 1,
     :Name => "ANCIENT CAVE Sounds",
     :Info => "Travel to the ANCIENT CAVE to see what is causing the odd sounds.",
     :Contact => "Dwayne",
     :map_id => nil,
-    :Available_Switch => 60,
+    :Available_Switch => 66,
     :Chosen_Switch => 61,
-    :Unavailable => [:M2,:M3],
-    :Completed => 64
+    :Completed => 64,
+    :Prerequisite => :M3
   },
 
-  M2 = {
+  2 => {
     :ID => 2,
     :Name => "DARKWOOD FOREST Missing Kid",
     :Info => "Help find the lost kid in the DARKWOOD FOREST",
     :Contact => "Danny",
     :map_id => nil,
-    :Available_Switch => 60,
+    :Available_Switch => 64,
     :Chosen_Switch => 62,
-    :Unavailable => [:M1,:M3],
-    :Completed => 65
+    :Completed => 65,
+    :Prerequisite => :M1
   },
 
-  M3 = {
+  3 => {
     :ID => 3,
     :Name => "TOTEM ISLAND Mystery",
     :Info => "Make your way to TOTEM ISLAND to help uncover the mysterious happenings there.",
@@ -32,11 +32,11 @@ module Mission_Data
     :map_id => nil,
     :Available_Switch => 60,
     :Chosen_Switch => 63,
-    :Unavailable => [:M1,:M2],
-    :Completed => 66
+    :Completed => 66,
+    :Prerequisite => nil
   }
 
-end
+}
 
 # Folder that contains the files
 ENC_FOLDER = "Graphics/Pictures/Encounters/"
@@ -70,6 +70,8 @@ end
 def pbChooseMission
   Mission_Database.setup
   id = Mission_Database.available_id
+  list = []
+
   pbMessage(_INTL("Which will you choose?\\ch[34,#{id.length+2},#{id[0]}: North,#{id[1]}: West,#{id[2]}: South,Cancel]"))
   var = $game_variables[34]
   case var
@@ -84,8 +86,9 @@ def pbChooseMission
   end
 end
 
-def pbCompleteMission
+def pbCompleteMission(mission_id)
   $game_switches[913] = false
+  Mission_Database.complete(mission_id)
 end
 
 
@@ -103,44 +106,21 @@ class Mission_Database
   end
 
   def self.active_missions
-    for i in 1..3
-      mission = "M#{i}"
-      mission = mission.to_sym
-      mis = getConst(Mission_Data,mission)
-      if i == 1
-        @active.push(mis[0]) if $game_switches[mis[0][:Chosen_Switch]] == true && $game_switches[mis[0][:Completed]] == false
-      else
-        @active.push(mis) if $game_switches[mis[:Chosen_Switch]] == true && $game_switches[mis[:Completed]] == false
-      end
+    for key in MISSION_DATA.keys
+      mission = MISSION_DATA[key]
+      m = key.to_sym
+      @active.push(m) if $game_switches[mission[:Chosen_Switch]] == true && $game_switches[mission[:Completed]] == false && !@completed.include?(mission[:Prerequisite])
     end
     return @active
   end
 
   def self.available_missions
     chosen = false
-    for j in 1..3
-      miss = "M#{j}"
-      miss = miss.to_sym
-      mi = getConst(Mission_Data,miss)
-      mi = mi.flatten
-      if j == 1
-        chosen = true if $game_switches[mi[0][:Chosen_Switch]] == true
-      else
-        chosen = true if $game_switches[mi[:Chosen_Switch]] == true
-      end
-    end
-    for i in 1..3
-      mission = "M#{i}"
-      mission = mission.to_sym
-      mis = getConst(Mission_Data,mission)
-
-      if chosen == false
-        if i == 1
-          @available.push(mis[0]) if $game_switches[mis[0][:Available_Switch]] == true
-        else
-          @available.push(mis) if $game_switches[mis[:Available_Switch]] == true
-        end
-      end
+    for key in MISSION_DATA.keys
+      mission = MISSION_DATA[key]
+      m = key.to_sym
+      chosen = true if $game_switches[mission[:Chosen_Switch]] == true
+      @available.push(m) if $game_switches[mission[:Available_Switch]] == true
     end
     @available.uniq!
     return @available
@@ -152,36 +132,23 @@ class Mission_Database
   end
 
   def self.activate(mission_id)
-    mission = "M#{mission_id}"
-    mis = getConst(Mission_Data,mission)
-    if mission_id == 1
-      @active.push(mis[0])
-    else
-      @active.push(mis)
+    for key in MISSION_DATA.keys
+      mission = MISSION_DATA[key]
+      m = key.to_sym
+      @active.push(m)
+      $game_switches[mission[:Chosen_Switch]] = true
+      pbMessage(_INTL("\\me[Key item get]You have chosen #{mission[:Name]}!\\wtnp[75]"))
+      $game_switches[913] = true
     end
-    for i in @active[0][:Unavailable]
-      d = getConst(Mission_Data,i)
-      self.deactivate(d)
-    end
-    if mission_id == 1
-      $game_switches[mis[0][:Chosen_Switch]] = true
-    else
-      $game_switches[mis[:Chosen_Switch]] = true
-    end
-    $game_switches[913] = true
-    mission_id == 1 ? pbMessage(_INTL("\\me[Key item get]You have chosen #{mis[0][:Name]}!\\wtnp[75]")) : pbMessage(_INTL("\\me[Key item get]You have chosen #{mis[:Name]}!\\wtnp[75]"))
   end
 
   def self.complete(mission_id)
     @active.clear
-    mission = "M#{mission_id}"
-    mis = getConst(Mission_Data,mission)
-    if mission_id == 1
-      $game_switches[mis[0][:Completed]] = true
-      @completed.push(mis[0])
-    else
-      $game_switches[mis[:Completed]] = true
-      @completed.push(mis)
+    for key in MISSION_DATA.keys
+      mission = MISSION_DATA[key]
+      m = key.to_sym
+      $game_switches[mission[:Completed]] = true
+      @completed.push(m)
     end
   end
 
@@ -197,9 +164,8 @@ class Mission_Database
     m = []
     a = Mission_Database.available_missions
     for i in 1..a.length
-      mission = "M#{i}"
-      mis = getConst(Mission_Data,mission)
-      i == 1 ? m.push(mis[0][:Name]) : m.push(mis[:Name])
+      mission = MISSION_DATA[i]
+      m.push(mis[:Name])
     end
     m.uniq!
     m.compact
@@ -210,9 +176,8 @@ class Mission_Database
     m = []
     a = Mission_Database.available_missions
     for i in 1..a.length
-      mission = "M#{i}"
-      mis = getConst(Mission_Data,mission)
-      i == 1 ? m.push(mis[0][:ID]) : m.push(mis[:ID])
+      mission = MISSION_DATA[i]
+      m.push(mission[:ID])
     end
     m.uniq!
     m.compact

@@ -1,4 +1,4 @@
-GAME_VERSION = "0.2.3"
+GAME_VERSION = "0.2.4"
 FISHING_AUTO_HOOK = true
 
 def write_version
@@ -22,6 +22,7 @@ def reset_all_custom_variables
   SetTime.clear
   $time_update = false
   $hm_catalogue = false
+  $new_version = true
 end
 
 def PokemonOption_Scene
