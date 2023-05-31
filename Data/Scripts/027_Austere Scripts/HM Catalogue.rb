@@ -1,5 +1,6 @@
 def pbHMCatalogue
   commands = []
+  done = false
   cmdCut = -1
   cmdRockSmash = -1
   cmdStrength = -1
@@ -19,33 +20,43 @@ def pbHMCatalogue
   commands[cmdRockClimb = commands.length]       = _INTL("Rock Climb") if HM_Catalogue.rock_climb
   commands[cmdWaterfall = commands.length]       = _INTL("Waterfall") if HM_Catalogue.waterfall
   commands[commands.length]                      = _INTL("Cancel")
+  command = pbShowCommands(nil,commands)
   loop do
-    command = pbShowCommands(nil,commands)
     if cmdCut>=0 && command==cmdCut
       useMoveCut if canUseMoveCut?
+      done = true
     elsif cmdRockSmash>=0 && command==cmdRockSmash
       useMoveRockSmash if canUseMoveRockSmash?
+      done = true
     elsif cmdStrength>=0 && command==cmdStrength
       useMoveStrength if canUseMoveStrength?
+      done = true
     elsif cmdFlash>=0 && command==cmdFlash
       useMoveFlash if canUseMoveFlash?
+      done = true
     elsif cmdSurf>=0 && command==cmdSurf
       useMoveSurf if canUseMoveSurf?
+      done = true
     elsif cmdFly>=0 && command==cmdFly
       useMoveFly if canUseMoveFly?
+      done = true
     elsif cmdDive>=0 && command==cmdDive
       useMoveDive if canUseMoveDive?
+      done = true
     elsif cmdRockClimb>=0 && command==cmdRockClimb
       useMoveRockClimb if canUseMoveRockClimb?
+      done = true
     elsif cmdWaterfall>=0 && command==cmdWaterfall
       useMoveWaterfall if canUseMoveWaterfall?
+      done = true
     elsif command==commands.length
       pbPlayCloseMenuSE
-      break
+      done = true
     else
       pbPlayCloseMenuSE
-      break
+      done = true
     end
+    break if done
   end
 end
 
@@ -192,9 +203,9 @@ end
 
 def canUseMoveCut?
   showmsg = true
-   return false if !HM_Catalogue.cut
+   return false if HM_Catalogue.cut == false
    facingEvent = $game_player.pbFacingEvent
-   if !facingEvent || facingEvent.name!="Tree"
+   if !facingEvent || facingEvent.name != "Tree"
      Kernel.pbMessage(_INTL("Can't use that here.")) if showmsg
      return false
    end
@@ -209,6 +220,7 @@ def useMoveCut
    end
    return true
 end
+
 def canUseMoveDive?
    showmsg = true
    return false if !HM_Catalogue.dive
@@ -269,6 +281,11 @@ def useMoveDive
    }
    return true
 end
+
+def pbDive
+  useMoveDive if canUseMoveDive?
+end
+
 def canUseMoveFlash?
    showmsg = true
    return false if !HM_Catalogue.flash
@@ -345,7 +362,7 @@ def useMoveFly
   pbEraseEscapePoint
   return true
 end
-def canUseMoveRockSmash?
+def canMoveUseRockSmash?
   showmsg = true
   return false if !HM_Catalogue.rock_smash
   facingEvent = $game_player.pbFacingEvent

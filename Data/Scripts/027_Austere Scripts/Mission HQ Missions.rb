@@ -1,32 +1,8 @@
 MISSION_DATA = {
-
   1 => {
     :ID => 1,
-    :Name => "ANCIENT CAVE Sounds",
-    :Info => "Travel to the ANCIENT CAVE to see what is causing the odd sounds.",
-    :Contact => "Dwayne",
-    :map_id => nil,
-    :Available_Switch => 66,
-    :Chosen_Switch => 61,
-    :Completed => 64,
-    :Prerequisite => :M3
-  },
-
-  2 => {
-    :ID => 2,
-    :Name => "DARKWOOD FOREST Missing Kid",
-    :Info => "Help find the lost kid in the DARKWOOD FOREST",
-    :Contact => "Danny",
-    :map_id => nil,
-    :Available_Switch => 64,
-    :Chosen_Switch => 62,
-    :Completed => 65,
-    :Prerequisite => :M1
-  },
-
-  3 => {
-    :ID => 3,
-    :Name => "TOTEM ISLAND Mystery",
+    :Location => "TOTEM ISLAND",
+    :Name => "Mysterious Happenings",
     :Info => "Make your way to TOTEM ISLAND to help uncover the mysterious happenings there.",
     :Contact => "Shawn",
     :map_id => nil,
@@ -34,6 +10,32 @@ MISSION_DATA = {
     :Chosen_Switch => 63,
     :Completed => 66,
     :Prerequisite => nil
+  },
+
+  2 => {
+    :ID => 2,
+    :Location => "ANCIENT CAVE",
+    :Name => "Weird Sounds",
+    :Info => "Travel to the ANCIENT CAVE to see what is causing the odd sounds.",
+    :Contact => "Dwayne",
+    :map_id => nil,
+    :Available_Switch => 66,
+    :Chosen_Switch => 61,
+    :Completed => 64,
+    :Prerequisite => 1
+  },
+
+  3 => {
+    :ID => 3,
+    :Location => "DARKWOOD FOREST",
+    :Name => "Missing Kid",
+    :Info => "Help find the lost kid in the DARKWOOD FOREST",
+    :Contact => "Danny",
+    :map_id => nil,
+    :Available_Switch => 64,
+    :Chosen_Switch => 62,
+    :Completed => 65,
+    :Prerequisite => 2
   }
 
 }
@@ -71,23 +73,20 @@ def pbChooseMission
   Mission_Database.setup
   id = Mission_Database.available_id
   list = []
-
-  pbMessage(_INTL("Which will you choose?\\ch[34,#{id.length+2},#{id[0]}: North,#{id[1]}: West,#{id[2]}: South,Cancel]"))
+  for i in id
+    loc = MISSION_DATA[i][:Location]
+    list.push(loc)
+  end
+  pbMessage(_INTL("Which location will you choose?\\ch[34,#{list.length+2},#{list},Cancel]"))
   var = $game_variables[34]
-  case var
-  when 0
-    Mission_Database.activate(id[0])
-  when 1
-    Mission_Database.activate(id[1])
-  when 2
-    Mission_Database.activate(id[2])
-  else
+  if var == (list.length+1 || list.length+2  || -1)
     pbPlayCloseMenuSE
+  else
+    Mission_Database.activate(id[var])
   end
 end
 
 def pbCompleteMission(mission_id)
-  $game_switches[913] = false
   Mission_Database.complete(mission_id)
 end
 
@@ -108,8 +107,7 @@ class Mission_Database
   def self.active_missions
     for key in MISSION_DATA.keys
       mission = MISSION_DATA[key]
-      m = key.to_sym
-      @active.push(m) if $game_switches[mission[:Chosen_Switch]] == true && $game_switches[mission[:Completed]] == false && !@completed.include?(mission[:Prerequisite])
+      @active.push(key) if $game_switches[mission[:Chosen_Switch]] == true && $game_switches[mission[:Completed]] == false && !@completed.include?(mission[:Prerequisite])
     end
     return @active
   end
@@ -118,9 +116,8 @@ class Mission_Database
     chosen = false
     for key in MISSION_DATA.keys
       mission = MISSION_DATA[key]
-      m = key.to_sym
       chosen = true if $game_switches[mission[:Chosen_Switch]] == true
-      @available.push(m) if $game_switches[mission[:Available_Switch]] == true
+      @available.push(key) if $game_switches[mission[:Available_Switch]] == true && chosen == false
     end
     @available.uniq!
     return @available
@@ -132,24 +129,24 @@ class Mission_Database
   end
 
   def self.activate(mission_id)
-    for key in MISSION_DATA.keys
-      mission = MISSION_DATA[key]
-      m = key.to_sym
-      @active.push(m)
-      $game_switches[mission[:Chosen_Switch]] = true
-      pbMessage(_INTL("\\me[Key item get]You have chosen #{mission[:Name]}!\\wtnp[75]"))
-      $game_switches[913] = true
-    end
+    $game_switches[913] = true
+    mission = MISSION_DATA[mission_id]
+    @active.push(mission_id)
+    $game_switches[mission[:Chosen_Switch]] = true
+    pbMessage(_INTL("\\me[Key item get]You have chosen #{mission[:Location]} : #{mission[:Name]}!\\wtnp[75]"))
+    @available = []
   end
 
   def self.complete(mission_id)
-    @active.clear
-    for key in MISSION_DATA.keys
-      mission = MISSION_DATA[key]
-      m = key.to_sym
-      $game_switches[mission[:Completed]] = true
-      @completed.push(m)
-    end
+    mission = MISSION_DATA[mission_id]
+    $game_switches[mission[:Completed]] = true
+    @completed.push(mission_id)
+    @active = []
+  end
+
+  def self.make_available(mission_id)
+    @available.push(mission_id)
+    $game_switches[913] = true
   end
 
   def self.display_available_missions
@@ -163,7 +160,7 @@ class Mission_Database
   def self.available_list
     m = []
     a = Mission_Database.available_missions
-    for i in 1..a.length
+    for i in a
       mission = MISSION_DATA[i]
       m.push(mis[:Name])
     end
@@ -175,7 +172,7 @@ class Mission_Database
   def self.available_id
     m = []
     a = Mission_Database.available_missions
-    for i in 1..a.length
+    for i in a
       mission = MISSION_DATA[i]
       m.push(mission[:ID])
     end
@@ -186,6 +183,9 @@ class Mission_Database
 end
 
 class MissionUI
+  attr_accessor :active
+  attr_accessor :available
+
   def initialize
     @viewport = Viewport.new(0, 0, Graphics.width, Graphics.height)
     @viewport.z = 99999
@@ -201,32 +201,49 @@ class MissionUI
   end
 
   def get_available_missions
+    mission_info = {}
     @available = Mission_Database.available_missions
-    if @available != [] && @available != nil
-      @num = @available.compact.length
-      @type = (0...@available.length).reject {|i| @available[i].nil? }
-      @first = @available.index(@available.find { |i| !i.nil? } || false)
-      @aray = @available[@type[@index]]
-      @id = @aray[:ID]
-      @name = @aray[:Name]
-      @info = @aray[:Info]
+    if @available != nil || !@available != []
+      for i in @available
+        mission = MISSION_DATA[i]
+        @id = mission[:ID]
+        @location = mission[:Location]
+        @name = mission[:Name]
+        @info = mission[:Info]
+        @num = @available.compact.length
+      end
     end
+    mission_info[:id] = @id
+    mission_info[:location] = @location
+    mission_info[:name] = @name
+    mission_info[:info] = @info
+    mission_info[:num] = @num
+    return mission_info
   end
 
   def get_active_missions
+    mission_info = {}
     @active = Mission_Database.active_missions
     if @active != [] && @active != nil
-      @num_active = @active.compact.length
-      @type_active = (0...@active.length).reject {|i| @active[i].nil? }
-      @first_active = @active.index(@active.find { |i| !i.nil? } || false)
-      @bray = @active[@type_active[@index]]
-      @active_name = @bray[:Name]
-      @active_info = @bray[:Info]
+      for i in @active
+        mission = MISSION_DATA[i]
+        @id = mission[:ID]
+        @location = mission[:Location]
+        @name = mission[:Name]
+        @info = mission[:Info]
+        @num = @available.compact.length
+      end
     end
+    mission_info[:id] = @id
+    mission_info[:location] = @location
+    mission_info[:name] = @name
+    mission_info[:info] = @info
+    mission_info[:num] = @num
+    return mission_info
   end
 
   def pbStartMenu
-    get_available_missions
+    m = get_available_missions
     if !File.file?(ENC_FOLDER + WINDOWSKIN)
       raise _INTL("You are missing the graphic for this UI. Make sure the image is in your Graphics/Pictures folder and that it is named appropriately.")
     end
@@ -242,16 +259,16 @@ class MissionUI
     @sprites["locwindow"].y = (Graphics.height - @sprites["locwindow"].height)/2
     #@sprites["locwindow"].windowskin = nil
 
-    if @available == [] || !@available
+    if m[:id].nil?
       loctext = sprintf("<ac>No missions available!</ac>")
       loctext += _INTL("-----------------------------")
       @sprites["locwindow"].setText(loctext)
       waitForExit
     else
-      loctext = _INTL("<ac>{1}</ac>", @name)
-      loctext += _INTL("<ac>Mission {1} of {2}</ac>", @id,@num)
+      loctext = _INTL("<ac>{1}</ac>", m[:name])
+      loctext += _INTL("<ac>Mission {1}</ac>", m[:id])
       loctext += _INTL("-----------------------------")
-      loctext += _INTL("<ac>{1}</ac>", @info)
+      loctext += _INTL("<ac>{1}</ac>", m[:info])
       @sprites["locwindow"].setText(loctext)
       @sprites["rightarrow"] = AnimatedSprite.new(ENC_FOLDER + "next_right",2,10,22,6,@viewport)
       @sprites["rightarrow"].x = Graphics.width - @sprites["rightarrow"].bitmap.width
@@ -263,12 +280,12 @@ class MissionUI
       @sprites["leftarrow"].y = 226
       @sprites["leftarrow"].visible = false
       @sprites["leftarrow"].play
-      main1
+      main2
     end
   end
 
   def pbStartMenu2
-    get_active_missions
+    m = get_active_missions
     if !File.file?(ENC_FOLDER + WINDOWSKIN)
       raise _INTL("You are missing the graphic for this UI. Make sure the image is in your Graphics/Pictures folder and that it is named appropriately.")
     end
@@ -284,16 +301,16 @@ class MissionUI
     @sprites["locwindow"].y = (Graphics.height - @sprites["locwindow"].height)/2
     #@sprites["locwindow"].windowskin = nil
 
-    if @active == [] || !@active
+    if m[:id].nil?
       loctext = sprintf("<ac>No missions active!</ac>")
       loctext += _INTL("-----------------------------")
       @sprites["locwindow"].setText(loctext)
       waitForExit
     else
-      loctext = _INTL("<ac>{1}</ac>", @active_name)
-      #loctext += _INTL("<ac>{1}:</ac>", $game_map.name)
+      loctext = _INTL("<ac>{1}</ac>", m[:name])
+      loctext += _INTL("<ac>Mission {1}</ac>", m[:id])
       loctext += _INTL("-----------------------------")
-      loctext += _INTL("<ac>{1}</ac>", @active_info)
+      loctext += _INTL("<ac>{1}</ac>", m[:info])
       @sprites["locwindow"].setText(loctext)
       @sprites["rightarrow"] = AnimatedSprite.new(ENC_FOLDER + "next_right",2,10,22,6,@viewport)
       @sprites["rightarrow"].x = Graphics.width - @sprites["rightarrow"].bitmap.width
@@ -305,7 +322,7 @@ class MissionUI
       @sprites["leftarrow"].y = 226
       @sprites["leftarrow"].visible = false
       @sprites["leftarrow"].play
-      waitForExit
+      main4
     end
   end
 
@@ -344,19 +361,18 @@ class MissionUI
   end
 
   def main2
-    get_available_missions
-    if !@available
-      loctext = sprintf("<ac>No missions active!</ac>")
+    m = get_available_missions
+    if m[:id].nil?
+      loctext = sprintf("<ac>No missions available!</ac>")
       loctext += _INTL("-----------------------------")
-      @sprites["locwindow"].setText(loctext)
-      waitForExit
     else
-      loctext = _INTL("<ac>{1}</ac>", @name)
-      loctext += _INTL("<ac>Mission {1} of {2}</ac>", @id,@num)
+      loctext = _INTL("<ac>{1} : {2}</ac>", m[:location],m[:name])
+      #loctext += _INTL("<ac>Mission {1}</ac>", m[:id])
       loctext += _INTL("-----------------------------")
-      loctext += _INTL("<ac>{1}</ac>", @info)
+      loctext += _INTL("<ac>{1}</ac>", m[:info])
     end
     @sprites["locwindow"].setText(loctext)
+    waitForExit
   end
 
   def main3
@@ -394,19 +410,20 @@ class MissionUI
   end
 
   def main4
-    get_active_missions
-    if !@active
+    m = get_active_missions
+    if m[:id].nil?
       loctext = sprintf("<ac>No missions active!</ac>")
       loctext += _INTL("-----------------------------")
-      @sprites["locwindow"].setText(loctext)
-      waitForExit
     else
-      loctext = _INTL("<ac>{1}</ac>", @active_name)
+      loctext = _INTL("<ac>{1} : {2}</ac>", m[:location],m[:name])
+      #loctext += _INTL("<ac>Mission {1}</ac>", m[:id])
+      loctext += _INTL("-----------------------------")
+      loctext += _INTL("<ac>{1}</ac>", m[:info])
       #loctext += _INTL("<ac>{1}:</ac>", $game_map.name)
       loctext += _INTL("-----------------------------")
-      loctext += _INTL("<ac>{1}</ac>", @active_info)
     end
     @sprites["locwindow"].setText(loctext)
+    waitForExit
   end
 
   def waitForExit
