@@ -425,7 +425,7 @@ FIELD_EFFECTS = {
 			:move_damage_boost => {},
 			:move_messages => {},
 			:move_type_mod => {
-			:ROCK => [Fields::SOUND_MOVES]
+			PBTypes::ROCK => [Fields::SOUND_MOVES]
 			}, #if a move adds a second type to the damage done
 			:move_type_change => {},
 			:move_accuracy_change => {},
@@ -455,7 +455,7 @@ FIELD_EFFECTS = {
 			:move_damage_boost => {},
 			:move_messages => {},
 			:move_type_mod => {
-			:ICE => [Fields::SOUND_MOVES,PBTypes::ROCK]
+			PBTypes::ICE => [Fields::SOUND_MOVES]
 			}, #if a move adds a second type to the damage done
 			:move_type_change => {},
 			:move_accuracy_change => {},
@@ -463,8 +463,12 @@ FIELD_EFFECTS = {
 			:type_damage_change => {
 			1.2 => [PBTypes::ICE]
 			},
-			:type_messages => {},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_messages => {"Avalanche!" => [PBTypes::ICE]},
+			:type_type_mod => {
+			PBTypes::ICE => [PBTypes::ROCK]
+			},
+			:type_mod_message => {},
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
@@ -695,7 +699,7 @@ FIELD_EFFECTS = {
 			1.3 => Fields::MACHINE_MOVES
 			},
 			:move_messages => {
-			"The attack drew power from the machinery!" => Fields::MACHINE_MOVES,
+			"The machines powered the attack!" => Fields::MACHINE_MOVES,
 			"The attack drew power from the machinery!" => Fields::OUTAGE_MOVES
 			},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
@@ -738,7 +742,7 @@ FIELD_EFFECTS = {
 			1.2 => [PBTypes::DARK,PBTypes::GHOST]
 			},
 			:type_messages => {
-			"The city's darkness powered the attack!" => [PBTypes::DARK],
+			"The darkness powered the attack!" => [PBTypes::DARK],
 			"The shadows powered the attack!" => [PBTypes::GHOST]
 			},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field

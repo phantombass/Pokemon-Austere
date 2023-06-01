@@ -393,7 +393,7 @@
 379,SMELLINGSALTS,SMELLING SALTS,07C,70,NORMAL,Physical,100,10,0,NearOther,0,abef,"This attack inflicts double damage on a paralyzed foe. It also cures the target's paralysis, however."
 380,HORNATTACK,HORN ATTACK,000,65,NORMAL,Physical,100,25,0,NearOther,0,abef,"The target is jabbed with a sharply pointed horn to inflict damage."
 381,STOMP,STOMP,010,65,NORMAL,Physical,100,20,30,NearOther,0,abe,"The target is stomped with a big foot. It may also make the target flinch."
-382,COVET,COVET,0F1,60,NORMAL,Physical,100,25,0,NearOther,0,abef,"The user endearingly approaches the target, then steals the target's held item."
+382,COVET,COVET,0F1,60,FAIRY,Physical,100,25,0,NearOther,0,abef,"The user endearingly approaches the target, then steals the target's held item."
 383,HIDDENPOWER,HIDDEN POWER,090,60,NORMAL,Special,100,15,0,NearOther,0,bef,"A unique attack that varies in type and intensity depending on the Pokémon using it."
 384,ROUND,ROUND,083,60,NORMAL,Special,100,15,0,NearOther,0,befk,"The user attacks with a song. Others can join in the Round and make the attack do greater damage."
 385,SWIFT,SWIFT,0A5,60,NORMAL,Special,0,20,0,AllNearFoes,0,bef,"Star-shaped rays are shot at the opposing team. This attack never misses."

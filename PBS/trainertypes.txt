@@ -67,4 +67,4 @@
 64,LEADER_Blaine,LEADER,100,VS Gym Leader and Elite.ogg,,,Male,100,
 65,LEADER_Blue,LEADER,100,VS Gym Leader and Elite.ogg,,,Male,100,
 66,PkMnTRAINER_Red,POKéMON TRAINER,100,VS Champion.ogg,,,Male,100,
-67,PROFESSOR,PROFESSOR,100,VS Champion,,,Male,100,
+67,PROFESSOR,PROFESSOR,100,VS Champion.ogg,,,Male,100,

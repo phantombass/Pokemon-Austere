@@ -8,8 +8,9 @@ def generate_egg
 end
 
 def egg_move_gen(egg)
-  moves = pbGetEggMoves(egg)
-  return rand(moves[moves.length])
+  moves = egg.getEggMovesList
+  move = rand(moves.length)
+  return moves[move]
 end
 
 def egg_gift
@@ -25,6 +26,7 @@ def egg_gift
     egg.pbLearnMove(move)
     egg.calcStats
     $qol_toggle = true
+    $Trainer.money -= 2000
     return true
   else
     return false

@@ -250,6 +250,151 @@ Pokemon = PIKACHU,11
 	Nature = MODEST
 	Role = WINCON
 #-------------------------------
+# ROUTE 3 ROCKET ARC
+#-------------------------------
+[POKEMONTRAINER_Crystal,EVE]
+LoseText = "Wow!"
+Pokemon = GRANBULL,18
+	Moves = BRICKBREAK,COVET,BITE,FIREPUNCH
+	IV = 31,31,31,31,31,31
+	EV = 252,252,4,0,0,0
+	Item = ASSAULTVEST
+	Nature = ADAMANT
+	Ability = 0
+	Roles = PHYSICALBREAKER,OFFENSIVEPIVOT
+Pokemon = BRIONNE,18
+	Moves = HYPERVOICE,DRAININGKISS,ICYWIND,ENERGYBALL
+	IV = 31,0,31,31,31,31
+	EV = 252,0,0,0,252,4
+	Item = GOLDBERRY
+	Nature = MODEST
+	Ability = 2
+	Roles = SPECIALBREAKER
+Pokemon = SYLVEON,18
+	Moves = HYPERVOICE,CALMMIND,MYSTICALFIRE,HELPINGHAND
+	IV = 31,0,31,31,31,31
+	EV = 252,0,4,0,252,0
+	Item = LEFTOVERS
+	Nature = MODEST
+	Ability = 2
+	Roles = WINCON
+#-------------------------------
+[ROCKETGRUNT_F,MAY,1]
+LoseText = "But you did."
+Pokemon = ROSELIA,18
+	Moves = GIGADRAIN,SLUDGE,HIDDENPOWERFIRE
+	IV = 31,31,31,31,31,31
+Pokemon = KLINK,18
+	Moves = CHARGEBEAM,MIRRORSHOT,MIRRORRUSH
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_F,JUNE,1]
+LoseText = "Ugh."
+Pokemon = PLUSLE,18
+	Moves = CHARGEBEAM,QUICKATTACK,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+Pokemon = MINUN,18
+	Moves = CHARGEBEAM,QUICKATTACK,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_M,AL,1]
+LoseText = "Punk."
+Pokemon = ELECTRIKE,18
+	Moves = DISCHARGE,FLAMEBURST,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+	Ability = 2
+Pokemon = CHINCHOU,18
+	Moves = DISCHARGE,BUBBLEBEAM,ICYWIND
+	IV = 31,31,31,31,31,31
+	Ability = 0
+#-------------------------------
+[ROCKETGRUNT_M,BOB,1]
+LoseText = "Oof."
+Pokemon = PIKACHU,18
+	Moves = FAKEOUT,QUICKATTACK,HIDDENPOWERICE,CHARGEBEAM
+	IV = 31,31,31,31,31,31
+	Ability = 2
+Pokemon = BLITZLE,18
+	Moves = CHARGEBEAM,QUICKATTACK,FLAMEBURST
+	IV = 31,31,31,31,31,31
+	Ability = 1
+#-------------------------------
+[ROCKETGRUNT_F,APRIL,1]
+LoseText = "Sheesh."
+Pokemon = MAGNEMITE,18
+	Moves = CHARGEBEAM,MIRRORRUSH,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+Pokemon = MAREEP,18
+	Moves = CHARGEBEAM,HIDDENPOWERICE,THUNDERWAVE
+	IV = 31,31,31,31,31,31
+	Roles = SPEEDCONTROL
+	Ability = 2
+#-------------------------------
+[ROCKETGRUNT_F,WEDNESDAY,1]
+LoseText = "Ugh."
+Pokemon = DEDENNE,18
+	Moves = CHARGEBEAM,DRAININGKISS,HIDDENPOWERICE
+	Ability = 2
+	IV = 31,31,31,31,31,31
+Pokemon = MINUN,18
+	Moves = CHARGEBEAM,QUICKATTACK,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_M,CAL,1]
+LoseText = "But you did."
+Pokemon = PACHIRISU,18
+	Moves = DISCHARGE,FAKEOUT,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+	Ability = 2
+Pokemon = TOGEDEMARU,18
+	Moves = CHARGEBEAM,MIRRORRUSH,HIDDENPOWERICE,FAKEOUT
+	IV = 31,31,31,31,31,31
+	Ability = 1
+#-------------------------------
+[ROCKETGRUNT_M,PHIL,1]
+LoseText = "Ugh."
+Pokemon = PINCURCHIN,18
+	Moves = CHARGEBEAM,HIDDENPOWERICE,RECOVER
+	IV = 31,31,31,31,31,31
+Pokemon = ELEKID,18
+	Moves = MACHPUNCH,DISCHARGE,FIREPUNCH
+	Ability = 2
+#-------------------------------
+[ROCKETEXEC_F,ARIANA,1]
+LoseText = "Ugh."
+Pokemon = LUNATONE,19
+	Moves = POWERGEM,CALMMIND,PSYBEAM,ICYWIND
+	Item = COLBURBERRY
+	IV = 31,31,31,31,31,31
+	EV = 252,0,0,0,252,4
+	Nature = MODEST
+	Role = SPECIALBREAKER
+Pokemon = GOLDEEN,20
+	Moves = BUBBLEBEAM,ICYWIND,PSYBEAM,HIDDENPOWERELECTRIC
+	Item = BERRYJUICE
+	IV = 31,31,31,31,31,31
+	EV = 0,0,0,252,252,4
+	Ability = 2
+	Nature = MODEST
+	Role = WINCON
+#-------------------------------
+[ROCKETEXEC_M,ARCHER,1]
+LoseText = "Good grief."
+Pokemon = SOLROCK,19
+	Moves = ROCKSLIDE,PSYCHOCUT,SWORDSDANCE,MORNINGSUN
+	Item = COLBURBERRY
+	IV = 31,31,31,31,31,31
+	EV = 0,252,4,252,0,0
+	Nature = ADAMANT
+	Role = PHYSICALBREAKER,SETUPSWEEPER
+Pokemon = PIKACHU,20
+	Moves = FAKEOUT,QUICKATTACK,CHARGEBEAM,HIDDENPOWERICE
+	Item = LIGHTBALL
+	IV = 31,31,31,31,31,31
+	EV = 0,0,0,252,252,4
+	Ability = 2
+	Nature = MODEST
+	Role = WINCON
 #-------------------------------
 # TERCER GYM
 #-------------------------------

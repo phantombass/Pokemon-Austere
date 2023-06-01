@@ -249,7 +249,7 @@ class Fields
   def recharge?
     return @recharge
   end
-  #pbCompileAllData(true) { |msg| pbSetWindowText(msg) } #This is here in case compiling fails at any point
+  pbCompileAllData(true) { |msg| pbSetWindowText(msg) } #This is here in case compiling fails at any point
   sound = []
   pulse = []
   moves = pbLoadMovesData
@@ -1731,10 +1731,10 @@ class PokeBattle_Move
       end
     end
 	#New Field Effect Modifier Method
-	if fe[:type_type_mod].keys != nil
-		for type_mod in fe[:type_type_mod].keys
+	if fe[:type_type_change].keys != nil
+		for type_mod in fe[:type_type_change].keys
 			if isConst?(ret,PBTypes,type_mod)
-				ret = getConst(PBTypes,fe[:type_type_mod][type_mod])
+				ret = getConst(PBTypes,fe[:type_type_change][type_mod])
 				for message in fe[:type_change_message].keys
 					if fe[:type_change_message][message].include?(type_mod)
 						msg = message
@@ -1745,6 +1745,51 @@ class PokeBattle_Move
 			end
 		end
 	end
+    return ret
+  end
+  def pbCalcTypeModSingle(moveType,defType,user,target)
+    ret = PBTypes.getEffectiveness(moveType,defType)
+    # Ring Target
+    if target.hasActiveItem?(:RINGTARGET)
+      ret = PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE if PBTypes.ineffective?(moveType,defType)
+    end
+    # Foresight
+    if user.hasActiveAbility?(:SCRAPPY) || target.effects[PBEffects::Foresight]
+      ret = PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE if isConst?(defType,PBTypes,:GHOST) &&
+                                                         PBTypes.ineffective?(moveType,defType)
+    end
+    # Miracle Eye
+    if target.effects[PBEffects::MiracleEye]
+      ret = PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE if isConst?(defType,PBTypes,:DARK) &&
+                                                         PBTypes.ineffective?(moveType,defType)
+    end
+    # Delta Stream's weather
+    if @battle.pbWeather==PBWeather::StrongWinds
+      ret = PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE if isConst?(defType,PBTypes,:FLYING) &&
+                                                         PBTypes.superEffective?(moveType,defType)
+    end
+    # Grounded Flying-type Pokémon become susceptible to Ground moves
+    if !target.airborne?
+      ret = PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE if isConst?(defType,PBTypes,:FLYING) &&
+                                                         isConst?(moveType,PBTypes,:GROUND)
+    end
+    if target.effects[PBEffects::TarShot] && isConst?(moveType,PBTypes,:FIRE)
+      ret = PBTypeEffectiveness::SUPER_EFFECTIVE_ONE if PBTypes.normalEffective?(moveType,target.type1,target.type2)
+      ret = PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE if PBTypes.notVeryEffective?(moveType,target.type1,target.type2)
+    end
+    fe = FIELD_EFFECTS[@battle.field.field_effects]
+    for key in fe[:move_type_mod].keys
+      if fe[:move_type_mod][key].include?(self.id)
+        newEff = PBTypes.getEffectiveness(getConst(PBTypes,key),defType)
+        ret *= newEff.to_f/PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE
+      end
+    end
+    for i in fe[:type_type_mod].keys
+      if fe[:type_type_mod][i].include?(moveType)
+        typeEff = PBTypes.getEffectiveness(getConst(PBTypes,i),defType)
+        ret *= typeEff.to_f/PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE
+      end
+    end
     return ret
   end
   def field_update
