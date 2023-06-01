@@ -249,7 +249,7 @@ class Fields
   def recharge?
     return @recharge
   end
-  pbCompileAllData(true) { |msg| pbSetWindowText(msg) } #This is here in case compiling fails at any point
+  #pbCompileAllData(true) { |msg| pbSetWindowText(msg) } #This is here in case compiling fails at any point
   sound = []
   pulse = []
   moves = pbLoadMovesData
