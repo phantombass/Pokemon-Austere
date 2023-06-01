@@ -20,8 +20,10 @@ FIELD_EFFECTS = {
 			#flags are: physical, special, fullhp. fullhp flag cuts damage by the 1/modifier. other flags multiply def mods.
 			:type_damage_change => {},
 			:type_messages => {},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -46,8 +48,10 @@ FIELD_EFFECTS = {
 			:defensive_modifiers => {},
 			:type_damage_change => {},
 			:type_messages => {},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::HELPINGHAND,PBMoves::ENCORE],
@@ -82,8 +86,10 @@ FIELD_EFFECTS = {
 			"The forest boosted the attack!" => [PBTypes::GRASS,PBTypes::DARK],
 			"It's a swarm!" => [PBTypes::BUG]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -116,8 +122,10 @@ FIELD_EFFECTS = {
 			"The desert boosted the attack!" => [PBTypes::FIRE,PBTypes::GROUND],
 			"The desert weakened the attack" => [PBTypes::GRASS,PBTypes::WATER]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {"sand" => Fields::WIND_MOVES},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::SHOREUP],
@@ -153,8 +161,10 @@ FIELD_EFFECTS = {
 			"The lava boosted the attack!" => [PBTypes::FIRE],
 			"The water evaporated!" => [PBTypes::WATER]
 			},
-			:type_type_mod => {PBTypes::WATER => PBTypes::ICE}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {PBTypes::WATER => PBTypes::ICE}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {"The lava melted the ice and weakened the attack!" => [PBTypes::ICE]},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -187,8 +197,10 @@ FIELD_EFFECTS = {
 			:type_messages => {
 			"The fumes strengthened the attack!" => [PBTypes::POISON]
 			},
-			:type_type_mod => {PBTypes::POISON => PBTypes::WATER}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {PBTypes::POISON => PBTypes::WATER}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {"The fumes corroded and strengthened the attack!" => [PBTypes::WATER]},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -231,8 +243,10 @@ FIELD_EFFECTS = {
 			"The fire boosted the attack!" => [PBTypes::FIRE],
 			"The fire weakened the attack!" => [PBTypes::WATER]
 			},
-			:type_type_mod => {PBTypes::FIRE => PBTypes::GRASS}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {PBTypes::FIRE => PBTypes::GRASS}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {"The grass caught fire!" => [PBTypes::GRASS]},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {"cinders" => [Fields::WIND_MOVES]},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -263,8 +277,10 @@ FIELD_EFFECTS = {
 			"The swamp boosted the attack!" => [PBTypes::GRASS,PBTypes::WATER,PBTypes::POISON],
 			"The swamp weakened the attack!" => [PBTypes::FIRE,PBTypes::FIGHTING,PBTypes::ROCK]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -291,8 +307,10 @@ FIELD_EFFECTS = {
 			1.5 => [PBTypes::ELECTRIC]
 			},
 			:type_messages => {"The attack drew power from the city." => [PBTypes::ELECTRIC]},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {
 			"outage" => PBTypes::ELECTRIC,
 			"sound_confuse" => Fields::SOUND_MOVES
@@ -335,8 +353,10 @@ FIELD_EFFECTS = {
 			1.2 => [PBTypes::DRAGON,PBTypes::GHOST,PBTypes::GRASS,PBTypes::FIRE,PBTypes::WATER]
 			},
 			:type_messages => {"The ruins boosted the attack!" => [PBTypes::DRAGON,PBTypes::GHOST,PBTypes::GRASS,PBTypes::FIRE,PBTypes::WATER]},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::DRAGONDANCE],
@@ -372,8 +392,10 @@ FIELD_EFFECTS = {
 			1.2 => [PBTypes::GRASS,PBTypes::FAIRY,PBTypes::BUG]
 			},
 			:type_messages => {"The grass strengthened the attack!" => [PBTypes::GRASS,PBTypes::FAIRY,PBTypes::BUG]},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::GROWTH],
@@ -404,8 +426,10 @@ FIELD_EFFECTS = {
 			0.8 => [PBTypes::ELECTRIC,PBTypes::FIRE,PBTypes::ROCK,PBTypes::ICE]
 			},
 			:type_messages => {"The jet stream weakened the attack." => [PBTypes::ELECTRIC,PBTypes::FIRE,PBTypes::ROCK,PBTypes::ICE]},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::TAILWIND],
@@ -434,8 +458,10 @@ FIELD_EFFECTS = {
 			1.2 => [PBTypes::ROCK]
 			},
 			:type_messages => {"Rocks from the mountain joined in." => PBTypes::ROCK},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -464,12 +490,12 @@ FIELD_EFFECTS = {
 			1.2 => [PBTypes::ICE]
 			},
 			:type_messages => {"Avalanche!" => [PBTypes::ICE]},
-			:type_type_mod => {
+			:type_type_change => {
 			PBTypes::ICE => [PBTypes::ROCK]
 			},
-			:type_mod_message => {},
-			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -502,8 +528,10 @@ FIELD_EFFECTS = {
 			"The attack rode the current." => [PBTypes::WATER],
 			"The water weakened the attack." => [PBTypes::FIRE]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -540,8 +568,10 @@ FIELD_EFFECTS = {
 			"The depths boosted the attack." => [PBTypes::WATER],
 			"The water put the fire out." => [PBTypes::FIRE]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -570,8 +600,10 @@ FIELD_EFFECTS = {
 			:type_messages => {
 			"The psychic terrain boosted the attack." => [PBTypes::PSYCHIC]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::CALMMIND,PBMoves::MEDITATE,PBMoves::TRICKROOM,Fields::HEALING_MOVES],
@@ -607,8 +639,10 @@ FIELD_EFFECTS = {
 			"The misty terrain boosted the attack." => [PBTypes::FAIRY],
 			"The misty terrain weakened the attack." => [PBTypes::DRAGON]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -640,8 +674,10 @@ FIELD_EFFECTS = {
 			:type_messages => {
 			"The electric terrain boosted the attack." => [PBTypes::ELECTRIC]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -673,8 +709,10 @@ FIELD_EFFECTS = {
 			:type_messages => {
 			"Register power boost..." => [PBTypes::ELECTRIC]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -712,8 +750,10 @@ FIELD_EFFECTS = {
 			:type_messages => {
 			"The machinery joined the attack!" => [PBTypes::STEEL]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {
 			"short" => Fields::OUTAGE_MOVES
 			},
@@ -745,8 +785,10 @@ FIELD_EFFECTS = {
 			"The darkness powered the attack!" => [PBTypes::DARK],
 			"The shadows powered the attack!" => [PBTypes::GHOST]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {
 			"recharge" => Fields::CHARGE_MOVES
 			},
@@ -778,8 +820,10 @@ FIELD_EFFECTS = {
 			"The city's darkness powered the attack!" => [PBTypes::DARK],
 			"The shadows powered the attack!" => [PBTypes::GHOST]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -813,8 +857,10 @@ FIELD_EFFECTS = {
 			:type_messages => {
 			"The darkness powered the attack!" => [PBTypes::DARK,PBTypes::GHOST]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::MOONLIGHT],
@@ -852,8 +898,10 @@ FIELD_EFFECTS = {
 			"The water whipped in the wind!" => [PBTypes::WATER],
 			"The fire fizzled out!" => [PBTypes::FIRE]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [],
@@ -888,8 +936,10 @@ FIELD_EFFECTS = {
 			:type_messages => {
 			"The spirits joined the attack!" => [PBTypes::GHOST]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::MOONLIGHT],
@@ -927,8 +977,10 @@ FIELD_EFFECTS = {
 			"The foundry intensified the heat!" => [PBTypes::FIRE],
 			"The heat from the foundry weakened the attack!" => [PBTypes::WATER]
 			},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
 			:side_effects => {"disturb" => Fields::KICKING_MOVES},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::MOONLIGHT],
