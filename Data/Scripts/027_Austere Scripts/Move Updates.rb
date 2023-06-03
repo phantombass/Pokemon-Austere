@@ -167,3 +167,12 @@ BattleHandlers::TerrainStatBoostItem.add(:PSYCHICSEED,
     next battler.pbRaiseStatStageByCause(PBStats::SPDEF,1,battler,itemName)
   }
 )
+
+class PokeBattle_Move_0BC < PokeBattle_Move
+  def pbEffectAgainstTarget(user,target)
+    target.effects[PBEffects::Encore]     = @battle.field.field_effects == PBFieldEffects::EchoChamber ? 6 : 4
+    target.effects[PBEffects::EncoreMove] = target.lastRegularMoveUsed
+    @battle.field.field_effects == PBFieldEffects::EchoChamber ? @battle.pbDisplay(_INTL("{1} received a standing ovation!",target.pbThis)) : @battle.pbDisplay(_INTL("{1} received an encore!",target.pbThis))
+    target.pbItemStatusCureCheck
+  end
+end

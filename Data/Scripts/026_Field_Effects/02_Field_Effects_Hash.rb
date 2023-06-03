@@ -38,8 +38,11 @@ FIELD_EFFECTS = {
 			:nature_power => PBMoves::HYPERVOICE,
 			:mimicry => :NORMAL,
 			:intro_script => nil,
-			:abilities => [],
-			:ability_effects => {},
+			:abilities => [PBAbilities::SOUNDPROOF,PBAbilities::PUNKROCK],
+			:ability_effects => {
+				PBAbilities::SOUNDPROOF => [PBStats::SPDEF,1],
+				PBAbilities::PUNKROCK => [PBStats::SPATK,1]
+			},
 			:move_damage_boost => {},
 			:move_messages => {},
 			:move_type_mod => {},
@@ -440,7 +443,7 @@ FIELD_EFFECTS = {
 		PBFieldEffects::Mountain => {
 			:field_name => "Mountainside",
 			:intro_message => "The mountain air is refreshing.",
-			:field_gfx => "Mountain",
+			:field_gfx => "Mountainside",
 			:nature_power => PBMoves::ROCKSLIDE,
 			:mimicry => PBTypes::ROCK,
 			:intro_script => nil,
@@ -940,7 +943,7 @@ FIELD_EFFECTS = {
 			:type_change_message => {},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_mod_message => {},
-			:side_effects => {},
+			:side_effects => {"disturb" => Fields::KICKING_MOVES},
 			:side_effect_message => {},
 			:status_move_boost => [PBMoves::MOONLIGHT],
 			:field_changers => {PBFieldEffects::None => Fields::QUAKE_MOVES},
@@ -981,232 +984,100 @@ FIELD_EFFECTS = {
 			:type_change_message => {},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_mod_message => {},
-			:side_effects => {"disturb" => Fields::KICKING_MOVES},
+			:side_effects => {},
 			:side_effect_message => {},
-			:status_move_boost => [PBMoves::MOONLIGHT],
+			:status_move_boost => [],
 			:field_changers => {PBFieldEffects::Lava => Fields::QUAKE_MOVES},
 			:change_message => {"The foundry collapsed and molten metal spilled!" => Fields::QUAKE_MOVES},
+			:field_change_conditions => {}
+		}, 
+		PBFieldEffects::Dojo => {
+			:field_name => "Dojo",
+			:intro_message => "En garde!",
+			:field_gfx => "Dojo",
+			:nature_power => PBMoves::BRICKBREAK,
+			:mimicry => PBTypes::FIGHTING,
+			:intro_script => nil,
+			:abilities => [PBAbilities::INNERFOCUS,PBAbilities::STEADFAST,PBAbilities::IRONFIST,PBAbilities::SCRAPPY],
+			:ability_effects => {
+				PBAbilities::INNERFOCUS => [PBStats::ATTACK,1],
+				PBAbilities::STEADFAST => [PBStats::SPEED,1],
+				PBAbilities::IRONFIST => [PBStats::ATTACK,1],
+				PBAbilities::SCRAPPY => [PBStats::ATTACK,1]
+			},
+			:move_damage_boost => {
+			1.2 => [Fields::KICKING_MOVES,Fields::PUNCHING_MOVES,Fields::SLICING_MOVES]
+			},
+			:move_messages => {
+			"Hyah!" => [Fields::KICKING_MOVES,Fields::PUNCHING_MOVES,Fields::SLICING_MOVES]
+			},
+			:move_type_mod => {}, #if a move adds a second type to the damage done
+			:move_type_change => {},
+			:move_accuracy_change => {},
+			:defensive_modifiers => {},
+			:type_damage_change => {
+			1.2 => [PBTypes::FIGHTING,PBTypes::PSYCHIC]
+			},
+			:type_messages => {
+			"With great focus!" => [PBTypes::FIGHTING,PBTypes::PSYCHIC]
+			},
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
+			:side_effects => {},
+			:side_effect_message => {},
+			:status_move_boost => [PBMoves::CALMMIND,PBMoves::BULKUP,PBMoves::MEDITATE,PBMoves::AGILITY],
+			:field_changers => {},
+			:change_message => {},
+			:field_change_conditions => {}
+		},
+		PBFieldEffects::Castle => {
+			:field_name => "Castle",
+			:intro_message => "The kingdom stands strong.",
+			:field_gfx => "Castle",
+			:nature_power => PBMoves::IRONHEAD,
+			:mimicry => PBTypes::STEEL,
+			:intro_script => nil,
+			:abilities => [PBAbilities::BATTLEARMOR,PBAbilities::SHELLARMOR,PBAbilities::STANCECHANGE,PBAbilities::SHADOWSHIELD,PBAbilities::LEAFGUARD,PBAbilities::MAGICGUARD],
+			:ability_effects => {
+				PBAbilities::BATTLEARMOR => [PBStats::DEFENSE,1],
+				PBAbilities::SHELLARMOR => [PBStats::DEFENSE,1],
+				PBAbilities::SHADOWSHIELD => [PBStats::DEFENSE,1],
+				PBAbilities::LEAFGUARD => [PBStats::DEFENSE,1],
+				PBAbilities::MAGICGUARD => [PBStats::SPDEF,1],
+				PBAbilities::STANCECHANGE => [PBStats::SPEED,1]
+			},
+			:move_damage_boost => {
+			1.2 => [Fields::BOMB_MOVES,Fields::SLICING_MOVES],
+			0.8 => [Fields::WIND_MOVES]
+			},
+			:move_messages => {
+			"For the kingdom!" => [Fields::PUNCHING_MOVES,Fields::SLICING_MOVES],
+			"The wall weakened the wind!" => [Fields::WIND_MOVES]
+			},
+			:move_type_mod => {}, #if a move adds a second type to the damage done
+			:move_type_change => {},
+			:move_accuracy_change => {},
+			:defensive_modifiers => {},
+			:type_damage_change => {
+			1.2 => [PBTypes::ROCK,PBTypes::STEEL,PBTypes::FAIRY],
+			0.8 => [PBTypes::FIGHTING,PBTypes::FLYING]
+			},
+			:type_messages => {
+			"All for one!" => [PBTypes::ROCK,PBTypes::STEEL,PBTypes::FAIRY],
+			"The castle's defenses weakened the attack!" => [PBTypes::FIGHTING,PBTypes::FLYING]
+			},
+			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_change_message => {},
+			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
+			:type_mod_message => {},
+			:side_effects => {},
+			:side_effect_message => {},
+			:status_move_boost => [PBMoves::SWORDSDANCE,PBMoves::IRONDEFENSE,PBMoves::KINGSSHIELD],
+			:field_changers => {PBFieldEffects::None => Fields::QUAKE_MOVES},
+			:change_message => {"The castle crumbled to the ground!" => Fields::QUAKE_MOVES},
 			:field_change_conditions => {}
 		}
 	}
 	
-#Saving these methods in case stuff doesn't work
-=begin
-	#Old FE Methods
-    if hasConst?(PBTypes,:WATER)
-      if @battle.field.field_effects == PBFieldEffects::Lava && isConst?(ret,PBTypes,:ICE)
-        @battle.field.field_effects = PBFieldEffects::None
-        ret = getConst(PBTypes,:WATER)
-        $orig_type_ice = true
-        @powerBoost = false
-      end
-    end
-    if hasConst?(PBTypes,:POISON)
-      if @battle.field.field_effects == PBFieldEffects::ToxicFumes && isConst?(ret,PBTypes,:WATER)
-        ret = getConst(PBTypes,:POISON)
-        $orig_water = true
-        @powerBoost = false
-      end
-    end
-    if hasConst?(PBTypes,:FIRE)
-      if @battle.field.field_effects == PBFieldEffects::Wildfire && isConst?(ret,PBTypes,:GRASS)
-        ret = getConst(PBTypes,:FIRE)
-        $orig_flying = false
-        $orig_grass = true
-        @powerBoost = false
-      end
-      if @battle.field.field_effects == PBFieldEffects::Wildfire && isConst?(ret,PBTypes,:FLYING) && specialMove?
-        ret = getConst(PBTypes,:FIRE)
-        $orig_grass = false
-        $orig_flying = true
-        @powerBoost = false
-      end
-	  				
- case @battle.field.field_effects
- when PBFieldEffects::Desert
-   priority = @battle.pbPriority(true)
-   if Fields::WIND_MOVES.include?(self.id)
-     if user.effectiveWeather != PBWeather::Sandstorm
-       @battle.field.weather = PBWeather::Sandstorm
-       @battle.field.weatherDuration = user.hasActiveItem?(:SMOOTHROCK) ? 8 : 5
-       @battle.pbDisplay(_INTL("The winds kicked up a Sandstorm!")) if $test_trigger == false
-     end
-   end
- when PBFieldEffects::ToxicFumes
-   priority = @battle.pbPriority(true)
- when PBFieldEffects::Wildfire
-   priority = @battle.pbPriority(true)
-   case type
-   when getConst(PBTypes,:FIRE)
-     if Fields::WIND_MOVES.include?(self.id)
-       @battle.pbDisplay(_INTL("The winds kicked up cinders!")) if $test_trigger == false
-       if target.effects[PBEffects::Cinders] == 0 && target.affectedByCinders?
-         target.effects[PBEffects::Cinders] = 3
-       end
-     end
-   when getConst(PBTypes,:WATER)
-   end
- when PBFieldEffects::Swamp
-   priority = @battle.pbPriority(true)
-   case type
-   when getConst(PBTypes,:ROCK)
-   when getConst(PBTypes,:FIRE),getConst(PBTypes,:FIGHTING)
-   when getConst(PBTypes,:POISON),getConst(PBTypes,:WATER),getConst(PBTypes,:GRASS)
-   end
- when PBFieldEffects::City
-   priority = @battle.pbPriority(true)
-   case type
-   when getConst(PBTypes,:NORMAL),getConst(PBTypes,:POISON)
-   when getConst(PBTypes,:FIRE)
-   when getConst(PBTypes,:GROUND)
-   when getConst(PBTypes,:ELECTRIC)
-       user.eachOpposing do |pkmn|
-         pkmn.pbLowerStatStage(PBStats::ACCURACY,1,user) if !pkmn.pbHasType?(:ELECTRIC)
-       end
-     end
-	if soundMove?
-     priority.each do |pkmn|
-       next if pkmn.hasActiveAbility?(:SOUNDPROOF)
-       confuse = rand(100)
-       if confuse > 85
-         @battle.pbDisplay(_INTL("The noise of the city was too much for {1}!",pkmn.name))
-         pkmn.pbConfuse if pkmn.pbCanConfuse?
-       end
-     end
-   end
-  when PBFieldEffects::Outage
-	case type
-	when getConst(PBTypes,:DARK),getConst(PBTypes,:GHOST)
-	end
- when PBFieldEffects::Ruins
-   priority = @battle.pbPriority(true)
-   case type
-   when getConst(PBTypes,:FIRE), getConst(PBTypes,:WATER), getConst(PBTypes,:GRASS)
-   when getConst(PBTypes,:DRAGON)
-   when getConst(PBTypes,:GHOST)
-   end
-   if target.pbHasType?(:GHOST) && target.hp == target.totalhp
-     multipliers[FINAL_DMG_MULT] /= 2
-   end
- when PBFieldEffects::Grassy
-   priority = @battle.pbPriority(true)
-   if target.pbHasType?(:BUG)
-     multipliers[DEF_MULT] *= 1.2
-   end
-   if Fields::WIND_MOVES.include?(self.id)
-     if @battle.pbWeather != PBWeather::Rain && @battle.pbWeather != PBWeather::HeavyRain && @battle.pbWeather != PBWeather::AcidRain
-       @battle.pbDisplay(_INTL("The attack kicked up spores!")) if $test_trigger == false
-       spore = rand(10)
-       spore2 = rand(10)
-       if user.status == PBStatuses::NONE && user.affectedByPowder?
-         case spore
-         when 0
-           user.status = PBStatuses::PARALYSIS if user.pbCanParalyze?(user,true)
-           @battle.pbDisplay(_INTL("{1} was paralyzed!",user.pbThis)) if user.pbCanParalyze?(user,true)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !user.pbCanParalyze?(user,true)
-         when 3
-           user.status = PBStatuses::POISON if user.pbCanPoison?(user,true)
-           @battle.pbDisplay(_INTL("{1} was poisoned!",user.pbThis)) if user.pbCanPoison?(user,true)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !user.pbCanPoison?(user,true)
-         when 6
-           user.status = PBStatuses::SLEEP if user.pbCanSleep?(user,true)
-           @battle.pbDisplay(_INTL("{1} fell asleep!",user.pbThis)) if user.pbCanSleep?(user,true)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",user.pbThis)) if !user.pbCanSleep?(user,true)
-         when 1,2,4,5,7,8,9
-           @battle.pbDisplay(_INTL("The spores had no effect on {1}!",user.pbThis)) if $test_trigger == false
-         end
-       else
-         @battle.pbDisplay(_INTL("But {1} was already statused.",user.pbThis)) if $test_trigger == false
-       end
-       if target.status == PBStatuses::NONE && target.affectedByPowder?
-         case spore2
-         when 0
-           target.status = PBStatuses::PARALYSIS if target.pbCanParalyze?(target,true)
-           @battle.pbDisplay(_INTL("{1} was paralyzed!",target.pbThis)) if target.pbCanParalyze?(target,true)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !target.pbCanParalyze?(target,true)
-         when 3
-           target.status = PBStatuses::POISON if target.pbCanPoison?(target,true)
-           @battle.pbDisplay(_INTL("{1} was poisoned!",target.pbThis)) if target.pbCanPoison?(target,true)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !target.pbCanPoison?(target,true)
-         when 6
-           target.status = PBStatuses::SLEEP if target.pbCanSleep?(target,true)
-           @battle.pbDisplay(_INTL("{1} fell asleep!",target.pbThis)) if target.pbCanSleep?(target,true)
-           @battle.pbDisplay(_INTL("The spores did not affect {1}!",target.pbThis)) if !target.pbCanSleep?(target,true)
-         when 1,2,4,5,7,8,9
-           @battle.pbDisplay(_INTL("The spores had no effect on {1}!",target.pbThis)) if $test_trigger == false
-         end
-       else
-         @battle.pbDisplay(_INTL("But {1} was already statused.",target.pbThis)) if $test_trigger == false
-       end
-     end
-   end
- when PBFieldEffects::JetStream
-   priority = @battle.pbPriority(true)
-   if target.affectedByJetStream?
-     multipliers[DEF_MULT] *= 1.2 if physicalMove?
-   end
-   case type
-   when getConst(PBTypes,:FIRE),getConst(PBTypes,:ELECTRIC),getConst(PBTypes,:ICE),getConst(PBTypes,:ROCK)
-   end
- end
- if $effect_flag[:sand] == true && @battle.field.weather != PBWeather::Sandstorm
-		    @battle.field.weather = PBWeather::Sandstorm
-		    @battle.field.weatherDuration = user.hasActiveItem?(:SMOOTHROCK) ? 8 : 5
-			@battle.pbDisplay(_INTL("The wind kicked up sand!")) if $test_trigger == false
-		end
-		if $effect_flag[:cinders] == true
-			priority = @battle.pbPriority(true)
-			priority.each do |target|
-				target.effects[PBEffects::Cinders] = 3 if target.effects[PBEffects::Cinders] == 0 && target.affectedByCinders?
-			end
-			@battle.pbDisplay(_INTL("The wind kicked up cinders!")) if $test_trigger == false
-		end
-		if $effect_flag[:spore] == true
-			priority = @battle.pbPriority(true)
-			if @battle.pbWeather != PBWeather::Rain && @battle.pbWeather != PBWeather::HeavyRain && @battle.pbWeather != PBWeather::AcidRain
-			   @battle.pbDisplay(_INTL("The attack kicked up spores!")) if $test_trigger == false
-			   spore = rand(10)
-			   spore2 = rand(10)
-			   priority.each do |pkmn|
-				   if pkmn.status == PBStatuses::NONE && pkmn.affectedByPowder?
-					 case spore
-					 when 0
-					   pkmn.status = PBStatuses::PARALYSIS if pkmn.pbCanParalyze?(@battler,true)
-					   @battle.pbDisplay(_INTL("{1} was paralyzed!",pkmn.pbThis)) if pkmn.pbCanParalyze?(pkmn,true)
-					   @battle.pbDisplay(_INTL("The spores did not affect {1}!",pkmn.pbThis)) if !pkmn.pbCanParalyze?(pkmn,true)
-					 when 3
-					   pkmn.status = PBStatuses::POISON if pkmn.pbCanPoison?(pkmn,true)
-					   @battle.pbDisplay(_INTL("{1} was poisoned!",pkmn.pbThis)) if pkmn.pbCanPoison?(pkmn,true)
-					   @battle.pbDisplay(_INTL("The spores did not affect {1}!",pkmn.pbThis)) if !pkmn.pbCanPoison?(pkmn,true)
-					 when 6
-					   pkmn.status = PBStatuses::SLEEP if pkmn.pbCanSleep?(pkmn,true)
-					   @battle.pbDisplay(_INTL("{1} fell asleep!",pkmn.pbThis)) if pkmn.pbCanSleep?(pkmn,true)
-					   @battle.pbDisplay(_INTL("The spores did not affect {1}!",pkmn.pbThis)) if !pkmn.pbCanSleep?(pkmn,true)
-					 when 1,2,4,5,7,8,9
-					   @battle.pbDisplay(_INTL("The spores had no effect on {1}!",pkmn.pbThis)) if $test_trigger == false
-					 end
-				   else
-					 @battle.pbDisplay(_INTL("But {1} was already statused.",pkmn.pbThis)) if $test_trigger == false
-				   end
-				end
-			end
-		 end
-		 if $effect_flag[:outage] == true
-			priority = @battle.pbPriority(true)
-			priority.each do |pkmn|
-			  pkmn.pbLowerStatStage(PBStats::ACCURACY,1,user) if !pkmn.pbHasType?(:ELECTRIC)
-			end
-		 end
-		 if $effect_flag[:sound_confuse] == true
-			priority = @battle.pbPriority(true)
-			priority.each do |pkmn|
-			   next if pkmn.hasActiveAbility?(:SOUNDPROOF)
-			   confuse = rand(100)
-			   if confuse > 85
-				 @battle.pbDisplay(_INTL("The noise of the city was too much for {1}!",pkmn.name))
-				 pkmn.pbConfuse if pkmn.pbCanConfuse?
-			   end
-			 end
-		 end
-	  end
-=end

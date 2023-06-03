@@ -78,8 +78,10 @@ begin
     Foundry = 24
     Machine = 25
     ShortOut = 26
+    Dojo = 27
+    Castle = 28
 
-    def PBFieldEffects.maxValue; return 27; end
+    def PBFieldEffects.maxValue; return 29; end
     def self.getName(id)
       id = getID(PBFieldEffects,id)
       names = [-
@@ -107,7 +109,9 @@ begin
          _INTL("Space"),
          _INTL("Monsoon"),
          _INTL("Graveyard"),
-         _INTL("Foundry")
+         _INTL("Foundry"),
+         _INTL("Dojo"),
+         _INTL("Castle")
 
       ]
       return names[id]
@@ -252,6 +256,8 @@ class Fields
   #pbCompileAllData(true) { |msg| pbSetWindowText(msg) } #This is here in case compiling fails at any point
   sound = []
   pulse = []
+  punch = []
+  bomb = []
   moves = pbLoadMovesData
   for move in moves
     next if move == nil
@@ -259,6 +265,8 @@ class Fields
     mv = PokeBattle_Move.pbFromPBMove(@battle,PBMove.new(getConst(PBMoves,m)))
     sound.push(m) if mv.flags[/k/]
     pulse.push(m) if mv.flags[/m/]
+    punch.push(m) if mv.flags[/j/]
+    bomb.push(m) if mv.flags[/n/]
   end
   def self.ignite?
       return false if [PBWeather::Rain,PBWeather::AcidRain,PBWeather::HeavyRain].include?($weather)
@@ -267,18 +275,22 @@ class Fields
   ECHO_MOVES = arrayToConstant(PBMoves,[:FAKEOUT,:STOMP,:SMELLINGSALTS])
   LIGHT_MOVES = arrayToConstant(PBMoves,[:LIGHTOFRUIN,:DAZZLINGGLEAM,:MOONBLAST,:PRISMATICLASER,:PHOTONGEYSER,:AURORABEAM,:SIGNALBEAM,:MISTBALL,:LUSTERPURGE,:FLASHCANNON,:MIRRORSHOT])
   #Ember added for testing purposes only
-  IGNITE_MOVES = arrayToConstant(PBMoves,[:FLAREBLITZ,:OVERHEAT,:FLAMEWHEEL,:BURNUP,:FLAMEBURST,:HEATWAVE,:LAVAPLUME,:MAGMASTORM,:ERUPTION])
+  IGNITE_MOVES = arrayToConstant(PBMoves,[:FLAREBLITZ,:OVERHEAT,:FLAMEWHEEL,:BURNUP,:FLAMEBURST,:HEATWAVE,:LAVAPLUME,:MAGMASTORM,:ERUPTION,:MYSTICALFIRE])
   WIND_MOVES = arrayToConstant(PBMoves,[:HURRICANE,:OMINOUSWIND,:AIRCUTTER,:AIRSLASH,:SILVERWIND,:DEFOG,:TAILWIND,:DOLDRUMS,:GUST,:RAZORWIND])
   SWAMP_CHANGERS = arrayToConstant(PBMoves,[:STONEEDGE,:POWERGEM,:METEORBEAM,:ROCKSLIDE])
   QUAKE_MOVES = arrayToConstant(PBMoves,[:EARTHQUAKE,:STOMPINGTANTRUM,:BULLDOZE,:FISSURE])
   HEALING_MOVES = arrayToConstant(PBMoves,[:RECOVER,:MOONLIGHT,:MORNINGSUN,:SYNTHESIS,:ROOST,:SLACKOFF,:MILKDRINK,:SOFTBOILED,:HEALORDER,:LIFEDEW,:JUNGLEHEALING])
   SOUND_MOVES = arrayToConstant(PBMoves,sound)
   PULSE_MOVES = arrayToConstant(PBMoves,pulse)
-  HAMMER_MOVES = arrayToConstant(PBMoves,[:HAMMERARM,:DRAGONHAMMER])
+  PUNCHING_MOVES = arrayToConstant(PBMoves,punch)
+  BOMB_MOVES = arrayToConstant(PBMoves,bomb)
+  HAMMER_MOVES = arrayToConstant(PBMoves,[:HAMMERARM,:DRAGONHAMMER,:ICEHAMMER])
   CHARGE_MOVES = arrayToConstant(PBMoves,[:THUNDERWAVE,:ZINGZAP,:THUNDERPUNCH,:CHARGE,:DISCHARGE,:SHOCKWAVE,:CHARGEBEAM,:PARABOLICCHARGE,:THUNDERBOLT,:THUNDER,:WILDCHARGE,:VOLTTACKLE,:OVERDRIVE,:PLASMAFISTS])
   KICKING_MOVES = arrayToConstant(PBMoves,[:JUMPKICK,:HIGHJUMPKICK,:MEGAKICK,:TROPKICK,:DOUBLEKICK,:STOMP,:BLAZEKICK,:TRIPLEKICK,:LOWKICK,:ROLLINGKICK,:LOWSWEEP,:THUNDEROUSKICK,:HIGHHORSEPOWER])
   OUTAGE_MOVES = arrayToConstant(PBMoves,[:DISCHARGE,:OVERDRIVE,:ZAPCANNON,:PLASMAFISTS,:SHOCKWAVE])
   MACHINE_MOVES = arrayToConstant(PBMoves,[:ZINGZAP,:THUNDERPUNCH,:PARABOLICCHARGE,:THUNDERBOLT,:THUNDER,:WILDCHARGE,:VOLTTACKLE,:CHARGEBEAM])
+  BEAM_MOVES = arrayToConstant(PBMoves,[:AURORABEAM,:ICEBEAM,:SIGNALBEAM,:CHARGEBEAM,:POWERGEM,:HYPERBEAM,:SOLARBEAM,:PSYBEAM,:PHOTONGEYSER,:LIGHTOFRUIN,:FLEURCANNON])
+  SLICING_MOVES = arrayToConstant(PBMoves,[:SACREDSWORD,:AIRSLASH,:AIRCUTTER,:PSYCHOCUT,:CUT,:NIGHTSLASH,:SLASH,:FURYCUTTER,:XSCISSOR,:LEAFBLADE,:KARATECHOP,:CROSSPOISON,:PRECIPICEBLADES,:FIRELASH,:RAZORSHELL,:SMARTSTRIKE])
 end
 
 $fields = Fields.new
@@ -311,6 +323,7 @@ class PokeBattle_Battler
 	alias init_field pbInitEffects
 	def pbInitEffects(*args)
 		init_field(*args)
+    @effects[PBEffects::EchoChamber] = 0
 		@effects[PBEffects::Cinders] = 0
 		@effects[PBEffects::Singed] = false
 	end
@@ -1577,17 +1590,17 @@ class PokeBattle_Battle
   def pbEORField(battler)
 	$effect_flag = {}
     return if battler.fainted?
-    if @field.field_effects == :Ruins && battler.affectedByRuins? && battler.canHeal?
+    if @field.field_effects == PBFieldEffects::Ruins && battler.affectedByRuins? && battler.canHeal?
       PBDebug.log("[Lingering effect] Ruins field heals #{battler.pbThis(true)}")
       battler.pbRecoverHP(battler.totalhp / 16)
       pbDisplay(_INTL("{1}'s HP was restored by the power of the Ruins.", battler.pbThis))
     end
-    if @field.field_effects == :Grassy && battler.affectedByGrass? && battler.canHeal?
+    if @field.field_effects == PBFieldEffects::Grassy && battler.affectedByTerrain? && battler.canHeal?
       PBDebug.log("[Lingering effect] Grassy field heals #{battler.pbThis(true)}")
       battler.pbRecoverHP(battler.totalhp / 16)
       pbDisplay(_INTL("{1}'s HP was restored by the Grassy field.", battler.pbThis))
     end
-    if @field.field_effects == :Swamp && battler.affectedBySwamp? && battler.canHeal? && battler.pbHasType?([:POISON,:WATER,:GRASS])
+    if @field.field_effects == PBFieldEffects::Swamp && battler.affectedBySwamp? && battler.canHeal? && battler.pbHasType?([:POISON,:WATER,:GRASS])
       PBDebug.log("[Lingering effect] Swamp field heals #{battler.pbThis(true)}")
       battler.pbRecoverHP(battler.totalhp / 16)
       pbDisplay(_INTL("{1}'s HP was restored by the Swamp.", battler.pbThis))
@@ -1657,9 +1670,199 @@ class PokeBattle_Battler
       return false
     end
   end
+  def pbProcessMoveHit(move,user,targets,hitNum,skipAccuracyCheck)
+    return false if user.fainted?
+    # For two-turn attacks being used in a single turn
+    move.pbInitialEffect(user,targets,hitNum)
+    numTargets = 0   # Number of targets that are affected by this hit
+    # Count a hit for Parental Bond (if it applies)
+    user.effects[PBEffects::ParentalBond] -= 1 if user.effects[PBEffects::ParentalBond]>0
+    user.effects[PBEffects::EchoChamber] -= 1 if user.effects[PBEffects::EchoChamber]>0
+    # Redirect Dragon Darts other hits
+  if move.function=="17C" && @battle.pbSideSize(targets[0].index)>1 && hitNum>0
+    targets=pbChangeTargets(move,user,targets,1)
+  end
+    targets.each { |b| b.damageState.resetPerHit }
+    # Accuracy check (accuracy/evasion calc)
+    if hitNum==0 || move.successCheckPerHit?
+      targets.each do |b|
+        next if b.damageState.unaffected
+        if pbSuccessCheckPerHit(move,user,b,skipAccuracyCheck)
+          numTargets += 1
+        else
+          b.damageState.missed     = true
+          b.damageState.unaffected = true
+        end
+      end
+      # If failed against all targets
+      if targets.length>0 && numTargets==0 && !move.worksWithNoTargets?
+        targets.each do |b|
+          next if !b.damageState.missed || b.damageState.magicCoat
+          pbMissMessage(move,user,b)
+        end
+        move.pbCrashDamage(user)
+        user.pbItemHPHealCheck
+        # Blunder Policy
+        if user.hasActiveItem?(:BLUNDERPOLICY) && user.effects[PBEffects::BlunderPolicy] &&
+           targets[0].effects[PBEffects::TwoTurnAttack]==0 && move.function!="070" && hitNum==0
+          if user.pbCanRaiseStatStage?(PBStats::SPEED,user,self)
+            pbRaiseStatStageByCause(PBStats::SPEED,2,user,itemName,showAnim=true,ignoreContrary=false)
+            user.pbConsumeItem
+          end
+        end
+        pbCancelMoves
+        return false
+      end
+    end
+    # If we get here, this hit will happen and do something
+    #---------------------------------------------------------------------------
+    # Calculate damage to deal
+    if move.pbDamagingMove?
+      targets.each do |b|
+        next if b.damageState.unaffected
+        # Check whether Substitute/Disguise will absorb the damage
+        move.pbCheckDamageAbsorption(user,b)
+        # Calculate the damage against b
+        # pbCalcDamage shows the "eat berry" animation for SE-weakening
+        # berries, although the message about it comes after the additional
+        # effect below
+        move.pbCalcDamage(user,b,targets.length)   # Stored in damageState.calcDamage
+        # Lessen damage dealt because of False Swipe/Endure/etc.
+        move.pbReduceDamage(user,b)   # Stored in damageState.hpLost
+      end
+    end
+    # Show move animation (for this hit)
+    move.pbShowAnimation(move.id,user,targets,hitNum)
+    # Type-boosting Gem consume animation/message
+    if user.effects[PBEffects::GemConsumed]>0 && hitNum==0
+      # NOTE: The consume animation and message for Gems are shown now, but the
+      #       actual removal of the item happens in def pbEffectsAfterMove.
+      @battle.pbCommonAnimation("UseItem",user)
+      @battle.pbDisplay(_INTL("The {1} strengthened {2}'s power!",
+         PBItems.getName(user.effects[PBEffects::GemConsumed]),move.name))
+    end
+    # Messages about missed target(s) (relevant for multi-target moves only)
+    targets.each do |b|
+      next if !b.damageState.missed
+      pbMissMessage(move,user,b)
+    # Blunder Policy (also activates if only one target is missed)
+    if user.hasActiveItem?(:BLUNDERPOLICY) && user.effects[PBEffects::BlunderPolicy] &&
+       b.effects[PBEffects::TwoTurnAttack]==0 && move.function!="070" && hitNum==0
+      if user.pbCanRaiseStatStage?(PBStats::SPEED,user,self)
+      pbRaiseStatStageByCause(PBStats::SPEED,2,user,itemName,showAnim=true,ignoreContrary=false)
+      user.pbConsumeItem
+      end
+    end
+    end
+    # Deal the damage (to all allies first simultaneously, then all foes
+    # simultaneously)
+    if move.pbDamagingMove?
+      # This just changes the HP amounts and does nothing else
+      targets.each do |b|
+        next if b.damageState.unaffected
+        move.pbInflictHPDamage(b)
+      end
+      # Animate the hit flashing and HP bar changes
+      move.pbAnimateHitAndHPLost(user,targets)
+    end
+    # Self-Destruct/Explosion's damaging and fainting of user
+    move.pbSelfKO(user) if hitNum==0
+    user.pbFaint if user.fainted?
+    if move.pbDamagingMove?
+      targets.each do |b|
+        next if b.damageState.unaffected
+        # NOTE: This method is also used for the OKHO special message.
+        move.pbHitEffectivenessMessages(user,b,targets.length)
+        # Record data about the hit for various effects' purposes
+        move.pbRecordDamageLost(user,b)
+      end
+      # Close Combat/Superpower's stat-lowering, Flame Burst's splash damage,
+      # and Incinerate's berry destruction
+      targets.each do |b|
+        next if b.damageState.unaffected
+        move.pbEffectWhenDealingDamage(user,b)
+      end
+      # Ability/item effects such as Static/Rocky Helmet, and Grudge, etc.
+      targets.each do |b|
+        next if b.damageState.unaffected
+        pbEffectsOnMakingHit(move,user,b)
+      end
+      # Disguise/Endure/Sturdy/Focus Sash/Focus Band messages
+      targets.each do |b|
+        next if b.damageState.unaffected
+        move.pbEndureKOMessage(b)
+      end
+      # HP-healing held items (checks all battlers rather than just targets
+      # because Flame Burst's splash damage affects non-targets)
+      @battle.pbPriority(true).each { |b| b.pbItemHPHealCheck }
+      # Animate battlers fainting (checks all battlers rather than just targets
+      # because Flame Burst's splash damage affects non-targets)
+      @battle.pbPriority(true).each { |b| b.pbFaint if b && b.fainted? }
+    end
+    @battle.pbJudgeCheckpoint(user,move)
+    # Main effect (recoil/drain, etc.)
+    targets.each do |b|
+      next if b.damageState.unaffected
+      move.pbEffectAgainstTarget(user,b)
+    end
+    move.pbEffectGeneral(user)
+    targets.each { |b| b.pbFaint if b && b.fainted? }
+    user.pbFaint if user.fainted?
+    # Additional effect
+    if !user.hasActiveAbility?(:SHEERFORCE)
+      targets.each do |b|
+        next if b.damageState.calcDamage==0
+        chance = move.pbAdditionalEffectChance(user,b)
+        next if chance<=0
+        if @battle.pbRandom(100)<chance
+          move.pbAdditionalEffect(user,b)
+        end
+      end
+    end
+    # Make the target flinch (because of an item/ability)
+    targets.each do |b|
+      next if b.fainted?
+      next if b.damageState.calcDamage==0 || b.damageState.substitute
+      chance = move.pbFlinchChance(user,b)
+      next if chance<=0
+      if @battle.pbRandom(100)<chance
+        PBDebug.log("[Item/ability triggered] #{user.pbThis}'s King's Rock/Razor Fang or Stench")
+        b.pbFlinch(user)
+      end
+    end
+    # Message for and consuming of type-weakening berries
+    # NOTE: The "consume held item" animation for type-weakening berries occurs
+    #       during pbCalcDamage above (before the move's animation), but the
+    #       message about it only shows here.
+    targets.each do |b|
+      next if b.damageState.unaffected
+      next if !b.damageState.berryWeakened
+      @battle.pbDisplay(_INTL("The {1} weakened the damage to {2}!",b.itemName,b.pbThis(true)))
+      b.pbConsumeItem
+    end
+    targets.each { |b| b.pbFaint if b && b.fainted? }
+    user.pbFaint if user.fainted?
+    return true
+  end
 end
 
 class PokeBattle_Move
+  def pbNumHits(user,targets)
+    if user.hasActiveAbility?(:PARENTALBOND) && pbDamagingMove? &&
+       !chargingTurnMove? && targets.length==1
+      # Record that Parental Bond applies, to weaken the second attack
+      user.effects[PBEffects::ParentalBond] = 3
+      return 2
+    end
+    echo = Fields::SOUND_MOVES + Fields::ECHO_MOVES + Fields::SLICING_MOVES
+    if @battle.field.field_effects == PBFieldEffects::EchoChamber && pbDamagingMove? && echo.include?(self.id) &&
+       !chargingTurnMove? && targets.length==1
+      # Record that Parental Bond applies, to weaken the second attack
+      user.effects[PBEffects::EchoChamber] = 3
+      return 2
+    end
+    return 1
+  end
   def pbAdditionalEffectChance(user,target,effectChance=0)
     return 0 if target.hasActiveAbility?(:SHIELDDUST) && !@battle.moldBreaker
     ret = (effectChance>0) ? effectChance : @addlEffect
@@ -1869,7 +2072,7 @@ class PokeBattle_Move
      multipliers[BASE_DMG_MULT] *= 1.5
    end
    if user.effects[PBEffects::HelpingHand] && !self.is_a?(PokeBattle_Confusion)
-     multipliers[BASE_DMG_MULT] *= 1.5
+     multipliers[BASE_DMG_MULT] *= @battle.field.field_effects == PBFieldEffects::EchoChamber ? 2.0 : 1.5
    end
    if user.effects[PBEffects::Charge]>0 && isConst?(type,PBTypes,:ELECTRIC)
      multipliers[BASE_DMG_MULT] *= 2

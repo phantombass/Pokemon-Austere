@@ -22,7 +22,7 @@ def reset_all_custom_variables
   SetTime.clear
   $time_update = false
   $hm_catalogue = false
-  $new_version = true
+  $eeveelution = nil
 end
 
 def PokemonOption_Scene
