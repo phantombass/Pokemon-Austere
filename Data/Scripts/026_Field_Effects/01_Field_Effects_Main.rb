@@ -276,7 +276,7 @@ class Fields
   LIGHT_MOVES = arrayToConstant(PBMoves,[:LIGHTOFRUIN,:DAZZLINGGLEAM,:MOONBLAST,:PRISMATICLASER,:PHOTONGEYSER,:AURORABEAM,:SIGNALBEAM,:MISTBALL,:LUSTERPURGE,:FLASHCANNON,:MIRRORSHOT])
   #Ember added for testing purposes only
   IGNITE_MOVES = arrayToConstant(PBMoves,[:FLAREBLITZ,:OVERHEAT,:FLAMEWHEEL,:BURNUP,:FLAMEBURST,:HEATWAVE,:LAVAPLUME,:MAGMASTORM,:ERUPTION,:MYSTICALFIRE])
-  WIND_MOVES = arrayToConstant(PBMoves,[:HURRICANE,:OMINOUSWIND,:AIRCUTTER,:AIRSLASH,:SILVERWIND,:DEFOG,:TAILWIND,:DOLDRUMS,:GUST,:RAZORWIND])
+  WIND_MOVES = arrayToConstant(PBMoves,[:HURRICANE,:OMINOUSWIND,:AIRCUTTER,:AIRSLASH,:SILVERWIND,:DEFOG,:TAILWIND,:DOLDRUMS,:GUST,:RAZORWIND,:ICYWIND])
   SWAMP_CHANGERS = arrayToConstant(PBMoves,[:STONEEDGE,:POWERGEM,:METEORBEAM,:ROCKSLIDE])
   QUAKE_MOVES = arrayToConstant(PBMoves,[:EARTHQUAKE,:STOMPINGTANTRUM,:BULLDOZE,:FISSURE])
   HEALING_MOVES = arrayToConstant(PBMoves,[:RECOVER,:MOONLIGHT,:MORNINGSUN,:SYNTHESIS,:ROOST,:SLACKOFF,:MILKDRINK,:SOFTBOILED,:HEALORDER,:LIFEDEW,:JUNGLEHEALING])
@@ -1060,6 +1060,14 @@ class PokeBattle_Battle
           battler.pbConfuse
         end
       end
+    when PBFieldEffects::Mountain
+      if battler.affectedByMountain?
+        mtn_rand = rand(100)
+        if mtn_rand > 85
+          pbDisplay(_INTL("{1} slipped and fell off the mountain!", battler.pbThis))
+          amt = battler.totalhp / 16
+        end
+      end
     end
     return if amt < 0
     @scene.pbDamageAnimation(battler)
@@ -1558,12 +1566,12 @@ class PokeBattle_Battle
     if @field.field_effects == PBFieldEffects::Grassy && battler.affectedByTerrain? && battler.canHeal?
       PBDebug.log("[Lingering effect] Grassy Terrain heals #{battler.pbThis(true)}")
       battler.pbRecoverHP(battler.totalhp / 16)
-      pbDisplay(_INTL("{1}'s HP was restored.", battler.pbThis))
+      pbDisplay(_INTL("{1}'s HP was restored by the field.", battler.pbThis))
     end
     if [PBFieldEffects::Electric,PBFieldEffects::Machine,PBFieldEffects::Digital].include?(@field.field_effects)
       if battler.hasActiveAbility?(:VOLTABSORB)
         battler.pbRecoverHP(battler.totalhp / 16)
-        pbDisplay(_INTL("{1}'s HP was restored.", battler.pbThis))
+        pbDisplay(_INTL("{1}'s HP was restored by the field.", battler.pbThis))
       end
     end
   end
@@ -1627,6 +1635,11 @@ class PokeBattle_Battler
     return false if pbHasType?(:POISON) || pbHasType?(:DARK) || pbHasType?(:PSYCHIC) || pbHasType?(:STEEL)
     return false if hasActiveAbility?([:OVERCOAT, :IMMUNITY, :OWNTEMPO, :TOXICBOOST, :POISONHEAL, :INNERFOCUS, :COMPOUNDEYES, :FILTER])
     return false if hasActiveItem?(:SAFETYGOGGLES)
+    return true
+  end
+  def affectedByMountain?
+    return false if pbHasType?(:ROCK) || pbHasType?(:GROUND) || airborne? || pbHasType?(:STEEL)
+    return false if hasActiveItem?([:HEAVYDUTYBOOTS,:PROTECTIVEPADS])
     return true
   end
   def affectedByCinders?

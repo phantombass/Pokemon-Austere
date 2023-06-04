@@ -1,21 +1,5 @@
 ﻿# See the documentation on the wiki to learn how to edit this file.
 #-------------------------------
-043 # UNION CAVE
-25,10,10
-Cave
-    PICHU,1
-    CLEFFA,1
-    IGGLYBUFF,1
-    IGGLYBUFF,1
-    CHINGLING,1
-    CHINGLING,1
-    RIOLU,1
-    RIOLU,1
-    TYROGUE,1
-    TYROGUE,1
-    TYROGUE,1
-    TYROGUE,1
-#-------------------------------
 091 # SILICA VALLEY
 25,10,10
 HeadbuttHigh
@@ -245,4 +229,67 @@ LandNight
     HONEDGE,10,12
     LITWICK,10,12
     HONEDGE,10,12
+#-------------------------------
+118 # Route 3
+25,10,10
+LandDay
+    RATTATA,7,9
+    PIDGEY,7,9
+    BOUNSWEET,7,9
+    FOMANTIS,7,9
+    PIDOVE,7,9
+    PATRAT,7,9
+    ODDISH,7,9
+    BELLSPROUT,7,9
+    HOPPIP,7,9
+    HOPPIP,7,9
+    HOPPIP,7,9
+    HOPPIP,7,9
+LandNight
+    RATTATA_1,7,9
+    SPEAROW,7,9
+    MORELULL,7,9
+    SHROOMISH,7,9
+    YAMPER,7,9
+    YAMPER,7,9
+    NINCADA,7,9
+    NINCADA,7,9
+    PHANTUMP,7,9
+    PUMPKABOO,7,9
+    PHANTUMP,7,9
+    PUMPKABOO,7,9
+HeadbuttHigh
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+HeadbuttLow
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+#-------------------------------
+124 # Tetra Caves North
+25,10,10
+Cave
+    WHISMUR,7,9
+    ZUBAT,7,9
+    WHISMUR,7,9
+    ZUBAT,7,9
+    GEODUDE,7,9
+    ROGGENROLA,7,9
+    ONIX,7,9
+    ONIX,7,9
+    NOIBAT,7,9
+    NOIBAT,7,9
+    NOIBAT,7,9
+    NOIBAT,7,9
 #-------------------------------

@@ -449,8 +449,12 @@ FIELD_EFFECTS = {
 			:intro_script => nil,
 			:abilities => [],
 			:ability_effects => {},
-			:move_damage_boost => {},
-			:move_messages => {},
+			:move_damage_boost => {
+			1.2 => Fields::WIND_MOVES
+			},
+			:move_messages => {
+			"The mountain gales boosted the wind!" => Fields::WIND_MOVES
+			},
 			:move_type_mod => {
 			PBTypes::ROCK => [Fields::SOUND_MOVES]
 			}, #if a move adds a second type to the damage done
