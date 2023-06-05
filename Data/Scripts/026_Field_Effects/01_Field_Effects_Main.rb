@@ -214,10 +214,17 @@ begin
     Ruins       = 26
     Grassy      = 27
     JetStream   = 28
-	Outage 		= 29
+    Digital = 29
+    Monsoon = 30
+	  Outage 		= 32
+    Foundry = 33
+    Machine = 34
+    ShortOut = 35
+    Dojo = 36
+    Castle = 37
 
 
-    def self.maxValue; return 30; end
+    def self.maxValue; return 38; end
   end
 
 rescue Exception
@@ -1157,7 +1164,7 @@ class PokeBattle_Battle
     priority.each do |b|
       next if b.fainted?
       # Grassy Terrain (healing)
-      pbEORTerrainHealing(b)
+      #pbEORTerrainHealing(b)
       pbEORField(b)
       # Healer, Hydration, Shed Skin
       BattleHandlers.triggerEORHealingAbility(b.ability,b,self) if b.abilityActive?
@@ -1559,23 +1566,6 @@ class PokeBattle_Battle
     @endOfRound = false
   end
 
-  def pbEORTerrainHealing(battler)
-    return if battler.fainted?
-    # Grassy Terrain (healing)
-    fe = FIELD_EFFECTS[@field.field_effects]
-    if @field.field_effects == PBFieldEffects::Grassy && battler.affectedByTerrain? && battler.canHeal?
-      PBDebug.log("[Lingering effect] Grassy Terrain heals #{battler.pbThis(true)}")
-      battler.pbRecoverHP(battler.totalhp / 16)
-      pbDisplay(_INTL("{1}'s HP was restored by the field.", battler.pbThis))
-    end
-    if [PBFieldEffects::Electric,PBFieldEffects::Machine,PBFieldEffects::Digital].include?(@field.field_effects)
-      if battler.hasActiveAbility?(:VOLTABSORB)
-        battler.pbRecoverHP(battler.totalhp / 16)
-        pbDisplay(_INTL("{1}'s HP was restored by the field.", battler.pbThis))
-      end
-    end
-  end
-
   def defaultField=(value)
     @field.defaultField  = value
     @field.field_effects         = value
@@ -1596,8 +1586,8 @@ class PokeBattle_Battle
   end
 
   def pbEORField(battler)
-	$effect_flag = {}
     return if battler.fainted?
+    fe = FIELD_EFFECTS[@field.field_effects]
     if @field.field_effects == PBFieldEffects::Ruins && battler.affectedByRuins? && battler.canHeal?
       PBDebug.log("[Lingering effect] Ruins field heals #{battler.pbThis(true)}")
       battler.pbRecoverHP(battler.totalhp / 16)
@@ -1612,6 +1602,12 @@ class PokeBattle_Battle
       PBDebug.log("[Lingering effect] Swamp field heals #{battler.pbThis(true)}")
       battler.pbRecoverHP(battler.totalhp / 16)
       pbDisplay(_INTL("{1}'s HP was restored by the Swamp.", battler.pbThis))
+    end
+    if [PBFieldEffects::Electric,PBFieldEffects::Machine,PBFieldEffects::Digital].include?(@field.field_effects)
+      if battler.hasActiveAbility?(:VOLTABSORB)
+        battler.pbRecoverHP(battler.totalhp / 16)
+        pbDisplay(_INTL("{1}'s HP was restored by the {2} field.", battler.pbThis,fe[:name]))
+      end
     end
   end
 end

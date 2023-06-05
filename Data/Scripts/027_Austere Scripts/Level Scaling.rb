@@ -147,10 +147,15 @@ Events.onWildPokemonCreate += proc { |_sender, e|
   pokemon = e[0]
   max_level = $Trainer.party.map { |e| e.level  }.max
   levelcap = LEVEL_CAP[$game_system.level_cap]
-  new_level = max_level - 3 - rand(3)   # For variety
-  new_level = 1 if new_level < 1
-  pokemon.level = new_level
-  Level_Scaling.evolve(pokemon,new_level,levelcap)
-  pokemon.calcStats
-  pokemon.resetMoves
+  if Level_Scale.active?
+    new_level = max_level - 3 - rand(3)   # For variety
+    new_level = 1 if new_level < 1
+    pokemon.level = new_level
+    Level_Scaling.evolve(pokemon,new_level,levelcap)
+    pokemon.calcStats
+    pokemon.resetMoves
+  end
+  if pokemon.level > levelcap
+    $game_switches[950] = true
+  end
 }

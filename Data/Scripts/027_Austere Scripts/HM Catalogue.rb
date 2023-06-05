@@ -201,6 +201,10 @@ class HM_Catalogue
   end
 end
 
+def pbCut
+  pbUseHiddenMove($Trainer,PBMoves::CUT)
+end
+
 def canUseMoveCut?
   showmsg = true
    return false if HM_Catalogue.cut == false
@@ -216,7 +220,7 @@ def useMoveCut
   Kernel.pbMessage(_INTL("{1} used Cut!",$Trainer.name))
    facingEvent = $game_player.pbFacingEvent
    if facingEvent
-     pbSmashEvent(facingEvent)
+     pbSmashThisEvent
    end
    return true
 end
@@ -342,14 +346,6 @@ def useMoveFly
   end
   pbFadeOutIn(99999){
     Kernel.pbCancelVehicles
-    $game_switches[115] = false
-    $game_switches[116] = false
-    $game_switches[117] = false
-    $game_switches[118] = false
-    $game_switches[119] = false
-    $game_switches[120] = false
-    $game_switches[121] = false
-    $game_switches[125] = false
     $game_temp.player_new_map_id=$PokemonTemp.flydata[0]
     $game_temp.player_new_x=$PokemonTemp.flydata[1]
     $game_temp.player_new_y=$PokemonTemp.flydata[2]

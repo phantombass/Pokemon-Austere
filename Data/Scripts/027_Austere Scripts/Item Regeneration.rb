@@ -154,6 +154,7 @@ class PokeBattle_Battle
     Level_Scaling.boss_battle = false
     Level_Scaling.gym_leader = false
     $qol_toggle = true
+    $game_switches[950] = false
     return @decision
   end
 end

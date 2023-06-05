@@ -220,6 +220,7 @@ class PokeBattle_Battle
         next false if !pbCanUseItemOnPokemon?(item,pkmn,battler,itemScene)
       when 4, 9   # Poké Balls
         next false if idxPkmn<0
+        next false if $game_switches[950]
         battler = @battlers[idxPkmn]
         pkmn    = battler.pokemon if battler
       when 5, 10   # No target (Poké Doll, Guard Spec., Launcher items)

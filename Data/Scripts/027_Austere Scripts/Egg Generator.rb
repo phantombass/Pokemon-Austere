@@ -23,7 +23,7 @@ def egg_gift
     egg.iv[PBStats::DEFENSE]=31
     egg.iv[PBStats::SPDEF]=31
     move = egg_move_gen(egg)
-    egg.pbLearnMove(move)
+    egg.pbLearnMove(move) if move != nil
     egg.calcStats
     $qol_toggle = true
     $Trainer.money -= 2000
