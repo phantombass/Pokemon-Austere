@@ -339,8 +339,8 @@ FIELD_EFFECTS = {
 			:field_name => "Ruins",
 			:intro_message => "The ruins feel strange...",
 			:field_gfx => "Ruins",
-			:nature_power => PBMoves::DRAGONPULSE,
-			:mimicry => PBTypes::DRAGON,
+			:nature_power => PBMoves::PSYSHOCK,
+			:mimicry => PBTypes::PSYCHIC,
 			:intro_script => nil,
 			:abilities => [],
 			:ability_effects => {},
@@ -350,21 +350,25 @@ FIELD_EFFECTS = {
 			:move_type_change => {},
 			:move_accuracy_change => {},
 			:defensive_modifiers => {
-			2.0 => [PBTypes::GHOST,"fullhp"]
+			2.0 => [PBTypes::PSYCHIC,"fullhp"]
 			},
 			:type_damage_change => {
-			1.2 => [PBTypes::DRAGON,PBTypes::GHOST,PBTypes::GRASS,PBTypes::FIRE,PBTypes::WATER]
+			1.2 => [PBTypes::PSYCHIC,PBTypes::GRASS,PBTypes::FIRE,PBTypes::WATER]
 			},
-			:type_messages => {"The ruins boosted the attack!" => [PBTypes::DRAGON,PBTypes::GHOST,PBTypes::GRASS,PBTypes::FIRE,PBTypes::WATER]},
+			:type_messages => {"The ruins boosted the attack!" => [PBTypes::PSYCHIC,PBTypes::GRASS,PBTypes::FIRE,PBTypes::WATER]},
 			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
-			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
-			:type_mod_message => {},
+			:type_type_mod => {
+			PBTypes::ROCK => [PBTypes::PSYCHIC]
+			}, #if a type gets added due to the field
+			:type_mod_message => {
+			"The ruins were added to the attack!" => [PBTypes::PSYCHIC]
+			},
 			:side_effects => {},
 			:side_effect_message => {},
-			:status_move_boost => [PBMoves::DRAGONDANCE],
-			:field_changers => {},
-			:change_message => {},
+			:status_move_boost => [PBMoves::CALMMIND,PBMoves::AMNESIA,PBMoves::MEDITATE,PBMoves::BARRIER],
+			:field_changers => {PBFieldEffects::None => Fields::QUAKE_MOVES},
+			:change_message => {"The ruins were destroyed!" => Fields::QUAKE_MOVES},
 			:field_change_conditions => {}
 		}, 
 		PBFieldEffects::Grassy => {

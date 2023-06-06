@@ -7,6 +7,15 @@ BattleHandlers::AbilityOnSwitchIn.add(:GRASSYSURGE,
   }
 )
 
+
+BattleHandlers::AbilityOnSwitchIn.add(:PSYCHICSURGE,
+  proc { |ability,battler,battle|
+    next if battle.field.field_effects==PBFieldEffects::Psychic
+    battle.pbShowAbilitySplash(battler)
+    battle.pbStartFieldEffect(battler,PBFieldEffects::Psychic)
+    # NOTE: The ability splash is hidden again in def pbStartTerrain.
+  }
+)
 BattleHandlers::DamageCalcTargetAbility.add(:GRASSPELT,
   proc { |ability,user,target,move,mults,baseDmg,type|
     if user.battle.field.field_effects==PBFieldEffects::Grassy

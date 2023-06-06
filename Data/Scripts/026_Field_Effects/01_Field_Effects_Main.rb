@@ -2000,6 +2000,11 @@ class PokeBattle_Move
       if fe[:type_type_mod][i].include?(moveType)
         typeEff = PBTypes.getEffectiveness(getConst(PBTypes,i),defType)
         ret *= typeEff.to_f/PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE
+        if fe[:type_mod_message] != nil
+          for mess in fe[:type_mod_message].keys
+            pbDisplay(_INTL(mess)) if fe[:type_mod_message][mess].include?(moveType)
+          end
+        end
       end
     end
     return ret
