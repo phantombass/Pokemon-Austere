@@ -1992,13 +1992,15 @@ class PokeBattle_Move
     fe = FIELD_EFFECTS[@battle.field.field_effects]
     for key in fe[:move_type_mod].keys
       if fe[:move_type_mod][key].include?(self.id)
-        newEff = PBTypes.getEffectiveness(getConst(PBTypes,key),defType)
+        typ = PBTypes.getName(key).to_sym
+        newEff = PBTypes.getEffectiveness(getConst(PBTypes,typ),defType)
         ret *= newEff.to_f/PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE
       end
     end
     for i in fe[:type_type_mod].keys
       if fe[:type_type_mod][i].include?(moveType)
-        typeEff = PBTypes.getEffectiveness(getConst(PBTypes,i),defType)
+        typ = PBTypes.getName(i).to_sym
+        typeEff = PBTypes.getEffectiveness(getConst(PBTypes,typ),defType)
         ret *= typeEff.to_f/PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE
         if fe[:type_mod_message] != nil
           for mess in fe[:type_mod_message].keys

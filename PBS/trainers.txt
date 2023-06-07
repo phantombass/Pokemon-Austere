@@ -364,24 +364,24 @@ Pokemon = GOLETT,18
 #-------------------------------
 [ROCKETGRUNT_M,LARRY]
 LoseText = "Sheesh."
-Pokemon = GEODUDE,18
-	Moves = ROCKSLIDE,BULLDOZE,FIREPUNCH
-	Nature = ADAMANT
+Pokemon = WHISMUR,18
+	Moves = ECHOEDVOICE,ICYWIND,STOMP
+	Nature = QUIET
 	IV = 31,31,31,31,31,31
-Pokemon = CRANIDOS,18
-	Moves = ROCKSLIDE,FIREPUNCH,HEADBUTT,ACCELEROCK
+Pokemon = ZUBAT,18
+	Moves = WINGATTACK,POISONFANG,ROOST
 	Nature = ADAMANT
 	IV = 31,31,31,31,31,31
 #-------------------------------
 [ROCKETGRUNT_M,WHIT]
 LoseText = "Ugh."
-Pokemon = ARCHEN,18
-	Moves = ROCKSLIDE,PLUCK,ROOST
-	Nature = JOLLY
+Pokemon = MAKUHITA,18
+	Moves = FAKEOUT,SMELLINGSALT,FORCEPALM
+	Nature = ADAMANT
 	IV = 31,31,31,31,31,31
-Pokemon = ARON,18
-	Moves = ROCKSLIDE,IRONHEAD,AVALANCHE
-	Nature = BRAVE
+Pokemon = AMAURA,18
+	Moves = ROUND,ICYWIND,ANCIENTPOWER
+	Nature = MODEST
 	IV = 31,31,31,31,31,31
 #-------------------------------
 [ROCKETEXEC_F,ARIANA,1]

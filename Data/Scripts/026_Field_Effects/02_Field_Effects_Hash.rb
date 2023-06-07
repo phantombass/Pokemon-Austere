@@ -454,10 +454,11 @@ FIELD_EFFECTS = {
 			:abilities => [],
 			:ability_effects => {},
 			:move_damage_boost => {
-			1.2 => Fields::WIND_MOVES
+			1.2 => [Fields::WIND_MOVES, Fields::SOUND_MOVES]
 			},
 			:move_messages => {
-			"The mountain gales boosted the wind!" => Fields::WIND_MOVES
+			"The mountain gales boosted the wind!" => Fields::WIND_MOVES,
+			"The loud noises brought rocks down!" => Fields::SOUND_MOVES
 			},
 			:move_type_mod => {
 			PBTypes::ROCK => [Fields::SOUND_MOVES]
