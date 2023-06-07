@@ -250,7 +250,7 @@ Pokemon = PIKACHU,11
 	Nature = MODEST
 	Role = WINCON
 #-------------------------------
-# ROUTE 3 ROCKET ARC
+# ROUTE 3
 #-------------------------------
 [POKEMONTRAINER_Crystal,EVE]
 LoseText = "Wow!"
@@ -394,7 +394,7 @@ Pokemon = LUNATONE,19
 	Nature = MODEST
 	Role = SPECIALBREAKER,SETUPSWEEPER
 Pokemon = NOCTOWL,20
-	Moves = BOOMBURST,DOLDRUMS,PSYBEAM,ROOST
+	Moves = HYPERVOICE,DOLDRUMS,PSYBEAM,ROOST
 	Item = GOLDBERRY
 	IV = 31,31,31,31,31,31
 	EV = 252,0,0,0,252,4
@@ -419,6 +419,29 @@ Pokemon = HONEDGE,20
 	Ability = 2
 	Nature = MODEST
 	Role = WINCON
+#-------------------------------
+[HIKER,ANDY]
+LoseText = "There's so much in it!."
+Pokemon = GEODUDE,18
+	Moves = ROCKTHROW,BULLDOZE,FIREPUNCH
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+Pokemon = LARVITAR,18
+	Moves = ROCKSLIDE,STOMPINGTANTRUM,BITE
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[YOUNGSTER,KYLE]
+LoseText = "There's so much in it!."
+Pokemon = DWEBBLE,18
+	Moves = ROCKTHROW,BUGBITE,KNOCKOFF
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+Pokemon = MONFERNO,18
+	Moves = FLAMEWHEEL,MACHPUNCH,THUNDERPUNCH
+	Nature = JOLLY
+	Ability = 2
+	IV = 31,31,31,31,31,31
 #-------------------------------
 # TERCER GYM
 #-------------------------------
@@ -497,6 +520,34 @@ Pokemon = KLEFKI,10
 	Ability = 0
 	Roles = SCREENS,SPECIALBREAKER
 Pokemon = HONEDGE,11
+	Moves = SWORDSDANCE,CUT,SHADOWSNEAK,AERIALACE
+	IV = 31,31,31,31,31,31
+	EV = 252,252,0,0,0,4
+	Nature = ADAMANT
+	Roles = SETUPSWEEPER
+#-------------------------------
+[RIVAL2,GUS,1]
+LoseText = "Hmmph. I don't like you."
+Pokemon = KLEFKI,20
+	Moves = DRAININGKISS,LIGHTSCREEN,REFLECT,MIRRORSHOT
+	IV = 31,31,31,31,31,31
+	EV = 252,0,0,0,4,252
+	Nature = SASSY
+	Ability = 0
+	Roles = SCREENS,SPECIALBREAKER
+Pokemon = SKARMORY,20
+	Moves = AERIALACE,CUT,ROOST,TOXIC
+	IV = 31,31,31,31,31,31
+	EV = 252,4,0,0,0,252
+	Nature = CAREFUL
+	Roles = TOXICSTALLER,PHYSICALBREAKER
+Pokemon = METANG,20
+	Moves = IRONHEAD,BULLETPUNCH,PSYCHOCUT,ICEPUNCH
+	IV = 31,31,31,31,31,31
+	EV = 252,252,0,0,0,4
+	Nature = ADAMANT
+	Roles = PHYSICALBREAKER
+Pokemon = HONEDGE,20
 	Moves = SWORDSDANCE,CUT,SHADOWSNEAK,AERIALACE
 	IV = 31,31,31,31,31,31
 	EV = 252,252,0,0,0,4

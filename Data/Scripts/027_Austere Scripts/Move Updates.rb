@@ -160,7 +160,7 @@ BattleHandlers::TerrainStatBoostItem.add(:MISTYSEED,
 
 BattleHandlers::TerrainStatBoostItem.add(:PSYCHICSEED,
   proc { |item,battler,battle|
-    next false if battle.field.field_effects!=PBFieldEffects::Psychic
+    next false if ![PBFieldEffects::Psychic,PBFieldEffects::Ruins].include?(battle.field.field_effects)
     next false if !battler.pbCanRaiseStatStage?(PBStats::SPDEF,battler)
     itemName = PBItems.getName(item)
     battle.pbCommonAnimation("UseItem",battler)

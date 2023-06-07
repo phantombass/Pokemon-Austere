@@ -246,7 +246,7 @@ LandDay
     HOPPIP,7,9
     HOPPIP,7,9
 LandNight
-    RATTATA_1,7,9
+    PURRLOIN,7,9
     SPEAROW,7,9
     MORELULL,7,9
     SHROOMISH,7,9
