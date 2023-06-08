@@ -384,10 +384,12 @@ FIELD_EFFECTS = {
 			PBAbilities::FLOWERVEIL => [PBStats::DEFENSE,1]
 			},
 			:move_damage_boost => {
-			1.2 => Fields::WIND_MOVES
+			1.2 => Fields::WIND_MOVES,
+			0.8 => [PBMoves::EARTHQUAKE,PBMoves::BULLDOZE,PBMoves::MAGNITUDE]
 			},
 			:move_messages => {
-			"The wind blows through the grass." => Fields::WIND_MOVES
+			"The wind blows through the grass." => Fields::WIND_MOVES,
+			"The grass softened the attack." => [PBMoves::EARTHQUAKE,PBMoves::BULLDOZE,PBMoves::MAGNITUDE]
 			},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
 			:move_type_change => {},

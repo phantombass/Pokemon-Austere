@@ -443,6 +443,37 @@ Pokemon = MONFERNO,18
 	Ability = 2
 	IV = 31,31,31,31,31,31
 #-------------------------------
+# ROUTE 5
+#-------------------------------
+[YOUNGSTER,TIMMY]
+LoseText = "There's so much in it!."
+Pokemon = GROWLITHE,18
+	Moves = FLAMEWHEEL,BITE,THUNDERFANG
+	Nature = ADAMANT
+	Ability = 1
+	IV = 31,31,31,31,31,31
+Pokemon = PIDGEOTTO,18
+	Moves = DOLDRUMS,ECHOEDVOICE,ROOST,HIDDENPOWERFIGHTING
+	Nature = TIMID
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[YOUNGSTER,TIMMY]
+LoseText = "There's so much in it!."
+Pokemon = NOCTOWL,18
+	Moves = AIRSLASH,ECHOEDVOICE,HIDDENPOWERFIGHTING,ROOST
+	Nature = MODEST
+	Ability = 2
+	IV = 31,31,31,31,31,31
+Pokemon = DEWPIDER,18
+	Moves = BUBBLEBEAM,ICYWIND,SILVERWIND
+	Nature = MODEST
+	IV = 31,31,31,31,31,31
+Pokemon = KRICKETUNE,18
+	Moves = PINMISSILE,ROCKTOMB,BULLETSEED,KNOCKOFF
+	Nature = JOLLY
+	Ability = 2
+	IV = 31,31,31,31,31,31
+#-------------------------------
 # TERCER GYM
 #-------------------------------
 [BIRDKEEPER,BOB]

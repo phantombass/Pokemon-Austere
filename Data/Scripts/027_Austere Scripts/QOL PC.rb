@@ -14,6 +14,7 @@ def pbPCBoxLink
     end
   elsif $game_variables[34] == 1
     if $game_variables[36] > 0
+      $game_variables[36] -= 1
       pbHealAll
       pbMessage(_INTL("Your party was healed!"))
     else
