@@ -472,7 +472,7 @@ FIELD_EFFECTS = {
 			:type_damage_change => {
 			1.2 => [PBTypes::ROCK]
 			},
-			:type_messages => {"Rocks from the mountain joined in." => PBTypes::ROCK},
+			:type_messages => {"Rocks from the mountain joined in." => [PBTypes::ROCK]},
 			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
 			:type_type_mod => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field

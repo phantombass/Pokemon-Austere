@@ -2187,7 +2187,7 @@ class PokeBattle_Move
    fe = FIELD_EFFECTS[@battle.field.field_effects]
 	 if fe[:field_changers] != nil
 		 priority = @battle.pbPriority(true)
-		 cmsg = nil
+		 cmsg = ""
 		 for fc in fe[:field_changers].keys
 			if @battle.field.field_effects != PBFieldEffects::None
 				if fe[:field_changers][fc].include?(self.id) && (fe[:field_change_conditions][fc] == true)
@@ -2225,7 +2225,7 @@ class PokeBattle_Move
 	 trigger = false
 	 if fe[:type_damage_change] != nil
     mesg = false
-     msg = nil
+     msg = ""
 		 for key in fe[:type_damage_change].keys
 			 if @battle.field.field_effects != PBFieldEffects::None
 				if fe[:type_damage_change][key].is_a?(Array)
@@ -2253,7 +2253,7 @@ class PokeBattle_Move
 	 #Field Effect Specific Move Boost
 	 if fe[:move_damage_boost] != nil
     mesg = false
-    msg = nil
+    msg = ""
 		 for dmg in fe[:move_damage_boost].keys
 			 if @battle.field.field_effects != PBFieldEffects::None
 					if fe[:move_damage_boost][dmg].include?(self.id)
@@ -2276,7 +2276,7 @@ class PokeBattle_Move
 	#Field Effect Defensive Modifiers
 	 if fe[:defensive_modifiers] != nil
 		priority = @battle.pbPriority(true)
-		msg = nil
+		msg = ""
 		for d in fe[:defensive_modifiers].keys
 			if fe[:defensive_modifiers][d][1] == "fullhp"
 				multipliers[FINAL_DMG_MULT] /= d
@@ -2292,7 +2292,7 @@ class PokeBattle_Move
 	#Additional Effects of Field Effects
 	 if fe[:side_effects] != nil
 		priority = @battle.pbPriority(true)
-		msg = nil
+		msg = ""
     f = fe[:side_effects].keys
 		for eff in fe[:side_effects].keys
 			if (fe[:side_effects][eff].is_a?(Array) && fe[:side_effects][eff].include?(self.id)) || (!fe[:side_effects][eff].is_a?(Array) && type == getConst(PBTypes,fe[:side_effects][eff]))
