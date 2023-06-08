@@ -69,9 +69,10 @@ FIELD_EFFECTS = {
 			:nature_power => PBMoves::SILVERWIND,
 			:mimicry => PBTypes::BUG,
 			:intro_script => nil,
-			:abilities => [PBAbilities::SWARM],
+			:abilities => [PBAbilities::SWARM,PBAbilities::SHIELDDUST],
 			:ability_effects => {
-			PBAbilities::SWARM => [PBStats::ATTACK,1]
+			PBAbilities::SWARM => [PBStats::ATTACK,1],
+			PBAbilities::SHIELDDUST => [PBStats::EVASION,1]
 			},
 			:move_damage_boost => {},
 			:move_messages => {"Bugs caught the wind!" => Fields::WIND_MOVES},

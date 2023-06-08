@@ -20,9 +20,10 @@ module PBRoles
   REDIRECTION = 18
   TRICKROOMSETTER = 19
   OFFENSIVEPIVOT = 20
+  SUPPORT = 21
 
-  def self.maxValue; 20; end
-  def self.getCount; 21; end
+  def self.maxValue; 21; end
+  def self.getCount; 22; end
   def self.getName(id)
     id = getID(PBRoles,id)
     names = [
@@ -46,7 +47,8 @@ module PBRoles
        _INTL("Target Ally"),
        _INTL("Redirection"),
        _INTL("Trick Room Setter"),
-       _INTL("Offensive Pivot")
+       _INTL("Offensive Pivot"),
+       _INTL("Support")
     ]
     return names[id]
   end

@@ -2253,3 +2253,16 @@ PBAI::ScoreHandler.add do |score, ai, user, target, move|
     $test_trigger = false
     next score
 end
+
+#Helping Hand
+PBAI::ScoreHandler.add("09C") do |score, ai, user, target, move|
+  ally = false
+  target.battler.eachAlly do |battler|
+    ally = true if battler == user.battler
+  end
+  if user.hasRole?(PBRoles::SUPPORT) && ally == true
+    score += 100
+    PBAI.log("+ 100 to boost ally attacks")
+  end
+  next score
+end
