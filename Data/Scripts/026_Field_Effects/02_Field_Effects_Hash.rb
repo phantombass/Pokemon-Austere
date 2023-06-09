@@ -360,7 +360,7 @@ FIELD_EFFECTS = {
 			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
 			:type_type_mod => {
-			PBTypes::ROCK => [PBTypes::PSYCHIC]
+			PBTypes::ROCK => PBTypes::PSYCHIC
 			}, #if a type gets added due to the field
 			:type_mod_message => {
 			"The ruins were added to the attack!" => [PBTypes::PSYCHIC]
