@@ -384,6 +384,29 @@ Pokemon = AMAURA,18
 	Nature = MODEST
 	IV = 31,31,31,31,31,31
 #-------------------------------
+[ROCKETGRUNT_M,JEFF]
+LoseText = "Sheesh."
+Pokemon = LICKITUNG,18
+	Moves = STOMP,SMELLINGSALTS,KNOCKOFF
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+Pokemon = NOIBAT,18
+	Moves = ECHOEDVOICE,DRAGONBREATH,AIRCUTTER
+	Nature = MODEST
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_M,AUDREY]
+LoseText = "Ugh."
+Pokemon = MEDITITE,18
+	Moves = FAKEOUT,ROCKSLIDE,FORCEPALM,BULLETPUNCH
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+Pokemon = DEWOTT,18
+	Moves = RAZORSHELL,NIGHTSLASH,AQUAJET
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Ability = 2
+#-------------------------------
 [ROCKETEXEC_F,ARIANA,1]
 LoseText = "Ugh."
 Pokemon = LUNATONE,19

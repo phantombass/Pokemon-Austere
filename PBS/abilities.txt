@@ -269,3 +269,4 @@
 267,ASONEGHOST,AS ONE,"Possesses 2 abilities, UNNERVE and GRIM NEIGH."
 268,MEDUSOID,MEDUSOID,"Lowers the foe's SPEED stat."
 269,MINDGAMES,MIND GAMEWS,"Lowers the foe's SPCL. ATK stat."
+270,SHARPNESS,SHARPNESS,"Boosts slicing moves."

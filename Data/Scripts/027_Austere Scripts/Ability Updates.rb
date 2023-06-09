@@ -73,3 +73,9 @@ BattleHandlers::AbilityOnSwitchIn.add(:FLASHFIRE,
     next true
   }
 )
+
+BattleHandlers::DamageCalcUserAbility.add(:SHARPNESS,
+  proc { |ability,user,target,move,mults,baseDmg,type|
+    mults[BASE_DMG_MULT] *= 1.5 if Fields::SLICING_MOVES.include?(move.id)
+  }
+)
