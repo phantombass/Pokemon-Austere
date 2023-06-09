@@ -1,4 +1,4 @@
-GAME_VERSION = "0.4.3"
+GAME_VERSION = "0.4.4"
 FISHING_AUTO_HOOK = true
 
 def write_version
