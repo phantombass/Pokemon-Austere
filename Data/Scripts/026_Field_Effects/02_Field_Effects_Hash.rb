@@ -464,7 +464,7 @@ FIELD_EFFECTS = {
 			"The loud noises brought rocks down!" => Fields::SOUND_MOVES
 			},
 			:move_type_mod => {
-			PBTypes::ROCK => [Fields::SOUND_MOVES]
+			PBTypes::ROCK => Fields::SOUND_MOVES
 			}, #if a move adds a second type to the damage done
 			:move_type_change => {},
 			:move_accuracy_change => {},
