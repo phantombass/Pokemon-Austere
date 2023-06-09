@@ -137,7 +137,7 @@ Events.onTrainerPartyLoad+=proc {|_sender, e |
         party[i].calcStats
         if !Level_Scaling.gym_leader? && !Level_Scaling.boss_battle? && !Level_Scaling.partner?
           party[i].species = Level_Scaling.evolve(party[i],level,levelcap)
-          party[i].resetMoves
+          party[i].resetMoves if $trainer.numbadges == 0
         end
       end
     end
