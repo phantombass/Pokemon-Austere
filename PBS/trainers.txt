@@ -480,7 +480,7 @@ Pokemon = PIDGEOTTO,18
 	Nature = TIMID
 	IV = 31,31,31,31,31,31
 #-------------------------------
-[YOUNGSTER,TIMMY]
+[YOUNGSTER,JIMMY]
 LoseText = "There's so much in it!."
 Pokemon = NOCTOWL,18
 	Moves = AIRSLASH,ECHOEDVOICE,HIDDENPOWERFIGHTING,ROOST
