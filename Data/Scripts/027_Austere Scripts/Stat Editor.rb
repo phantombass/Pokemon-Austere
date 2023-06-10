@@ -38,7 +38,7 @@ class PokemonSummary_Scene
       min_grind_commands[cmdNature = min_grind_commands.length] = _INTL("Change Nature")
       min_grind_commands[cmdStatChange = min_grind_commands.length] = _INTL("Change EVs/IVs")
       min_grind_commands[cmdAbility = min_grind_commands.length] = _INTL("Change Ability")
-      min_command = pbShowCommands(min_grind_commands)
+      min_command = pbShowCommands(min_grind_commands) if !@inbattle
       if cmdLevel>=0 && min_command==cmdLevel
         change_Level
       elsif cmdNature>=0 && min_command==cmdNature

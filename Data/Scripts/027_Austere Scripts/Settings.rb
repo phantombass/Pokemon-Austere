@@ -1,4 +1,4 @@
-GAME_VERSION = "0.4.7"
+GAME_VERSION = "0.4.8"
 FISHING_AUTO_HOOK = true
 
 def write_version
@@ -12,6 +12,7 @@ def reset_custom_variables
   $qol_toggle = true if $Trainer.pokedex == true
   $PokemonGlobal.repel = 0
   SetTime.clear
+  Mission_Database.setup
   $time_update = false
   $eeveelution = nil
 end

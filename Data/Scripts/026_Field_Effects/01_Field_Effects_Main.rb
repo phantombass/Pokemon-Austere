@@ -282,7 +282,7 @@ class Fields
   ECHO_MOVES = arrayToConstant(PBMoves,[:FAKEOUT,:STOMP,:SMELLINGSALTS])
   LIGHT_MOVES = arrayToConstant(PBMoves,[:LIGHTOFRUIN,:DAZZLINGGLEAM,:MOONBLAST,:PRISMATICLASER,:PHOTONGEYSER,:AURORABEAM,:SIGNALBEAM,:MISTBALL,:LUSTERPURGE,:FLASHCANNON,:MIRRORSHOT])
   #Ember added for testing purposes only
-  IGNITE_MOVES = arrayToConstant(PBMoves,[:FLAREBLITZ,:OVERHEAT,:FLAMEWHEEL,:BURNUP,:FLAMEBURST,:HEATWAVE,:LAVAPLUME,:MAGMASTORM,:ERUPTION,:MYSTICALFIRE])
+  IGNITE_MOVES = arrayToConstant(PBMoves,[:EMBER,:FLAREBLITZ,:OVERHEAT,:FLAMEWHEEL,:BURNUP,:FLAMEBURST,:HEATWAVE,:LAVAPLUME,:MAGMASTORM,:ERUPTION,:MYSTICALFIRE])
   WIND_MOVES = arrayToConstant(PBMoves,[:HURRICANE,:OMINOUSWIND,:AIRCUTTER,:AIRSLASH,:SILVERWIND,:DEFOG,:TAILWIND,:DOLDRUMS,:GUST,:RAZORWIND,:ICYWIND])
   SWAMP_CHANGERS = arrayToConstant(PBMoves,[:STONEEDGE,:POWERGEM,:METEORBEAM,:ROCKSLIDE])
   QUAKE_MOVES = arrayToConstant(PBMoves,[:EARTHQUAKE,:STOMPINGTANTRUM,:BULLDOZE,:FISSURE])
@@ -2190,6 +2190,8 @@ class PokeBattle_Move
 		 cmsg = ""
 		 for fc in fe[:field_changers].keys
 			if @battle.field.field_effects != PBFieldEffects::None
+        next if fe[:field_changers][fc].nil?
+        next if !fe[:field_changers][fc].include?(self.id)
 				if fe[:field_changers][fc].include?(self.id) && (fe[:field_change_conditions][fc] == true)
 					for message in fe[:change_message].keys
 						cmsg = message if fe[:change_message][message].include?(self.id)
@@ -2321,14 +2323,14 @@ class PokeBattle_Move
           priority.each do |pkmn|
              next if pkmn.hasActiveAbility?(:SOUNDPROOF)
              confuse = rand(100)
-             if confuse > 85
-				 @battle.pbDisplay(_INTL("The noise of the city was too much for {1}!",pkmn.name))
-				 pkmn.pbConfuse if pkmn.pbCanConfuse?
+             if confuse > 85 && $test_trigger == false
+      				 @battle.pbDisplay(_INTL("The noise of the city was too much for {1}!",pkmn.name))
+      				 pkmn.pbConfuse if pkmn.pbCanConfuse?
              end
            end
   		 when "disturb"
     			dist = rand(10)
-    			if user.pbCanFreeze?(user,true) && dist > 7
+    			if user.pbCanFreeze?(user,true) && dist > 7 && $test_trigger == false
     				user.pbFreeze
     				@battle.pbDisplay(_INTL("The spirits awoke and chilled {1} to the bone!",user.name))
     			end

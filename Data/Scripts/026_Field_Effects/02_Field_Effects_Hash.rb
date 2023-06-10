@@ -76,7 +76,7 @@ FIELD_EFFECTS = {
 			},
 			:move_damage_boost => {},
 			:move_messages => {"Bugs caught the wind!" => Fields::WIND_MOVES},
-			:move_type_mod => {Fields::WIND_MOVES => PBTypes::BUG},
+			:move_type_mod => {PBTypes::BUG => Fields::WIND_MOVES},
 			:move_type_change => {},
 			:move_accuracy_change => {},
 			:defensive_modifiers => {
@@ -254,8 +254,8 @@ FIELD_EFFECTS = {
 			:side_effects => {"cinders" => [Fields::WIND_MOVES]},
 			:side_effect_message => {},
 			:status_move_boost => [],
-			:field_changers => {PBFieldEffects::None => [PBMoves::RAINDANCE,PBWeather::Rain]},
-			:change_message => {"The rain doused the fire!" => [PBMoves::RAINDANCE,PBWeather::Rain]},
+			:field_changers => {PBFieldEffects::None => [PBMoves::RAINDANCE,PBMoves::WATERSPORT,PBWeather::Rain]},
+			:change_message => {"The rain doused the fire!" => [PBMoves::RAINDANCE,PBMoves::WATERSPORT,PBWeather::Rain]},
 			:field_change_conditions => {}
 		},
 		PBFieldEffects::Swamp => {
