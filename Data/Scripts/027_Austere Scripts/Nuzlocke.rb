@@ -199,7 +199,7 @@ class PokeBattle_Battle
     self.rules["batonpassclause"] = true
   end
   def pbItemMenu(idxBattler,firstAction)
-    if !@internalBattle || @opponent
+    if !@internalBattle || @opponent || $game_switches[950] == true
       pbDisplay(_INTL("Items can't be used here."))
       return false
     end
@@ -220,10 +220,6 @@ class PokeBattle_Battle
         next false if !pbCanUseItemOnPokemon?(item,pkmn,battler,itemScene)
       when 4, 9   # Poké Balls
         next false if idxPkmn<0
-        if $game_switches[950]
-          pbDisplay(_INTL("You can't catch this POKéMON!"))
-          return false
-        end
         battler = @battlers[idxPkmn]
         pkmn    = battler.pokemon if battler
       when 5, 10   # No target (Poké Doll, Guard Spec., Launcher items)

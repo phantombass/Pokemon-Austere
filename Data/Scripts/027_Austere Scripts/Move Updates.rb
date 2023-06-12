@@ -176,3 +176,14 @@ class PokeBattle_Move_0BC < PokeBattle_Move
     target.pbItemStatusCureCheck
   end
 end
+
+class PokeBattle_Move_190 < PokeBattle_Move
+  def pbTarget(user)
+    return PBTargets::AllNearFoes if [PBFieldEffects::Psychic,PBFieldEffects::Ruins].include?(@battle.field.field_effects)
+    super
+  end
+  def pbBaseDamage(baseDmg,user,target)
+    baseDmg *= 1.5 if [PBFieldEffects::Psychic,PBFieldEffects::Ruins].include?(@battle.field.field_effects)
+    return baseDmg
+  end
+end

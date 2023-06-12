@@ -74,7 +74,9 @@ FIELD_EFFECTS = {
 			PBAbilities::SWARM => [PBStats::ATTACK,1],
 			PBAbilities::SHIELDDUST => [PBStats::EVASION,1]
 			},
-			:move_damage_boost => {},
+			:move_damage_boost => {
+			1.2 => Fields::WIND_MOVES
+			},
 			:move_messages => {"Bugs caught the wind!" => Fields::WIND_MOVES},
 			:move_type_mod => {PBTypes::BUG => Fields::WIND_MOVES},
 			:move_type_change => {},
@@ -343,8 +345,15 @@ FIELD_EFFECTS = {
 			:nature_power => PBMoves::PSYSHOCK,
 			:mimicry => PBTypes::PSYCHIC,
 			:intro_script => nil,
-			:abilities => [],
-			:ability_effects => {},
+			:abilities => [PBAbilities::TELEPATHY,PBAbilities::POWERSPOT,PBAbilities::SYNCHRONIZE,PBAbilities::INNERFOCUS,PBAbilities::MAGICBOUNCE,PBAbilities::MAGICGUARD],
+			:ability_effects => {
+			PBAbilities::TELEPATHY => [PBStats::SPATK,1],
+			PBAbilities::POWERSPOT => [PBStats::ATTACK,1],
+			PBAbilities::INNERFOCUS => [PBStats::ATTACK,1],
+			PBAbilities::MAGICBOUNCE => [PBStats::EVASION,1],
+			PBAbilities::MAGICGUARD => [PBStats::DEFENSE,1],
+			PBAbilities::SYNCHRONIZE => [PBStats::SPEED,1]
+			},
 			:move_damage_boost => {},
 			:move_messages => {},
 			:move_type_mod => {}, #if a move adds a second type to the damage done
@@ -360,7 +369,7 @@ FIELD_EFFECTS = {
 			:type_type_change => {}, #if a type changes due to the field, i.e. Ice => Water in Lava Field
 			:type_change_message => {},
 			:type_type_mod => {
-			PBTypes::ROCK => PBTypes::PSYCHIC
+			PBTypes::ROCK => [PBTypes::PSYCHIC]
 			}, #if a type gets added due to the field
 			:type_mod_message => {
 			"The ruins were added to the attack!" => [PBTypes::PSYCHIC]

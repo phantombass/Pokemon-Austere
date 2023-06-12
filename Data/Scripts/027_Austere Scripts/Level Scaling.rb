@@ -158,4 +158,11 @@ Events.onWildPokemonCreate += proc { |_sender, e|
   if pokemon.level > levelcap
     $game_switches[950] = true
   end
+  if $game_map.map_id == 137
+    pokemon.setAbility(2)
+    pokemon.pbLearnMove(:PSYBEAM)
+    pokemon.pbLearnMove(:DRAININGKISS)
+    PBStats.eachStat {|s| pokemon.iv[s] = 31}
+    pokemon.calcStats
+  end
 }

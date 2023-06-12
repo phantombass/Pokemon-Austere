@@ -141,6 +141,7 @@ class PBAI
 	def reveal_item(battler)
 		@sides.each do |side|
 			side.battlers.each do |proj|
+				next if proj.nil?
 				if proj.battler == battler && !proj.revealed_item
 					proj.revealed_item = true
 					PBAI.log("#{proj.pokemon.name}'s item was revealed.")
@@ -489,22 +490,27 @@ class PBAI
         end
       end
 
+      for move in scores
+      	scr = 0
+      	scr += 1 if move[1] >= 300
+      end
+
       # If absolutely no good options exist
-      if scores.size == 0
+      if scores.size == 0 || scr == 0
         # Then just try to use the very first move with pp
 				healing = false
         protect = false
         for i in 0...4
           move = @battler.moves[i]
           next if move.nil?
-          if move.pp > 0
+          if move.pp > 0 && !move.statusMove?
             next if @battler.effects[PBEffects::DisableMove] == move.id
             scores << [i, 1, 0, "internal"]
           end
 					healing = true if move.healingMove?
         end
-				user.flags[:should_heal] = true if healing == true
-        user.flags[:should_protect] = true if healing == false
+				self.flags[:should_heal] = true if healing == true
+        self.flags[:should_protect] = true if healing == false
       end
 
       # Map the numeric skill factor to a -4..1 range (not hard bounds)
@@ -612,7 +618,7 @@ class PBAI
       # we won't choose a Ground move, for instance.
       if target.side == @side
         # The target is an ally
-        return nil if move.function != "0DF" # Heal Pulse
+        return nil if !["0DF","09C","16F"].include?(move.function) # Heal Pulse
         # Move score calculation will only continue if the target is not an ally,
         # or if it is an ally, then the move must be Heal Pulse (0DF).
       end
@@ -673,6 +679,13 @@ class PBAI
       if @battler.effects[PBEffects::DisableMove] == move.id
         score = 0
         PBAI.log("* 0 for the move being disabled")
+      end
+      if target.hp < target.totalhp/5
+        if move.statusMove?
+          score = 0
+        else
+          score = 300
+        end
       end
       $test_trigger = false
       PBAI.log("= #{score}")
@@ -872,6 +885,7 @@ class PBAI
       party = @battle.pbParty(@battler.index)
       return [0,0] if party.length == 1
       return [0,0] if !self.can_switch?
+      $doubles_switch = nil if $d_switch == 1
       $d_switch = 0
       $d_switch = 1 if $doubles_switch != nil
       $target_strong_moves = false
@@ -888,7 +902,7 @@ class PBAI
         for i in scores
           if i[1] == self && i[0] > 0
             next if i[1] != self
-            if i[0] >= 0 && self.turnCount == 0
+            if i[0] <= 400 && self.turnCount == 0
                 return [0,0]
              elsif i[0] <= 400
           	    return [0,0]
@@ -903,6 +917,7 @@ class PBAI
         for i in 0..availscores.size
           score = 0
           score, proj = availscores[i]
+          $doubles_switch = proj if $d_switch == 0
           if proj != nil
             self.opposing_side.battlers.each do |target|
               next if target.nil?
@@ -916,7 +931,6 @@ class PBAI
               PBAI.log("\n#{proj.pokemon.name} => #{score}")
             end
           end
-          $doubles_switch = proj if $d_switch == 0
           eligible = true
           eligible = false if proj.nil?
           if proj != nil
@@ -967,6 +981,8 @@ class PBAI
         score = 200
         score += e[0] * 100
         score -= e[1] * 100
+        score -= 10000 if $doubles_switch == proj
+        score -= 10000 if Level_Scaling.gym_leader? && self.turnCount == 0
         next [score,proj]
       end
       scores.sort! do |a,b|

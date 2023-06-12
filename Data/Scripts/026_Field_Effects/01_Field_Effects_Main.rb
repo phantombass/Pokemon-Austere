@@ -1652,7 +1652,7 @@ class PokeBattle_Battler
     return true
   end
   def affectedByRuins?
-    if pbHasType?(:FIRE) || pbHasType?(:WATER) || pbHasType?(:GRASS) || pbHasType?(:GHOST) || pbHasType?(:DRAGON)
+    if pbHasType?(:FIRE) || pbHasType?(:WATER) || pbHasType?(:GRASS) || pbHasType?(:PSYCHIC)
       return true
     else
       return false
@@ -2004,7 +2004,7 @@ class PokeBattle_Move
         ret *= typeEff.to_f/PBTypeEffectiveness::NORMAL_EFFECTIVE_ONE
         if fe[:type_mod_message] != nil
           for mess in fe[:type_mod_message].keys
-            pbDisplay(_INTL(mess)) if fe[:type_mod_message][mess].include?(moveType)
+            pbDisplay(_INTL(mess)) if fe[:type_mod_message][mess].include?(i)
           end
         end
       end

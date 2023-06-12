@@ -1507,7 +1507,7 @@ PBAI::ScoreHandler.add("0A2") do |score, ai, user, target, move|
     score = 0
     PBAI.log("- 30 for another battler will already use reflect")
   else
-    enemies = target.side.battlers.select { |proj| !proj.fainted? }.size
+    enemies = target.side.battlers.select { |proj| !proj.nil? && !proj.fainted? }.size
     physenemies = target.side.battlers.select { |proj| proj.is_physical_attacker? }.size
     add = enemies * 20 + physenemies * 30
     score += add
@@ -1530,7 +1530,7 @@ PBAI::ScoreHandler.add("0A3") do |score, ai, user, target, move|
     score = 0
     PBAI.log("- 30 for another battler will already use light screen")
   else
-    enemies = target.side.battlers.select { |proj| !proj.fainted? }.size
+    enemies = target.side.battlers.select { |proj| !proj.nil? && !proj.fainted? }.size
     specenemies = target.side.battlers.select { |proj| proj.is_special_attacker? }.size
     add = enemies * 20 + specenemies * 30
     score += add
@@ -2261,8 +2261,17 @@ PBAI::ScoreHandler.add("09C") do |score, ai, user, target, move|
     ally = true if battler == user.battler
   end
   if user.hasRole?(PBRoles::SUPPORT) && ally == true
-    score += 100
-    PBAI.log("+ 100 to boost ally attacks")
+    score += 200
+    PBAI.log("+ 200 to boost ally attacks")
+  end
+  next score
+end
+
+#Tailwind
+PBAI::ScoreHandler.add("05B") do |score, ai, user, target, move|
+  if user.hasRole?(PBRoles::SPEEDCONTROL) && (user.turnCount == 0 || user.side.effects[PBEffects::Tailwind] == 0)
+    score += 300
+    PBAI.log("+ 300 to set Tailwind")
   end
   next score
 end
