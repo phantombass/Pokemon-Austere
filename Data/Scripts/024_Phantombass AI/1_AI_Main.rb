@@ -232,12 +232,17 @@ class PBAI
 			return true if @pokemon.hasRole?(PBRoles::REDIRECTION)
 			return true if @pokemon.hasRole?(PBRoles::CLERIC)
 			return true if @pokemon.hasRole?(PBRoles::HAZARDLEAD)
+			return true if @pokemon.hasRole?(PBRoles::SPEEDCONTROL)
+			return true if @pokemon.hasRole?(PBRoles::SUPPORT)
 			return false
 		end
 
 		def setup?
+			return true if @pokemon.hasRole?(PBRoles::PHYSICALBREAKER)
+			return true if @pokemon.hasRole?(PBRoles::SPECIALBREAKER)
 			return true if @pokemon.hasRole?(PBRoles::SETUPSWEEPER)
 			return true if @pokemon.hasRole?(PBRoles::WINCON)
+			return false
 		end
 
 		def choiced?
@@ -490,9 +495,15 @@ class PBAI
         end
       end
 
+      m_ind = -1
+      s_ind = -1
       for move in scores
+      	m_ind += 1
       	scr = 0
       	scr += 1 if move[1] >= 300
+      	if move[1] < 300
+      		move[1] = 0
+      	end
       end
 
       # If absolutely no good options exist
@@ -503,7 +514,7 @@ class PBAI
         for i in 0...4
           move = @battler.moves[i]
           next if move.nil?
-          if move.pp > 0 && !move.statusMove?
+          if move.pp > 0 && !move.statusMove? && move.name != "FAKE OUT"
             next if @battler.effects[PBEffects::DisableMove] == move.id
             scores << [i, 1, 0, "internal"]
           end
@@ -1140,7 +1151,7 @@ class PBAI
       return true if target.effects[PBEffects::Substitute]>0 && move.statusMove? &&
                      !move.ignoresSubstitute?(@battler) && @battler.index != target.index
       return true if NEWEST_BATTLE_MECHANICS && @battler.hasActiveAbility?(:PRANKSTER) &&
-                     target.pbHasType?(:DARK) && target.opposes?(@battler)
+                     target.pbHasType?(:DARK) && target.opposes?(@battler) && move.statusMove?
       return true if move.priority > 0 && @battle.field.terrain == PBBattleTerrains::Psychic &&
                      target.affected_by_terrain? && target.opposes?(@battler)
 	    return false
