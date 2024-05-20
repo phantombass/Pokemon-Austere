@@ -1,33 +1,33 @@
 ﻿# See the documentation on the wiki to learn how to edit this file.
 #-------------------------------
 [000]
-Home = 94,9,7,0
-SurfBGM = Surf.ogg
-WildVictoryME = Wild Defeated.ogg
-BicycleBGM = Bicycle.ogg
-TrainerBattleBGM = VS Trainer.ogg
-WildBattleBGM = VS Wild.ogg
-TrainerVictoryME = Trainer Defeated.ogg
 PlayerB = POKEMONTRAINER_Crystal,trchar001,Crystal-onbike,PKMN-SURF_B,girl_run,PKMN-SURF_B,Crystal-fishing,Crystal-fishing
 PlayerA = POKEMONTRAINER_Gold,trchar000,Gold-onbike,PKMN-SURF_A,boy_run,PKMN-SURF_A,Gold-fishing,Gold-fishing
+WildBattleBGM = VS Wild.ogg
+BicycleBGM = Bicycle.ogg
+SurfBGM = Surf.ogg
+WildVictoryME = Wild Defeated.ogg
+TrainerVictoryME = Trainer Defeated.ogg
+TrainerBattleBGM = VS Trainer.ogg
+Home = 94,9,7,0
 #-------------------------------
 [001]
 # INTRO
 #-------------------------------
 [002]
 # NEW BARK TOWN
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 0,20,12
 BattleBack = general
 #-------------------------------
 [003]
 # \PN'S HOUSE
 MapPosition = 0,20,12
-HealingSpot = 2,15,8
 BattleBack = general
+HealingSpot = 2,15,8
 #-------------------------------
 [004]
 # \PN'S ROOM
@@ -48,15 +48,15 @@ BattleBack = general
 [007]
 # ELM'S POKéMON LAB
 MapPosition = 0,20,12
-BattleBack = general
 MapSize = 2,11
+BattleBack = general
 #-------------------------------
 [008]
 # ROUTE 29
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 0,18,12
 BattleBack = general
 #-------------------------------
@@ -68,10 +68,10 @@ BattleBack = general
 #-------------------------------
 [010]
 # GOLDENROD CITY
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 0,18,11
 BattleBack = general
 #-------------------------------
@@ -135,19 +135,19 @@ MapPosition = 0,18,10
 #-------------------------------
 [028]
 # EXIL FOREST
-ShowArea = true
-Outdoor = false
-SnapEdges = true
 Bicycle = true
+Outdoor = false
+ShowArea = true
+SnapEdges = true
 MapPosition = 0,18,10
 BattleBack = general
 #-------------------------------
 [029]
 # GANYMAHO TOWN
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 0,18,9
 BattleBack = general
 #-------------------------------
@@ -193,10 +193,10 @@ BattleBack = general
 #-------------------------------
 [038]
 # ROUTE 30
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 0,20,9
 BattleBack = general
 #-------------------------------
@@ -209,10 +209,10 @@ BattleBack = general
 #-------------------------------
 [040]
 # ROUTE 31
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 0,21,10
 BattleBack = general
 #-------------------------------
@@ -233,11 +233,11 @@ BattleBack = general
 #-------------------------------
 [044]
 # ROUTE 28
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
 DiveMap = 45
+SnapEdges = true
 MapPosition = 0,22,12
 BattleBack = general
 #-------------------------------
@@ -258,10 +258,10 @@ BattleBack = general
 #-------------------------------
 [048]
 # INDIGO PLATEAU
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 1,9,8
 BattleBack = general
 #-------------------------------
@@ -282,10 +282,10 @@ BattleBack = general
 #-------------------------------
 [052]
 # BATTLE FRONTIER
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 0,16,9
 BattleBack = general
 #-------------------------------
@@ -361,10 +361,10 @@ BattleBack = general
 #-------------------------------
 [067]
 # FRONSAF CITY
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 1,11,8
 BattleBack = general
 #-------------------------------
@@ -382,21 +382,21 @@ MapPosition = 1,11,8
 #-------------------------------
 [071]
 # ROUTE 24
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 1,13,8
 BattleBack = general
 #-------------------------------
 [072]
 # ROUTE 24
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = false
-MapPosition = 1,13,8
+Outdoor = true
+ShowArea = true
 BicycleAlways = true
+SnapEdges = true
+MapPosition = 1,13,8
 BattleBack = general
 #-------------------------------
 [073]
@@ -405,28 +405,28 @@ MapPosition = 1,12,8
 #-------------------------------
 [074]
 # ROUTE 25
-ShowArea = true
 Outdoor = true
+ShowArea = true
+BicycleAlways = true
 SnapEdges = true
 MapPosition = 1,13,9
-BicycleAlways = true
 BattleBack = general
 #-------------------------------
 [075]
 # ROUTE 26
-ShowArea = true
 Outdoor = true
+ShowArea = true
+BicycleAlways = true
 SnapEdges = true
 MapPosition = 1,13,11
-BicycleAlways = true
 BattleBack = general
 #-------------------------------
 [076]
 # ROUTE 26
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 1,13,11
 BattleBack = general
 #-------------------------------
@@ -436,10 +436,10 @@ MapPosition = 1,12,11
 #-------------------------------
 [078]
 # LLIONVERMI CITY
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 1,11,11
 BattleBack = general
 #-------------------------------
@@ -457,12 +457,12 @@ MapPosition = 1,11,11
 #-------------------------------
 [082]
 # SAFARI ZONE
+Bicycle = false
 Outdoor = true
 SnapEdges = true
-SafariMap = true
-Bicycle = false
 MapPosition = 1,11,10
 BattleBack = general
+SafariMap = true
 #-------------------------------
 [083]
 # SAFARY ZONE GATE
@@ -470,35 +470,35 @@ MapPosition = 1,11,10
 #-------------------------------
 [084]
 # HARBOUR
+Bicycle = false
 Outdoor = true
 SnapEdges = true
-Bicycle = false
 MapPosition = 1,11,11
 BattleBack = general
 #-------------------------------
 [085]
 # ROUTE 27
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 MapPosition = 1,10,11
 BattleBack = general
 #-------------------------------
 [086]
 # DAROXY ISLAND
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 BattleBack = general
 #-------------------------------
 [087]
 # FARADAY ISLAND
-ShowArea = true
-Outdoor = true
-SnapEdges = true
 Bicycle = true
+Outdoor = true
+ShowArea = true
+SnapEdges = true
 BattleBack = general
 #-------------------------------
 [088]
@@ -515,8 +515,8 @@ BattleBack = general
 #-------------------------------
 [091]
 # SILICA VALLEY
-ShowArea = true
 Outdoor = true
+ShowArea = true
 SnapEdges = true
 MapPosition = 0,20,12
 #-------------------------------
@@ -539,15 +539,15 @@ MapPosition = 0,20,12
 #-------------------------------
 [097]
 # ROUTE 1
-ShowArea = true
 Outdoor = true
+ShowArea = true
 SnapEdges = true
 MapPosition = 0,19,12
 #-------------------------------
 [098]
 # SEGUN TOWN
-ShowArea = true
 Outdoor = true
+ShowArea = true
 SnapEdges = true
 MapPosition = 0,18,11
 #-------------------------------
@@ -565,42 +565,85 @@ MapPosition = 0,18,11
 #-------------------------------
 [102]
 # ROUTE 2
-ShowArea = true
 Outdoor = true
+ShowArea = true
 SnapEdges = true
 MapPosition = 0,18,9
 #-------------------------------
 [103]
 # TERCER CITY
-ShowArea = true
 Outdoor = true
+ShowArea = true
 SnapEdges = true
 MapPosition = 0,16,9
 #-------------------------------
 [118]
 # ROUTE 3
-ShowArea = true
 Outdoor = true
+ShowArea = true
 SnapEdges = true
 MapPosition = 0,16,8
 #-------------------------------
 [119]
 # ROUTE 4
-ShowArea = true
 Outdoor = true
+ShowArea = true
 SnapEdges = true
 MapPosition = 0,15,9
 #-------------------------------
 [120]
 # ROUTE 5
-ShowArea = true
 Outdoor = true
+ShowArea = true
 SnapEdges = true
 MapPosition = 0,16,10
 #-------------------------------
 [121]
 # ROUTE 6
-ShowArea = true
 Outdoor = true
+ShowArea = true
 SnapEdges = true
 MapPosition = 0,14,11
+#-------------------------------
+[122]
+# TETRA CAVES
+ShowArea = true
+SnapEdges = true
+#-------------------------------
+[123]
+# TETRA CAVES
+ShowArea = true
+SnapEdges = true
+#-------------------------------
+[124]
+# TETRA CAVES
+ShowArea = true
+SnapEdges = true
+#-------------------------------
+[126]
+# TETRA TOWN
+Outdoor = true
+ShowArea = true
+SnapEdges = true
+MapPosition = 0,14,6
+#-------------------------------
+[130]
+# HEXA PORT
+Outdoor = true
+ShowArea = true
+SnapEdges = true
+MapPosition = 0,14,13
+#-------------------------------
+[136]
+# TOTEM ISLAND
+Outdoor = true
+ShowArea = true
+SnapEdges = true
+MapPosition = 0,12,16
+#-------------------------------
+[137]
+# TOTEM ISLAND
+Outdoor = true
+ShowArea = true
+SnapEdges = true
+MapPosition = 0,12,16

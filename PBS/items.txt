@@ -701,10 +701,11 @@
 691,BLUEORB,BLUE ORB,BLUE ORB,1,0,"Returns KYOGRE to its original form.",0,0,0,
 #--------------CUSTOM ITEMS------------------
 692,PIXIEDUST,PIXIE DUST,PIXIE DUSTS,1,3000,"Evolves certain kinds of POKéMON.",1,0,7,
-693,CHIMECHONITE,CHIMECHONITE,CHIMECHONITE,1,0,"Mega evolves CHIMECHO.",0,0,12,
+693,ALTERNATESTONE,ALTERNATE STONE,ALTERNATE STONES,1,3000,"Evolves certain kinds of POKéMON.",1,0,7,
 #--------------CUSTOM TMs------------------
 900,TM108,108,108,4,10000,"Inflicts frostbite on the foe.",3,0,0,DEEPFREEZE,
 901,TM109,109,109,4,10000,"Boiling water is shot that may burn.",3,0,0,SCALD,
 902,TM110,110,110,4,10000,"May be used to encounter POKéMON in trees.",3,0,0,HEADBUTT,
 903,TM111,111,111,4,10000,"Raises the user's ATTACK.",3,0,0,POWERUPPUNCH,
 904,TM112,112,112,4,10000,"User roosts to recover HP.",3,0,0,ROOST,
+905,TM113,113,113,4,10000,"May lower the target's Defense.",3,0,0,LIQUIDATION,

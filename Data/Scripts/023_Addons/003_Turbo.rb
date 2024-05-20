@@ -61,7 +61,7 @@ module Input
   G = 50
 
   def self.buttonToKey(btn)
-    return [0x46] if btn == Input::F
+    return [0x46] if btn == Input::G
     fast_forward_button_to_key(btn)
   end
 end

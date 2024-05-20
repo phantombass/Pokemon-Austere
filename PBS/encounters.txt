@@ -1,20 +1,4 @@
-﻿# See the documentation on the wiki to learn how to edit this file.
-#-------------------------------
-043 # UNION CAVE
-25,10,10
-Cave
-    PICHU,1
-    CLEFFA,1
-    IGGLYBUFF,1
-    IGGLYBUFF,1
-    CHINGLING,1
-    CHINGLING,1
-    RIOLU,1
-    RIOLU,1
-    TYROGUE,1
-    TYROGUE,1
-    TYROGUE,1
-    TYROGUE,1
+# See the documentation on the wiki to learn how to edit this file.
 #-------------------------------
 091 # SILICA VALLEY
 25,10,10
@@ -76,7 +60,7 @@ LandNight
     HOOTHOOT,3,6
     MORELULL,3,6
     MORELULL,3,6
-    CHINGLING,3,6
+    SHINX,3,6
     BIDOOF,3,6
     KRICKETOT,3,6
     KRICKETOT,3,6
@@ -171,8 +155,8 @@ LandNight
     SPEAROW,7,9
     SHROOMISH,7,9
     SHROOMISH,7,9
-    CHINGLING,7,9
-    CHINGLING,7,9
+    IGGLYBUFF,7,9
+    IGGLYBUFF,7,9
     KRICKETOT,7,9
     KRICKETOT,7,9
     DRIFLOON,7,9
@@ -237,8 +221,8 @@ LandNight
     MACHOP,10,12
     SCRAGGY,10,12
     SCRAGGY,10,12
-    CHINGLING,10,12
-    CHINGLING,10,12
+    SOLOSIS,10,12
+    GOTHITA,10,12
     VULPIX,10,12
     VULPIX,10,12
     LITWICK,10,12
@@ -246,3 +230,228 @@ LandNight
     LITWICK,10,12
     HONEDGE,10,12
 #-------------------------------
+118 # Route 3
+25,10,10
+LandDay
+    RATTATA,7,9
+    PIDGEY,7,9
+    BOUNSWEET,7,9
+    FOMANTIS,7,9
+    PIDOVE,7,9
+    PATRAT,7,9
+    ODDISH,7,9
+    BELLSPROUT,7,9
+    HOPPIP,7,9
+    HOPPIP,7,9
+    HOPPIP,7,9
+    HOPPIP,7,9
+LandNight
+    PURRLOIN,7,9
+    SPEAROW,7,9
+    MORELULL,7,9
+    SHROOMISH,7,9
+    YAMPER,7,9
+    YAMPER,7,9
+    NINCADA,7,9
+    NINCADA,7,9
+    PHANTUMP,7,9
+    PUMPKABOO,7,9
+    PHANTUMP,7,9
+    PUMPKABOO,7,9
+HeadbuttHigh
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+HeadbuttLow
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+#-------------------------------
+120 # Route 5
+25,10,10
+LandDay
+    LILLIPUP,7,9
+    PIDOVE,7,9
+    PANSAGE,7,9
+    PANPOUR,7,9
+    PANSEAR,7,9
+    MANKEY,7,9
+    ODDISH,7,9
+    BELLSPROUT,7,9
+    EXEGGCUTE,7,9
+    EXEGGCUTE,7,9
+    EXEGGCUTE_1,7,9
+    EXEGGCUTE_1,7,9
+LandNight
+    PURRLOIN,7,9
+    WOOBAT,7,9
+    MORELULL,7,9
+    SHROOMISH,7,9
+    CUBONE_1,7,9
+    CUBONE_1,7,9
+    NINCADA,7,9
+    NINCADA,7,9
+    PHANTUMP,7,9
+    PUMPKABOO,7,9
+    PHANTUMP,7,9
+    PUMPKABOO,7,9
+HeadbuttHigh
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+    HOOTHOOT,2,5
+    JOLTIK,2,5
+HeadbuttLow
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+    SCYTHER,2,5
+#-------------------------------
+121 # Route 6
+25,10,10
+LandDay
+    CATERPIE,7,9
+    WEEDLE,7,9
+    METAPOD,7,9
+    KAKUNA,7,9
+    SEWADDLE,7,9
+    LEDYBA,7,9
+    PARAS,7,9
+    WURMPLE,7,9
+    SCYTHER,7,9
+    PINSIR,7,9
+    SCYTHER,7,9
+    PINSIR,7,9
+LandNight
+    CATERPIE,7,9
+    WEEDLE,7,9
+    METAPOD,7,9
+    KAKUNA,7,9
+    KRICKETOT,7,9
+    NINCADA,7,9
+    PARAS,7,9
+    WURMPLE,7,9
+    SCYTHER,7,9
+    PINSIR,7,9
+    SCYTHER,7,9
+    PINSIR,7,9
+#---------------
+122 # Tetra Caves South
+25,10,10
+Cave
+    WHISMUR,7,9
+    ZUBAT,7,9
+    WHISMUR,7,9
+    ZUBAT,7,9
+    GEODUDE,7,9
+    ROGGENROLA,7,9
+    ONIX,7,9
+    ONIX,7,9
+    NOIBAT,7,9
+    NOIBAT,7,9
+    NOIBAT,7,9
+    NOIBAT,7,9
+Water
+    TENTACOOL,14,19
+    GYARADOS,15,16
+    REMORAID,14,16
+    REMORAID,14,16
+    REMORAID,14,16
+OldRod
+    MAGIKARP,5,5
+    TENTACOOL,15,15
+GoodRod
+    GYARADOS,17,18
+    CLAMPERL,16,19
+    CHINCHOU,15,16
+SuperRod
+    GYARADOS,17,19
+    QWILFISH,16,19
+    CORSOLA,15,18
+    FEEBAS,15,17
+    FEEBAS,15,17
+#-------------------------------
+124 # Tetra Caves North
+25,10,10
+Cave
+    WHISMUR,7,9
+    ZUBAT,7,9
+    WHISMUR,7,9
+    ZUBAT,7,9
+    GEODUDE,7,9
+    ROGGENROLA,7,9
+    ONIX,7,9
+    ONIX,7,9
+    NOIBAT,7,9
+    NOIBAT,7,9
+    NOIBAT,7,9
+    NOIBAT,7,9
+#-------------------------------
+130 # Hexa Port
+25,10,10
+Water
+    TENTACOOL,14,19
+    GYARADOS,15,16
+    REMORAID,14,16
+    REMORAID,14,16
+    REMORAID,14,16
+OldRod
+    MAGIKARP,5,5
+    TENTACOOL,15,15
+GoodRod
+    GYARADOS,17,18
+    CLAMPERL,16,19
+    FEEBAS,15,16
+SuperRod
+    GYARADOS,17,19
+    QWILFISH,16,19
+    CORSOLA,15,18
+    WAILMER,15,17
+    LAPRAS,15,17
+#-------------------------------
+136 # Totem Island
+25,10,10
+LandDay
+    BLIPBUG,7,9
+    NINCADA,7,9
+    BLIPBUG,7,9
+    NINCADA,7,9
+    RALTS,7,9
+    EXEGGCUTE,7,9
+    RALTS,7,9
+    EXEGGCUTE,7,9
+    CUBONE,7,9
+    ABRA,7,9
+    SMOOCHUM,7,9
+    BELDUM,7,9
+LandNight
+    BLIPBUG,7,9
+    NINCADA,7,9
+    BLIPBUG,7,9
+    NINCADA,7,9
+    RALTS,7,9
+    EXEGGCUTE,7,9
+    RALTS,7,9
+    EXEGGCUTE,7,9
+    INKAY,7,9
+    ABRA,7,9
+    ABSOL,7,9
+    PAWNIARD,7,9
+#---------------

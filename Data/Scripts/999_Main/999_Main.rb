@@ -43,6 +43,7 @@ def mainFunctionDebug
     setScreenBorderName("border")   # Sets image file for the border
     Graphics.update
     Graphics.freeze
+    Console.setup_console
     $scene = pbCallTitle
     $scene.main until $scene.nil?
     Graphics.transition(20)

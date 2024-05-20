@@ -230,9 +230,9 @@ class EncounterListUI_withforms
     i = 0
     @encarray2.each do |specie| # Loops over internal IDs of encounters on current map     
       fSpecies = pbGetSpeciesFromFSpecies(specie) # Array of internal ID of base form and form ID of specie
-      if !pbFormSeen?(fSpecies[0],fSpecies[1]) && !pbFormOwned?(fSpecies[0],fSpecies[1])
-        @sprites["icon_#{i}"] = PokemonSpeciesIconSprite.new(0,@viewport)
-      elsif !pbFormOwned?(fSpecies[0],fSpecies[1])
+      #if !pbFormSeen?(fSpecies[0],fSpecies[1]) && !pbFormOwned?(fSpecies[0],fSpecies[1])
+      #  @sprites["icon_#{i}"] = PokemonSpeciesIconSprite.new(0,@viewport)
+      if !pbFormOwned?(fSpecies[0],fSpecies[1])
         @sprites["icon_#{i}"] = PokemonSpeciesIconSprite.new(fSpecies[0],@viewport)
         @sprites["icon_#{i}"].pbSetParams(fSpecies[0],0,fSpecies[1],false)
         @sprites["icon_#{i}"].tone = Tone.new(0, 0, 0, 255)

@@ -1,4 +1,4 @@
-﻿# See the documentation on the wiki to learn how to edit this file.
+# See the documentation on the wiki to learn how to edit this file.
 #-------------------------------
 # ROUTE 1
 #-------------------------------
@@ -40,67 +40,614 @@ Pokemon = HERACROSS,10
 #-------------------------------
 [LASS,SOPHIA]
 LoseText = "You're really good!"
-Pokemon = TORRACAT,20
+Pokemon = TORRACAT,15
 	Moves = FAKEOUT,DOUBLEKICK,FLAMEWHEEL,CRUNCH
 	IV = 31,31,31,31,31,31
 	EV = 0,252,0,252,0,4
 	Item = NORMALGEM
 	Nature = JOLLY
 	Ability = 2
-	Role = PHYSICALBREAKER
-Pokemon = SKIDDO,20
+	Roles = PHYSICALBREAKER
+Pokemon = SKIDDO,15
 	Moves = GRASSYGLIDE,MILKDRINK,TOXIC,PROTECT
 	IV = 31,31,31,31,31,31
 	EV = 252,0,0,0,4,252
 	Nature = CAREFUL
 	Item = TERRAINEXTENDER
 	Ability = 1
-	Role = TOXICSTALLER
-Pokemon = SWOOBAT,20
-	Moves = CALMMIND,AIRCUTTER,ROOST,PSYBEAM
+	Roles = TOXICSTALLER
+Pokemon = SWOOBAT,15
+	Moves = CALMMIND,DOLDRUMS,ROOST,PSYBEAM
 	IV = 31,31,31,31,31,31
 	EV = 0,0,4,252,252,0
 	Item = GRASSYSEED
 	Nature = TIMID
 	Ability = 2
-	Role = SETUPSWEEPER
-Pokemon = LUXIO,20
+	Roles = SETUPSWEEPER
+Pokemon = LUXIO,15
 	Moves = THUNDERFANG,ICEFANG,BITE,FIREFANG
 	IV = 31,31,31,31,31,31
 	EV = 0,252,0,252,0,4
 	Item = MUSCLEBAND
 	Nature = JOLLY
 	Ability = 0
-	Role = PHYSICALBREAKER
+	Roles = PHYSICALBREAKER
 #-------------------------------
 # TERCER CITY
 #-------------------------------
 [GENTLEMAN,EBENEZER]
 LoseText = "Fair enough."
-Pokemon = SCRAGGY,20
+Pokemon = SCRAGGY,15
 	Moves = FAKEOUT,DRAINPUNCH,KNOCKOFF,ICEPUNCH
 	IV = 31,31,31,31,31,31
 	EV = 252,252,0,0,0,4
 	Item = BERRYJUICE
 	Nature = ADAMANT
 	Ability = 2
-	Role = PHYSICALBREAKER
-Pokemon = BRONZOR,20
+	Roles = PHYSICALBREAKER
+Pokemon = BRONZOR,15
 	Moves = GYROBALL,PROTECT,PSYWAVE,TOXIC
 	IV = 31,31,31,0,31,31
 	EV = 252,0,0,0,4,252
 	Nature = SASSY
 	Item = BERRYJUICE
 	Ability = 0
-	Role = TOXICSTALLER
-Pokemon = CLEFABLE,20
+	Roles = TOXICSTALLER
+Pokemon = CLEFABLE,15
 	Moves = DRAININGKISS,ICYWIND,WORKUP,MYSTICALFIRE
 	IV = 31,0,31,31,31,31
 	EV = 252,0,0,0,252,4
 	Item = LIFEORB
 	Nature = MODEST
 	Ability = 1
+	Roles = WINCON
+#-------------------------------
+# SHOFAR CORP
+#-------------------------------
+[LEADER_Janine,WENDY]
+LoseText = "Truly amazing!"
+Pokemon = STARAVIA,13
+	Moves = WINGATTACK,QUICKATTACK,TAILWIND,ROOST
+	IV = 31,31,31,31,31,31
+	EV = 252,4,252,0,0,0
+	Item = BERRYJUICE
+	Nature = IMPISH
+	Ability = 0
+	Roles = PHYSICALWALL,SPEEDCONTROL
+Pokemon = EMOLGA,13
+	Moves = AIRCUTTER,SHOCKWAVE,ROOST,ENERGYBALL
+	IV = 31,31,31,31,31,31
+	EV = 0,0,0,252,252,4
+	Item = CHARTIBERRY
+	Nature = TIMID
+	Ability = 2
+	Roles = SPECIALBREAKER
+Pokemon = GLIGAR,13
+	Moves = WINGATTACK,SWORDSDANCE,DUSTYDASH,ROOST
+	IV = 31,31,31,31,31,31
+	EV = 252,4,0,252,0,0
+	Item = FOCUSSASH
+	Nature = JOLLY
+	Ability = 2
+	Roles = WINCON
+#-------------------------------
+[ROCKETGRUNT_F,MAY]
+LoseText = "But you did."
+Pokemon = VOLTORB,10
+	Moves = CHARGEBEAM,ECHOEDVOICE,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+Pokemon = KLINK,11
+	Moves = CHARGEBEAM,MIRRORSHOT,MIRRORRUSH
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_F,JUNE]
+LoseText = "Ugh."
+Pokemon = PLUSLE,10
+	Moves = CHARGEBEAM,QUICKATTACK,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+Pokemon = MINUN,11
+	Moves = CHARGEBEAM,QUICKATTACK,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_M,AL]
+LoseText = "Punk."
+Pokemon = ELECTRIKE,10
+	Moves = DISCHARGE,FLAMEBURST,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+	Ability = 2
+Pokemon = CHINCHOU,11
+	Moves = DISCHARGE,BUBBLEBEAM,ICYWIND
+	IV = 31,31,31,31,31,31
+	Ability = 0
+#-------------------------------
+[ROCKETGRUNT_M,BOB]
+LoseText = "Oof."
+Pokemon = PIKACHU,10
+	Moves = FAKEOUT,QUICKATTACK,HIDDENPOWERICE,CHARGEBEAM
+	IV = 31,31,31,31,31,31
+	Ability = 2
+Pokemon = BLITZLE,11
+	Moves = CHARGEBEAM,QUICKATTACK,FLAMEBURST
+	IV = 31,31,31,31,31,31
+	Ability = 1
+#-------------------------------
+[ROCKETGRUNT_F,APRIL]
+LoseText = "Sheesh."
+Pokemon = MAGNEMITE,10
+	Moves = CHARGEBEAM,MIRRORRUSH,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+Pokemon = MAREEP,11
+	Moves = CHARGEBEAM,HIDDENPOWERICE,THUNDERWAVE
+	IV = 31,31,31,31,31,31
+	Roles = SPEEDCONTROL
+	Ability = 2
+#-------------------------------
+[ROCKETGRUNT_F,WEDNESDAY]
+LoseText = "Ugh."
+Pokemon = DEDENNE,10
+	Moves = CHARGEBEAM,DRAININGKISS,HIDDENPOWERICE
+	Ability = 2
+	IV = 31,31,31,31,31,31
+Pokemon = MINUN,11
+	Moves = CHARGEBEAM,QUICKATTACK,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_M,CAL]
+LoseText = "But you did."
+Pokemon = PACHIRISU,10
+	Moves = DISCHARGE,FAKEOUT,HIDDENPOWERICE
+	IV = 31,31,31,31,31,31
+	Ability = 2
+Pokemon = TOGEDEMARU,11
+	Moves = CHARGEBEAM,MIRRORRUSH,HIDDENPOWERICE,FAKEOUT
+	IV = 31,31,31,31,31,31
+	Ability = 1
+#-------------------------------
+[ROCKETGRUNT_M,PHIL]
+LoseText = "Ugh."
+Pokemon = PINCURCHIN,10
+	Moves = CHARGEBEAM,HIDDENPOWERICE,RECOVER
+	IV = 31,31,31,31,31,31
+Pokemon = ELEKID,11
+	Moves = MACHPUNCH,DISCHARGE,FIREPUNCH
+	Ability = 2
+#-------------------------------
+[ROCKETEXEC_F,ARIANA]
+LoseText = "Ugh."
+Pokemon = FLAAFFY,10
+	Moves = CHARGEBEAM,HIDDENPOWERICE,SIGNALBEAM
+	Item = BERRYJUICE
+	IV = 31,31,31,31,31,31
+	EV = 252,0,0,0,252,4
+	Nature = MODEST
+	Ability = 2
+	Role = SPECIALBREAKER
+Pokemon = GOLDEEN,11
+	Moves = BUBBLEBEAM,ICYWIND,PSYBEAM,HIDDENPOWERELECTRIC
+	Item = BERRYJUICE
+	IV = 31,31,31,31,31,31
+	EV = 0,0,0,252,252,4
+	Ability = 2
+	Nature = MODEST
 	Role = WINCON
+#-------------------------------
+[ROCKETEXEC_M,ARCHER]
+LoseText = "Good grief."
+Pokemon = STUNFISK,10
+	Moves = DISCHARGE,MUDSHOT,BUBBLEBEAM,SLACKOFF
+	Item = BERRYJUICE
+	IV = 31,31,31,31,31,31
+	EV = 252,0,0,0,4,252
+	Nature = MODEST
+	Ability = 1
+	Role = SPECIALWALL
+Pokemon = PIKACHU,11
+	Moves = FAKEOUT,QUICKATTACK,CHARGEBEAM,HIDDENPOWERICE
+	Item = LIGHTBALL
+	IV = 31,31,31,31,31,31
+	EV = 0,0,0,252,252,4
+	Ability = 2
+	Nature = MODEST
+	Role = WINCON
+#-------------------------------
+# ROUTE 3
+#-------------------------------
+[POKEMONTRAINER_Crystal,EVE]
+LoseText = "Wow!"
+Pokemon = GRANBULL,18
+	Moves = BRICKBREAK,COVET,BITE,FIREPUNCH
+	IV = 31,31,31,31,31,31
+	EV = 252,252,4,0,0,0
+	Item = ASSAULTVEST
+	Nature = ADAMANT
+	Ability = 0
+	Roles = PHYSICALBREAKER,OFFENSIVEPIVOT
+Pokemon = BRIONNE,18
+	Moves = HYPERVOICE,DRAININGKISS,ICYWIND,ENERGYBALL
+	IV = 31,0,31,31,31,31
+	EV = 252,0,0,0,252,4
+	Item = GOLDBERRY
+	Nature = MODEST
+	Ability = 2
+	Roles = SPECIALBREAKER
+Pokemon = SYLVEON,18
+	Moves = HYPERVOICE,CALMMIND,MYSTICALFIRE,HELPINGHAND
+	IV = 31,0,31,31,31,31
+	EV = 252,0,4,0,252,0
+	Item = LEFTOVERS
+	Nature = MODEST
+	Ability = 2
+	Roles = WINCON
+#-------------------------------
+[ROCKETGRUNT_F,MAY,1]
+LoseText = "But you did."
+Pokemon = ROSELIA,18
+	Moves = GIGADRAIN,SLUDGE,HIDDENPOWERFIRE
+	Nature = MODEST
+	Ability = 2
+	IV = 31,31,31,31,31,31
+Pokemon = FLOETTE,19
+	Moves = DAZZLINGGLEAM,MEGADRAIN,SYNTHESIS
+	Nature = MODEST
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_F,JUNE,1]
+LoseText = "Ugh."
+Pokemon = SKIDDO,18
+	Moves = GRASSYGLIDE,STOMPINGTANTRUM,MILKDRINK
+	Nature = CAREFUL
+	Ability = 0
+	IV = 31,31,31,31,31,31
+Pokemon = HERACROSS,18
+	Moves = PINMISSILE,ROCKSLIDE,BRICKBREAK
+	Nature = JOLLY
+	Ability = 0
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_M,AL,1]
+LoseText = "Punk."
+Pokemon = COTTONEE,18
+	Moves = AIRCUTTER,MEGADRAIN,DAZZLINGGLEAM,SYNTHESIS
+	IV = 31,31,31,31,31,31
+Pokemon = SCYTHER,18
+	Moves = DUALWINGBEAT,BUGBITE,ROOST,SWORDSDANCE
+	IV = 31,31,31,31,31,31
+	Ability = 0
+#-------------------------------
+[ROCKETGRUNT_M,BOB,1]
+LoseText = "Oof."
+Pokemon = KRICKETUNE,18
+	Moves = PINMISSILE,ROCKTOMB,BULLETSEED,FELLSTINGER
+	IV = 31,31,31,31,31,31
+	Ability = 2
+Pokemon = TOGETIC,18
+	Moves = DAZZLINGGLEAM,DOLDRUMS,ROOST
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_F,APRIL,1]
+LoseText = "Sheesh."
+Pokemon = GEODUDE,18
+	Moves = ROCKSLIDE,BULLDOZE,FIREPUNCH
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+Pokemon = CRANIDOS,18
+	Moves = ROCKSLIDE,FIREPUNCH,HEADBUTT,ACCELEROCK
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_F,WEDNESDAY,1]
+LoseText = "Ugh."
+Pokemon = ARCHEN,18
+	Moves = ROCKSLIDE,PLUCK,ROOST
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+Pokemon = ARON,18
+	Moves = ROCKSLIDE,IRONHEAD,AVALANCHE
+	Nature = BRAVE
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_M,CAL,1]
+LoseText = "But you did."
+Pokemon = TAILLOW,18
+	Moves = BOOMBURST,QUICKATTACK,HIDDENPOWEGROUND
+	Nature = MODEST
+	IV = 31,31,31,31,31,31
+	Ability = 2
+#-------------------------------
+[ROCKETGRUNT_M,PHIL,1]
+LoseText = "Ugh."
+Pokemon = GOLETT,18
+	Moves = BULLDOZE,ROCKSLIDE,SHADOWPUNCH
+	Nature = ADAMANT
+	Ability = 0
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_M,LARRY]
+LoseText = "Sheesh."
+Pokemon = WHISMUR,18
+	Moves = ECHOEDVOICE,ICYWIND,STOMP
+	Nature = QUIET
+	IV = 31,31,31,31,31,31
+Pokemon = ZUBAT,18
+	Moves = WINGATTACK,POISONFANG,ROOST
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_M,WHIT]
+LoseText = "Ugh."
+Pokemon = MAKUHITA,18
+	Moves = FAKEOUT,SMELLINGSALT,FORCEPALM
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+Pokemon = AMAURA,18
+	Moves = ROUND,ICYWIND,ANCIENTPOWER
+	Nature = MODEST
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_M,JEFF]
+LoseText = "Sheesh."
+Pokemon = LICKITUNG,18
+	Moves = STOMP,SMELLINGSALTS,KNOCKOFF
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+Pokemon = NOIBAT,18
+	Moves = ECHOEDVOICE,DRAGONBREATH,AIRCUTTER
+	Nature = MODEST
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[ROCKETGRUNT_F,AUDREY]
+LoseText = "Ugh."
+Pokemon = MEDITITE,18
+	Moves = FAKEOUT,ROCKSLIDE,FORCEPALM,BULLETPUNCH
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+Pokemon = DEWOTT,18
+	Moves = RAZORSHELL,NIGHTSLASH,AQUAJET
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Ability = 2
+#-------------------------------
+[ROCKETEXEC_F,ARIANA,1]
+LoseText = "Ugh."
+Pokemon = LUNATONE,19
+	Moves = ANCIENTPOWER,CALMMIND,PSYBEAM,ICYWIND
+	Item = COLBURBERRY
+	IV = 31,31,31,31,31,31
+	EV = 252,0,0,0,252,4
+	Nature = MODEST
+	Role = SPECIALBREAKER,SETUPSWEEPER
+Pokemon = NOCTOWL,20
+	Moves = HYPERVOICE,DOLDRUMS,PSYBEAM,ROOST
+	Item = GOLDBERRY
+	IV = 31,31,31,31,31,31
+	EV = 252,0,0,0,252,4
+	Ability = 2
+	Nature = MODEST
+	Role = WINCON
+#-------------------------------
+[ROCKETEXEC_M,ARCHER,1]
+LoseText = "Good grief."
+Pokemon = SOLROCK,19
+	Moves = ROCKSLIDE,PSYCHOCUT,SWORDSDANCE,MORNINGSUN
+	Item = COLBURBERRY
+	IV = 31,31,31,31,31,31
+	EV = 0,252,4,252,0,0
+	Nature = ADAMANT
+	Role = PHYSICALBREAKER,SETUPSWEEPER
+Pokemon = HONEDGE,20
+	Moves = SWORDSDANCE,SHADOWSNEAK,CUT,ROCKSLIDE
+	Item = EVIOLITE
+	IV = 31,31,31,31,31,31
+	EV = 252,252,0,0,0,4
+	Ability = 2
+	Nature = MODEST
+	Role = WINCON
+#-------------------------------
+[HIKER,ANDY]
+LoseText = "There's so much in it!."
+Pokemon = GEODUDE,18
+	Moves = ROCKTHROW,BULLDOZE,FIREPUNCH
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+Pokemon = LARVITAR,18
+	Moves = ROCKSLIDE,STOMPINGTANTRUM,BITE
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[YOUNGSTER,KYLE]
+LoseText = "There's so much in it!."
+Pokemon = DWEBBLE,18
+	Moves = ROCKTHROW,BUGBITE,KNOCKOFF
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+Pokemon = MONFERNO,18
+	Moves = FLAMEWHEEL,MACHPUNCH,THUNDERPUNCH
+	Nature = JOLLY
+	Ability = 2
+	IV = 31,31,31,31,31,31
+#-------------------------------
+# ROUTE 5
+#-------------------------------
+[YOUNGSTER,TIMMY]
+LoseText = "There's so much in it!."
+Pokemon = GROWLITHE,18
+	Moves = FLAMEWHEEL,BITE,THUNDERFANG
+	Nature = ADAMANT
+	Ability = 1
+	IV = 31,31,31,31,31,31
+Pokemon = PIDGEOTTO,18
+	Moves = DOLDRUMS,ECHOEDVOICE,ROOST,HIDDENPOWERFIGHTING
+	Nature = TIMID
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[YOUNGSTER,JIMMY]
+LoseText = "There's so much in it!."
+Pokemon = NOCTOWL,18
+	Moves = AIRSLASH,ECHOEDVOICE,HIDDENPOWERFIGHTING,ROOST
+	Nature = MODEST
+	Ability = 2
+	IV = 31,31,31,31,31,31
+Pokemon = DEWPIDER,18
+	Moves = BUBBLEBEAM,ICYWIND,SILVERWIND
+	Nature = MODEST
+	IV = 31,31,31,31,31,31
+Pokemon = KRICKETUNE,18
+	Moves = PINMISSILE,ROCKTOMB,BULLETSEED,KNOCKOFF
+	Nature = JOLLY
+	Ability = 2
+	IV = 31,31,31,31,31,31
+#-------------------------------
+# ROUTE 6
+#-------------------------------
+[BUGCATCHER,SAMMY]
+LoseText = "Have you seen him?"
+Pokemon = BUTTERFREE,18
+	Moves = SILVERWIND,AIRCUTTER,PSYBEAM
+	Nature = TIMID
+	Ability = 2
+	IV = 31,31,31,31,31,31
+Pokemon = BEEDRILL,18
+	Moves = TWINEEDLE,FOCUSENERGY,AERIALACE,POISONTAIL
+	Nature = JOLLY
+	Ability = 2
+	IV = 31,31,31,31,31,31
+Pokemon = LEDIAN,18
+	Moves = BUGBITE,AERIALACE,MACHPUNCH,BULLETSEED
+	Nature = JOLLY
+	Ability = 2
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[BUGCATCHER,ANTHONY]
+LoseText = "I love bugs!"
+Pokemon = KARRABLAST,18
+	Moves = FURYCUTTER,SMACKDOWN,BULLETSEED,DRILLRUN
+	Nature = JOLLY
+	Ability = 2
+	IV = 31,31,31,31,31,31
+Pokemon = SHELMET,18
+	Moves = SILVERWIND,MEGADRAIN,HIDDENPOWERROCK
+	Nature = MODEST
+	Ability = 1
+	IV = 31,31,31,31,31,31
+Pokemon = SIZZLIPEDE,18
+	Moves = BUGBITE,FLAMEWHEEL,BITE
+	Nature = JOLLY
+	Ability = 0
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[BUGCATCHER,BUD]
+LoseText = "It's my favorite!"
+Pokemon = SCYTHER,18
+	Moves = BUGBITE,AERIALACE,QUICKATTACK
+	Nature = JOLLY
+	Ability = 1
+	IV = 31,31,31,31,31,31
+#-------------------------------
+[BUGCATCHER,WEBSTER]
+LoseText = "I love bugs!"
+Pokemon = WORMADAM,18
+	Form = 1
+	Moves = BUGBITE,SMACKDOWN,BULLDOZE
+	Nature = ADAMANT
+	Ability = 2
+	IV = 31,31,31,31,31,31
+Pokemon = MOTHIM,18
+	Moves = SILVERWIND,MEGADRAIN,DOLDRUMS
+	Nature = MODEST
+	Ability = 1
+	IV = 31,31,31,31,31,31
+Pokemon = WORMADAM,18
+	Form = 2
+	Moves = SILVERWIND,MIRRORRUSH,HIDDENPOWERWATER
+	Nature = MODEST
+	Ability = 2
+	IV = 31,31,31,31,31,31
+Pokemon = CUTIEFLY,18
+	Moves = SILVERWIND,FAIRYWIND,HIDDENPOWERGROUND,ROOST
+	Nature = MODEST
+	Ability = 1
+	IV = 31,31,31,31,31,31
+#-------------------------------
+# TOTEM ISLAND
+#-------------------------------
+[LEADER_Erika,CASSANDRA]
+LoseText = "Truly amazing!"
+Pokemon = MEOWSTIC,20
+	Gender = male
+	Moves = FAKEOUT,EXPANDINGFORCE,LIGHTSCREEN,REFLECT
+	IV = 31,0,31,31,31,31
+	EV = 252,0,0,252,4,0
+	Item = LIGHTCLAY
+	Nature = TIMID
+	Ability = 2
+	Roles = SCREENS
+Pokemon = GIRAFARIG,20
+	Moves = HYPERVOICE,PSYBEAM,PROTECT,HELPINGHAND
+	IV = 31,0,31,31,31,31
+	EV = 0,0,0,252,252,4
+	Item = THROATSPRAY
+	Nature = TIMID
+	Ability = 1
+	Roles = SPECIALBREAKER,SUPPORT,SETUPSWEEPER
+Pokemon = MRMIME,20
+	Moves = PSYBEAM,DAZZLINGGLEAM,FAKEOUT,SLACKOFF
+	IV = 31,31,31,31,31,31
+	EV = 0,0,4,252,252,0
+	Item = GOLDBERRY
+	Nature = TIMID
+	Ability = 0
+	Roles = WINCON
+#-------------------------------
+[LEADER_Erika,CASSANDRA,1]
+LoseText = "How intriguing."
+Pokemon = MEOWSTIC,20
+	Gender = male
+	Moves = FAKEOUT,EXPANDINGFORCE,LIGHTSCREEN,REFLECT
+	IV = 31,0,31,31,31,31
+	EV = 252,0,0,252,4,0
+	Item = LIGHTCLAY
+	Nature = TIMID
+	Ability = 2
+	Roles = SCREENS
+Pokemon = SIGILYPH,20
+	Moves = DOLDRUMS,PSYBEAM,TAILWIND,ROOST
+	IV = 31,0,31,31,31,31
+	EV = 252,0,0,252,4,0
+	Item = LIFEORB
+	Nature = TIMID
+	Ability = 1
+	Roles = SPECIALBREAKER,SPEEDCONTROL
+Pokemon = GIRAFARIG,20
+	Moves = HYPERVOICE,PSYBEAM,PROTECT,HELPINGHAND
+	IV = 31,0,31,31,31,31
+	EV = 0,0,0,252,252,4
+	Item = THROATSPRAY
+	Nature = TIMID
+	Ability = 1
+	Roles = SPECIALBREAKER,SUPPORT,SETUPSWEEPER
+Pokemon = MEDITITE,20
+	Moves = FAKEOUT,PSYCHOCUT,ROCKSLIDE,DRAINPUNCH
+	IV = 31,31,31,31,31,31
+	EV = 4,252,0,252,0,0
+	Item = COBABERRY
+	Nature = JOLLY
+	Roles = PHYSICALBREAKER
+Pokemon = UNOWN,20
+	Moves = HIDDENPOWERPSYCHIC
+	IV = 31,31,31,31,31,31
+	EV = 252,0,4,0,252,0
+	Item = CHOICESPECS
+	Nature = MODEST
+	Ability = 2
+	Roles = SPECIALBREAKER
+Pokemon = MRMIME,20
+	Moves = PSYBEAM,DAZZLINGGLEAM,FAKEOUT,SLACKOFF
+	IV = 31,31,31,31,31,31
+	EV = 0,0,4,252,252,0
+	Item = GOLDBERRY
+	Nature = TIMID
+	Ability = 0
+	Roles = WINCON
 #-------------------------------
 # TERCER GYM
 #-------------------------------
@@ -116,72 +663,100 @@ Pokemon = BUTTERFREE,10
 Pokemon = FLETCHLING,11
 Pokemon = WINGULL,11
 #-------------------------------
-[LEADER_Janine,WENDY]
+[LEADER_Janine,WENDY,1]
 LoseText = "Truly amazing!"
-Pokemon = STARAVIA,20
-	Moves = WINGATTACK,QUICKATTACK,UTURN,ROOST
+Pokemon = STARAVIA,15
+	Moves = WINGATTACK,QUICKATTACK,TAILWIND,ROOST
 	IV = 31,31,31,31,31,31
 	EV = 252,4,252,0,0,0
 	Item = BERRYJUICE
 	Nature = IMPISH
 	Ability = 0
-	Role = PHYSICALWALL
-Pokemon = EMOLGA,20
-	Moves = AIRCUTTER,SHOCKWAVE,UTURN,ENERGYBALL
+	Roles = PHYSICALWALL,SPEEDCONTROL
+Pokemon = EMOLGA,15
+	Moves = AIRCUTTER,SHOCKWAVE,PROTECT,ENERGYBALL
 	IV = 31,31,31,31,31,31
 	EV = 0,0,0,252,252,4
 	Item = CHARTIBERRY
 	Nature = TIMID
 	Ability = 2
-	Role = SPECIALBREAKER
-Pokemon = ARCHEN,20
+	Roles = SPECIALBREAKER
+Pokemon = ARCHEN,15
 	Moves = PLUCK,UTURN,BULLDOZE,ROOST
 	IV = 31,31,31,31,31,31
 	EV = 0,252,0,252,0,4
 	Item = BERRYJUICE
 	Nature = JOLLY
 	Ability = 0
-	Role = PHYSICALBREAKER
-Pokemon = DRIFLOON,20
+	Roles = PHYSICALBREAKER
+Pokemon = DRIFLOON,15
 	Moves = PROTECT,HEX,DOLDRUMS,ROOST
 	IV = 31,0,31,31,31,31
 	EV = 4,0,0,252,252,0
 	Item = FLAMEORB
 	Nature = TIMID
 	Ability = 2
-	Role = SPECIALBREAKER
-Pokemon = SKARMORY,20
+	Roles = SPECIALBREAKER
+Pokemon = SKARMORY,15
 	Moves = WHIRLWIND,AERIALACE,TOXIC,ROOST
 	IV = 31,31,31,31,31,31
 	EV = 252,4,0,0,0,252
 	Item = LEFTOVERS
 	Nature = CAREFUL
 	Ability = 1
-	Role = SPECIALWALL
-Pokemon = GLIGAR,20
+	Roles = SPECIALWALL,TOXICSTALLER
+Pokemon = GLIGAR,15
 	Moves = WINGATTACK,SWORDSDANCE,BULLDOZE,ROOST
 	IV = 31,31,31,31,31,31
 	EV = 252,4,0,252,0,0
 	Item = FOCUSSASH
 	Nature = JOLLY
 	Ability = 2
-	Role = WINCON
+	Roles = WINCON
 #-------------------------------
 # RIVAL BATTLES
 #-------------------------------
 [RIVAL2,GUS]
 LoseText = "Hmmph. I don't like you."
-Pokemon = IMPIDIMP,10
-	Moves = FAKEOUT,LIGHTSCREEN,REFLECT,DRAININGKISS
+Pokemon = KLEFKI,10
+	Moves = DRAININGKISS,LIGHTSCREEN,REFLECT
 	IV = 31,31,31,31,31,31
 	EV = 252,0,0,0,4,252
 	Nature = SASSY
 	Ability = 0
-	Role = SCREENS
+	Roles = SCREENS,SPECIALBREAKER
 Pokemon = HONEDGE,11
 	Moves = SWORDSDANCE,CUT,SHADOWSNEAK,AERIALACE
 	IV = 31,31,31,31,31,31
 	EV = 252,252,0,0,0,4
 	Nature = ADAMANT
-	Role = SETUPSWEEPER
+	Roles = SETUPSWEEPER
+#-------------------------------
+[RIVAL2,GUS,1]
+LoseText = "Hmmph. I don't like you."
+Pokemon = KLEFKI,20
+	Moves = DRAININGKISS,LIGHTSCREEN,REFLECT,MIRRORSHOT
+	IV = 31,31,31,31,31,31
+	EV = 252,0,0,0,4,252
+	Nature = SASSY
+	Ability = 0
+	Roles = SCREENS,SPECIALBREAKER
+Pokemon = SKARMORY,20
+	Moves = AERIALACE,CUT,ROOST,TOXIC
+	IV = 31,31,31,31,31,31
+	EV = 252,4,0,0,0,252
+	Nature = CAREFUL
+	Roles = TOXICSTALLER,PHYSICALBREAKER
+Pokemon = METANG,20
+	Moves = IRONHEAD,BULLETPUNCH,PSYCHOCUT,ICEPUNCH
+	IV = 31,31,31,31,31,31
+	EV = 252,252,0,0,0,4
+	Nature = ADAMANT
+	Roles = PHYSICALBREAKER
+Pokemon = HONEDGE,20
+	Moves = SWORDSDANCE,CUT,SHADOWSNEAK,AERIALACE
+	IV = 31,31,31,31,31,31
+	EV = 252,252,0,0,0,4
+	Nature = ADAMANT
+	Roles = SETUPSWEEPER
 #-------------------------------
