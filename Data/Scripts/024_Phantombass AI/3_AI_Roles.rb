@@ -283,6 +283,8 @@ def pbLoadTrainer(trainerid,trainername,partyid=0)
           else
             pokemon.ev[i] = [level*3/2,PokeBattle_Pokemon::EV_LIMIT/6].min
           end
+        else
+          pokemon.ev[i] = 0
         end
       end
       pokemon.happiness = poke[TPHAPPINESS] if poke[TPHAPPINESS]

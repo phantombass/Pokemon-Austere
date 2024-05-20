@@ -718,19 +718,12 @@ Pokemon = GLIGAR,15
 #-------------------------------
 [RIVAL2,GUS]
 LoseText = "Hmmph. I don't like you."
-Pokemon = KLEFKI,10
-	Moves = DRAININGKISS,LIGHTSCREEN,REFLECT
-	IV = 31,31,31,31,31,31
-	EV = 252,0,0,0,4,252
-	Nature = SASSY
-	Ability = 0
-	Roles = SCREENS,SPECIALBREAKER
-Pokemon = HONEDGE,11
-	Moves = SWORDSDANCE,CUT,SHADOWSNEAK,AERIALACE
+Pokemon = HONEDGE,9
+	Moves = CUT
 	IV = 31,31,31,31,31,31
 	EV = 252,252,0,0,0,4
 	Nature = ADAMANT
-	Roles = SETUPSWEEPER
+	Roles = PHYSICALBREAKER
 #-------------------------------
 [RIVAL2,GUS,1]
 LoseText = "Hmmph. I don't like you."
