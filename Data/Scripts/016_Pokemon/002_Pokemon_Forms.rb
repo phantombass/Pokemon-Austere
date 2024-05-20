@@ -793,40 +793,6 @@ MultipleForms.register(:CALYREX,{
 })
 
 #===============================================================================
-# Alolan forms
-#===============================================================================
-
-# These species don't have visually different Alolan forms, but they need to
-# evolve into different forms depending on the location where they evolved.
-MultipleForms.register(:EXEGGCUTE,{
-  "getForm" => proc { |pkmn|
-    next if pkmn.formSimple>=2
-    mapPos = pbGetMetadata($game_map.map_id,MetadataMapPosition)
-    next 1 if mapPos && mapPos[0]==1   # Tiall region
-    next 0
-  }
-})
-
-MultipleForms.copy(:EXEGGCUTE,:CUBONE)
-
-#===============================================================================
-# Galarian forms
-#===============================================================================
-
-# These species don't have visually different Galarian forms, but they need to
-# evolve into different forms depending on the location where they evolved.
-MultipleForms.register(:KOFFING,{
-  "getForm" => proc { |pkmn|
-    next if pkmn.formSimple>=2
-    mapPos = pbGetMetadata($game_map.map_id,MetadataMapPosition)
-    next 1 if mapPos && mapPos[0]==1   # Tiall region
-    next 0
-  }
-})
-
-MultipleForms.copy(:KOFFING,:MIMEJR)
-
-#===============================================================================
 # Hisuian forms
 #===============================================================================
 MultipleForms.register(:GROWLITHE,{

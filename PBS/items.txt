@@ -701,6 +701,7 @@
 691,BLUEORB,BLUE ORB,BLUE ORB,1,0,"Returns KYOGRE to its original form.",0,0,0,
 #--------------CUSTOM ITEMS------------------
 692,PIXIEDUST,PIXIE DUST,PIXIE DUSTS,1,3000,"Evolves certain kinds of POKéMON.",1,0,7,
+693,ALTERNATESTONE,ALTERNATE STONE,ALTERNATE STONES,1,3000,"Evolves certain kinds of POKéMON.",1,0,7,
 #--------------CUSTOM TMs------------------
 900,TM108,108,108,4,10000,"Inflicts frostbite on the foe.",3,0,0,DEEPFREEZE,
 901,TM109,109,109,4,10000,"Boiling water is shot that may burn.",3,0,0,SCALD,

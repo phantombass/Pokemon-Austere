@@ -1,4 +1,4 @@
-﻿# See the documentation on the wiki to learn how to edit this file.
+# See the documentation on the wiki to learn how to edit this file.
 #-------------------------------
 091 # SILICA VALLEY
 25,10,10
@@ -324,7 +324,7 @@ HeadbuttLow
     SCYTHER,2,5
     SCYTHER,2,5
 #-------------------------------
-121 # Route 5
+121 # Route 6
 25,10,10
 LandDay
     CATERPIE,7,9
@@ -404,7 +404,7 @@ Cave
     NOIBAT,7,9
     NOIBAT,7,9
 #-------------------------------
-130 # Tetra Caves North
+130 # Hexa Port
 25,10,10
 Water
     TENTACOOL,14,19
@@ -426,3 +426,32 @@ SuperRod
     WAILMER,15,17
     LAPRAS,15,17
 #-------------------------------
+136 # Totem Island
+25,10,10
+LandDay
+    BLIPBUG,7,9
+    NINCADA,7,9
+    BLIPBUG,7,9
+    NINCADA,7,9
+    RALTS,7,9
+    EXEGGCUTE,7,9
+    RALTS,7,9
+    EXEGGCUTE,7,9
+    CUBONE,7,9
+    ABRA,7,9
+    SMOOCHUM,7,9
+    BELDUM,7,9
+LandNight
+    BLIPBUG,7,9
+    NINCADA,7,9
+    BLIPBUG,7,9
+    NINCADA,7,9
+    RALTS,7,9
+    EXEGGCUTE,7,9
+    RALTS,7,9
+    EXEGGCUTE,7,9
+    INKAY,7,9
+    ABRA,7,9
+    ABSOL,7,9
+    PAWNIARD,7,9
+#---------------

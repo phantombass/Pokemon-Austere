@@ -48,14 +48,6 @@ BattleHandlers::AbilityOnSwitchIn.add(:MOTORDRIVE,
   }
 )
 
-BattleHandlers::AbilityOnSwitchIn.add(:LIGHTNINGROD,
-  proc { |ability,battler,battle|
-    next if ![PBFieldEffects::Machine,PBFieldEffects::Electric,PBFieldEffects::Digital].include?(battle.field.field_effects)
-    stat = PBStats::SPATK
-    battler.pbRaiseStatStageByAbility(stat,1,battler)
-  }
-)
-
 BattleHandlers::AbilityOnSwitchIn.add(:FLASHFIRE,
   proc { |ability,battler,battle|
     next false if ![PBFieldEffects::Wildfire,PBFieldEffects::Lava].include?(battle.field.field_effects)
@@ -71,11 +63,5 @@ BattleHandlers::AbilityOnSwitchIn.add(:FLASHFIRE,
     end
     battle.pbHideAbilitySplash(battler)
     next true
-  }
-)
-
-BattleHandlers::DamageCalcUserAbility.add(:SHARPNESS,
-  proc { |ability,user,target,move,mults,baseDmg,type|
-    mults[BASE_DMG_MULT] *= 1.5 if Fields::SLICING_MOVES.include?(move.id)
   }
 )

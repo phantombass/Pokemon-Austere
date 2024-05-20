@@ -270,3 +270,6 @@
 268,MEDUSOID,MEDUSOID,"Lowers the foe's SPEED stat."
 269,MINDGAMES,MIND GAMES,"Lowers the foe's SPCL. ATK stat."
 270,SHARPNESS,SHARPNESS,"Boosts slicing moves."
+271,TIGHTFOCUS,TIGHT FOCUS,"Boosts beam moves."
+272,GAVELPOWER,GAVEL POWER,"Boosts hammer moves."
+273,STEPMASTER,STEP MASTER,"Boosts kicking moves."

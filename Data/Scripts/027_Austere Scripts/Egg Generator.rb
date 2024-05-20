@@ -19,9 +19,6 @@ def egg_gift
     egg = $Trainer.lastParty
     egg.eggsteps = 150
     egg.setAbility(2)
-    egg.iv[PBStats::HP]=31
-    egg.iv[PBStats::DEFENSE]=31
-    egg.iv[PBStats::SPDEF]=31
     move = egg_move_gen(egg)
     egg.pbLearnMove(move) if move != nil
     egg.calcStats

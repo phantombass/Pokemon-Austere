@@ -25,7 +25,7 @@ class PokemonSystem
   def level_caps;  return @level_caps || 0;    end
 end
 
-LEVEL_CAP = [9,15,20,25]
+LEVEL_CAP = [9,15,20,25,30]
 
 def pbLevelCapToggle
   $PokemonSystem.level_caps == 1 ? $PokemonSystem.level_caps = 0 : $PokemonSystem.level_caps = 1
@@ -182,6 +182,38 @@ class PokeBattle_Battle
       # Learn all moves learned at this level
       moveList = pkmn.getMoveList
       moveList.each { |m| pbLearnMove(idxParty,m[1]) if m[0]==curLevel }
+    end
+  end
+  def pbGainEVsOne(idxParty,defeatedBattler)
+    if !DISABLE_EVS
+      pkmn = pbParty(0)[idxParty]   # The Pokémon gaining EVs from defeatedBattler
+      evYield = defeatedBattler.pokemon.evYield
+      # Num of effort points pkmn already has
+      evTotal = 0
+      PBStats.eachStat { |s| evTotal += pkmn.ev[s] }
+      # Modify EV yield based on pkmn's held item
+      if !BattleHandlers.triggerEVGainModifierItem(pkmn.item,pkmn,evYield)
+        BattleHandlers.triggerEVGainModifierItem(@initialItems[0][idxParty],pkmn,evYield)
+      end
+      # Double EV gain because of Pokérus
+      if pkmn.pokerusStage>=1   # Infected or cured
+        evYield.collect! { |a| a*2 }
+      end
+      # Gain EVs for each stat in turn
+      PBStats.eachStat do |s|
+        evGain = evYield[s]
+        # Can't exceed overall limit
+        if evTotal+evGain>PokeBattle_Pokemon::EV_LIMIT
+          evGain = PokeBattle_Pokemon::EV_LIMIT-evTotal
+        end
+        # Can't exceed individual stat limit
+        if pkmn.ev[s]+evGain>PokeBattle_Pokemon::EV_STAT_LIMIT
+          evGain = PokeBattle_Pokemon::EV_STAT_LIMIT-pkmn.ev[s]
+        end
+        # Add EV gain
+        pkmn.ev[s] += evGain
+        evTotal += evGain
+      end
     end
   end
 end

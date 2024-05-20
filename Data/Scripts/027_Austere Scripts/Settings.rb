@@ -1,8 +1,10 @@
-GAME_VERSION = "0.5.1"
+GAME_VERSION = "0.6.0"
 FISHING_AUTO_HOOK = true
+DISABLE_EVS = true
 
 def write_version
   File.open("version.txt", "wb") { |f|
+    #$DEBUG = false
     version = GAME_VERSION
     f.write("#{version}")
   }

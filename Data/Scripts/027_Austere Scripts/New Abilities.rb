@@ -160,3 +160,27 @@ BattleHandlers::TargetAbilityOnHit.add(:ICEBODY,
     battle.pbHideAbilitySplash(target)
   }
 )
+
+BattleHandlers::DamageCalcUserAbility.add(:SHARPNESS,
+  proc { |ability,user,target,move,mults,baseDmg,type|
+    mults[BASE_DMG_MULT] *= 1.5 if Fields::SLICING_MOVES.include?(move.id)
+  }
+)
+
+BattleHandlers::DamageCalcUserAbility.add(:GAVELPOWER,
+  proc { |ability,user,target,move,mults,baseDmg,type|
+    mults[BASE_DMG_MULT] *= 1.5 if Fields::HAMMER_MOVES.include?(move.id)
+  }
+)
+
+BattleHandlers::DamageCalcUserAbility.add(:TIGHTFOCUS,
+  proc { |ability,user,target,move,mults,baseDmg,type|
+    mults[BASE_DMG_MULT] *= 1.3 if Fields::BEAM_MOVES.include?(move.id)
+  }
+)
+
+BattleHandlers::DamageCalcUserAbility.add(:STEPMASTER,
+  proc { |ability,user,target,move,mults,baseDmg,type|
+    mults[BASE_DMG_MULT] *= 1.3 if Fields::KICKING_MOVES.include?(move.id)
+  }
+)

@@ -291,13 +291,13 @@ class Fields
   PULSE_MOVES = arrayToConstant(PBMoves,pulse)
   PUNCHING_MOVES = arrayToConstant(PBMoves,punch)
   BOMB_MOVES = arrayToConstant(PBMoves,bomb)
-  HAMMER_MOVES = arrayToConstant(PBMoves,[:HAMMERARM,:DRAGONHAMMER,:ICEHAMMER])
+  HAMMER_MOVES = arrayToConstant(PBMoves,[:HAMMERARM,:DRAGONHAMMER,:ICEHAMMER,:GIGATONHAMMER])
   CHARGE_MOVES = arrayToConstant(PBMoves,[:THUNDERWAVE,:ZINGZAP,:THUNDERPUNCH,:CHARGE,:DISCHARGE,:SHOCKWAVE,:CHARGEBEAM,:PARABOLICCHARGE,:THUNDERBOLT,:THUNDER,:WILDCHARGE,:VOLTTACKLE,:OVERDRIVE,:PLASMAFISTS])
   KICKING_MOVES = arrayToConstant(PBMoves,[:JUMPKICK,:HIGHJUMPKICK,:MEGAKICK,:TROPKICK,:DOUBLEKICK,:STOMP,:BLAZEKICK,:TRIPLEKICK,:LOWKICK,:ROLLINGKICK,:LOWSWEEP,:THUNDEROUSKICK,:HIGHHORSEPOWER])
   OUTAGE_MOVES = arrayToConstant(PBMoves,[:DISCHARGE,:OVERDRIVE,:ZAPCANNON,:PLASMAFISTS,:SHOCKWAVE])
   MACHINE_MOVES = arrayToConstant(PBMoves,[:ZINGZAP,:THUNDERPUNCH,:PARABOLICCHARGE,:THUNDERBOLT,:THUNDER,:WILDCHARGE,:VOLTTACKLE,:CHARGEBEAM])
-  BEAM_MOVES = arrayToConstant(PBMoves,[:AURORABEAM,:ICEBEAM,:SIGNALBEAM,:CHARGEBEAM,:POWERGEM,:HYPERBEAM,:SOLARBEAM,:PSYBEAM,:PHOTONGEYSER,:LIGHTOFRUIN,:FLEURCANNON])
-  SLICING_MOVES = arrayToConstant(PBMoves,[:SACREDSWORD,:AIRSLASH,:AIRCUTTER,:PSYCHOCUT,:CUT,:NIGHTSLASH,:SLASH,:FURYCUTTER,:XSCISSOR,:LEAFBLADE,:KARATECHOP,:CROSSPOISON,:PRECIPICEBLADES,:FIRELASH,:RAZORSHELL,:SMARTSTRIKE])
+  BEAM_MOVES = arrayToConstant(PBMoves,[:AURORABEAM,:ICEBEAM,:SIGNALBEAM,:CHARGEBEAM,:POWERGEM,:HYPERBEAM,:SOLARBEAM,:PSYBEAM,:PHOTONGEYSER,:LIGHTOFRUIN,:FLEURCANNON,:SNIPESHOT,:BUBBLEBEAM])
+  SLICING_MOVES = arrayToConstant(PBMoves,[:DUALCHOP,:SACREDSWORD,:AIRSLASH,:AIRCUTTER,:PSYCHOCUT,:CUT,:NIGHTSLASH,:SLASH,:FURYCUTTER,:XSCISSOR,:LEAFBLADE,:KARATECHOP,:CROSSPOISON,:PRECIPICEBLADES,:FIRELASH,:RAZORSHELL,:SMARTSTRIKE])
 end
 
 $fields = Fields.new
@@ -957,6 +957,7 @@ class PokeBattle_Battle
   
   def pbOnActiveOne(battler)
     return false if battler.fainted?
+    fe_trigger = 0
     fe = FIELD_EFFECTS[@field.field_effects]
     # Introduce Shadow Pokémon
     if battler.opposes? && battler.shadowPokemon?
@@ -1036,12 +1037,12 @@ class PokeBattle_Battle
     end
     battler.pbCheckForm
     for key in fe[:ability_effects].keys
-        if battler.hasActiveAbility?(key)
-          pbShowAbilitySplash(battler)
-          battler.pbRaiseStatStage(fe[:ability_effects][key][0],fe[:ability_effects][key][1],battler)
-          pbHideAbilitySplash(battler)
-        end
+      if battler.hasActiveAbility?(key)
+        pbShowAbilitySplash(battler)
+        battler.pbRaiseStatStage(fe[:ability_effects][key][0],fe[:ability_effects][key][1],battler)
+        pbHideAbilitySplash(battler)
       end
+    end
     return true
   end
   
@@ -2203,7 +2204,7 @@ class PokeBattle_Move
   					$field_effect_bg = fe[:field_gfx]
   					@battle.scene.pbRefreshEverything
   					priority.each do |pkmn|
-  						if pkmn.hasActiveAbility?([fe[:abilities]])
+  						if pkmn.hasActiveAbility?(fe[:abilities])
   							for key in fe[:ability_effects].keys
   								if pkmn.ability != fc
   									abil = nil
@@ -2214,7 +2215,7 @@ class PokeBattle_Move
   									trigger = true
   								end
   							end
-  							BattleHandlers.triggerAbilityOnSwitchIn(fc,pkmn,@battle) if trigger
+  							BattleHandlers.triggerAbilityOnSwitchIn(pkmn.ability,pkmn,@battle) unless fe[:ability_effects].keys.include?(pkmn.ability)
   							pkmn.pbRaiseStatStage(abil[0],abil[1],user) if abil != nil && !trigger
   						end
   					end
