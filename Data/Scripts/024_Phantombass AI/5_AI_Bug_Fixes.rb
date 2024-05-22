@@ -17,3 +17,18 @@ class PokeBattle_Battler
     return true if @battle.field.effects[PBEffects::FairyLock] > 0
   end
 end
+
+#===============================================================================
+# Power is doubled if the target has already moved this round. (Payback)
+#===============================================================================
+class PokeBattle_Move_084 < PokeBattle_Move
+  def pbBaseDamage(baseDmg,user,target)
+    ind = target.index != nil ? target.index : 1
+    if @battle.choices[ind][0]!=:None &&
+       ((@battle.choices[ind][0]!=:UseMove &&
+       @battle.choices[ind][0]!=:Shift) || target.movedThisRound?)
+      baseDmg *= 2
+    end
+    return baseDmg
+  end
+end

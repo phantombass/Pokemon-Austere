@@ -84,7 +84,7 @@ PBAI::ScoreHandler.add do |score, ai, user, target, move|
   next if ai.battle.field.field_effects == :Psychic
   next if target.priority_blocking?
   kill = 0
-  target.moves.each {|m| kill += 1 if target.get_move_damage(user,m) >= user.hp}
+  target.moves.each {|m| kill += 1 if user.get_calc(target,m) >= user.hp}
   if kill > 0
     score *= PBAI.threat_score(user,target)
     PBAI.log_ai("x #{PBAI.threat_score(user,target)} to factor in threat score")
@@ -104,7 +104,7 @@ PBAI::ScoreHandler.add do |score, ai, user, target, move|
   # The AI kind of cheats here, because this takes all items, berries, abilities, etc. into account.
   # It is worth for the effect though; the AI using a priority move to prevent
   # you from using one last move before you faint.
-  dmg = target.get_move_damage(user, move)
+  dmg = user.get_calc(target, move)
   if dmg >= target.battler.hp
     # We have the previous damage this user has done with this move.
     # Use the average of the previous damage dealt, and if it's more than the target's hp,
@@ -255,7 +255,7 @@ PBAI::ScoreHandler.add do |score, ai, user, target, move|
         score += 15
         PBAI.log("+ 15 for being Choice locked and unable to switch")
       end
-      if user.can_switch? && user.get_move_damage(target, move) < target.totalhp/4
+      if user.can_switch? && user.get_calc_self(target, move) < target.totalhp/4
         score -= 10
         PBAI.log("-= 10 to encourage switching when Choice Locked into something bad")
       end
@@ -883,7 +883,6 @@ end
 
 # Leech Life, Parabolic Charge, Drain Punch, Giga Drain, Horn Leech, Mega Drain, Absorb
 PBAI::ScoreHandler.add("0DD") do |score, ai, user, target, move|
-  dmg = user.get_move_damage(target, move)
   add = 3
   score += add
   PBAI.log("+ #{add} for hp gained")
@@ -978,7 +977,7 @@ PBAI::ScoreHandler.add("0EB", "0EC", "0EE") do |score, ai, user, target, move|
     end
     kill = 0
     for i in user.moves
-      kill += 1 if user.get_move_damage(target,i) >= target.hp
+      kill += 1 if user.get_calc_self(target,i) >= target.hp
     end
     fnt = 0
     user.side.party.each do |pkmn|
@@ -1286,12 +1285,12 @@ PBAI::ScoreHandler.add("035") do |score, ai, user, target, move|
     else
       count = 0
       user.moves.each do |m|
-        count += 1 if user.get_move_damage(target, m) >= target.hp && m.physicalMove?
+        count += 1 if user.get_calc_self(target, m) >= target.hp && m.physicalMove?
       end
       t_count = 0
       if target.used_moves != nil
         target.used_moves.each do |tmove|
-          t_count += 1 if target.get_move_damage(user, tmove) >= user.hp
+          t_count += 1 if user.get_calc(target, tmove) >= user.hp
         end
       end
       end
@@ -1325,12 +1324,12 @@ PBAI::ScoreHandler.add("02E") do |score, ai, user, target, move|
     else
       count = 0
       user.moves.each do |m|
-        count += 1 if user.get_move_damage(target, m) >= target.hp && m.physicalMove?
+        count += 1 if user.get_calc_self(target, m) >= target.hp && m.physicalMove?
       end
       t_count = 0
       if target.used_moves != nil
         target.used_moves.each do |tmove|
-          t_count += 1 if target.get_move_damage(user, tmove) >= user.hp
+          t_count += 1 if user.get_calc(target, tmove) >= user.hp
         end
       end
       # As long as the target's stat stages are more advantageous than ours (i.e. net < 0), Haze is a good choice
@@ -1363,12 +1362,12 @@ PBAI::ScoreHandler.add("024", "518", "026") do |score, ai, user, target, move|
     else
       count = 0
       user.moves.each do |m|
-        count += 1 if user.get_move_damage(target, m) >= target.hp && m.physicalMove?
+        count += 1 if user.get_calc_self(target, m) >= target.hp && m.physicalMove?
       end
       t_count = 0
       if target.used_moves != nil
         target.used_moves.each do |tmove|
-          t_count += 1 if target.get_move_damage(user, tmove) >= user.hp
+          t_count += 1 if user.get_calc(target, tmove) >= user.hp
         end
       end
       end
@@ -1401,12 +1400,12 @@ PBAI::ScoreHandler.add("032") do |score, ai, user, target, move|
     else
       count = 0
       user.moves.each do |m|
-        count += 1 if user.get_move_damage(target, m) >= target.hp && m.specialMove?
+        count += 1 if user.get_calc_self(target, m) >= target.hp && m.specialMove?
       end
       t_count = 0
       if target.used_moves != nil
         target.used_moves.each do |tmove|
-          t_count += 1 if target.get_move_damage(user, tmove) >= user.hp
+          t_count += 1 if user.get_calc(target, tmove) >= user.hp
         end
       end
       # As long as the target's stat stages are more advantageous than ours (i.e. net < 0), Haze is a good choice
@@ -1439,12 +1438,12 @@ PBAI::ScoreHandler.add("02B", "02C") do |score, ai, user, target, move|
     else
       count = 0
       user.moves.each do |m|
-        count += 1 if user.get_move_damage(target, m) >= target.hp && m.specialMove?
+        count += 1 if user.get_calc_self(target, m) >= target.hp && m.specialMove?
       end
       t_count = 0
       if target.used_moves != nil
         target.used_moves.each do |tmove|
-          t_count += 1 if target.get_move_damage(user, tmove) >= user.hp
+          t_count += 1 if user.get_calc(target, tmove) >= user.hp
         end
       end
       # As long as the target's stat stages are more advantageous than ours (i.e. net < 0), Haze is a good choice
@@ -1479,7 +1478,7 @@ PBAI::ScoreHandler.add("18C") do |score, ai, user, target, move|
     if target.faster_than?(user)
       score += 4
       PBAI.log("+ 4 for being a priority move to outspeed opponent")
-      if user.get_move_damage(target, move) >= target.hp
+      if user.get_calc_self(target, move) >= target.hp
         score += 2
         PBAI.log("+ 2 for being able to KO with priority")
       end
@@ -1584,7 +1583,7 @@ PBAI::ScoreHandler.add("10C") do |score, ai, user, target, move|
   dmg = 0
   sound = 0
   for i in target.used_moves
-    dmg += 1 if target.get_move_damage(user,i) >= user.totalhp/4
+    dmg += 1 if user.get_calc(target,i) >= user.totalhp/4
     sound += 1 if i.soundMove? && i.damagingMove?
   end
   if user.effects[PBEffects::Substitute] == 0
@@ -1623,7 +1622,7 @@ end
 PBAI::ScoreHandler.add("0E7") do |score, ai, user, target, move|
   dmg = 0
   for i in target.moves
-    dmg += 1 if target.get_move_damage(user,i) >= user.hp
+    dmg += 1 if user.get_calc(target,i) >= user.hp
   end
   if dmg > 0
     dbond = dmg
@@ -1685,7 +1684,7 @@ end
 PBAI::ScoreHandler.add("0E7") do |score, ai, user, target, move|
   next if move.pbCalcType(user) == :NORMAL && target.pbHasType?(:GHOST)
   next if target.hasActiveAbility?(:DAMP)
-  if user.get_move_damage(target, move) >= target.hp
+  if user.get_calc_self(target, move) >= target.hp
     score += 2
     PBAI.log("+ 2 for being able to KO")
   end
@@ -1763,12 +1762,12 @@ PBAI::ScoreHandler.add("036") do |score, ai, user, target, move|
     else
       count = 0
       user.moves.each do |m|
-        count += 1 if user.get_move_damage(target, m) >= target.hp && m.physicalMove?
+        count += 1 if user.get_calc_self(target, m) >= target.hp && m.physicalMove?
       end
       t_count = 0
       if target.used_moves != nil
         target.used_moves.each do |tmove|
-          t_count += 1 if target.get_move_damage(user, tmove) >= user.hp
+          t_count += 1 if user.get_calc(target, tmove) >= user.hp
         end
       end
       end
@@ -2032,12 +2031,12 @@ PBAI::ScoreHandler.add_final do |score, ai, user, target, move|
   o_count = 0
   se = 0
   user.moves.each do |m|
-    count += 1 if user.get_move_damage(target, m) >= target.hp
+    count += 1 if user.get_calc_self(target, m) >= target.hp
     matchup = target.calculate_move_matchup(m.id)
     se += 1 if matchup > 1
   end
   target.moves.each do |t|
-    o_count += 1 if target.get_move_damage(user, t) >= user.hp
+    o_count += 1 if user.get_calc(target, t) >= user.hp
   end
   faster = user.faster_than?(target)
   fast_kill = faster
@@ -2110,12 +2109,12 @@ PBAI::ScoreHandler.add_final do |score, ai, user, target, move|
   o_count = 0
   se = 0
   user.moves.each do |m|
-    count += 1 if user.get_move_damage(target, m) >= target.hp
+    count += 1 if user.get_calc_self(target, m) >= target.hp
     matchup = target.calculate_move_matchup(m.id)
     se += 1 if matchup > 1
   end
   target.moves.each do |t|
-    o_count += 1 if target.get_move_damage(user, t) >= user.hp
+    o_count += 1 if user.get_calc(target, t) >= user.hp
   end
   faster = user.faster_than?(target)
   fast_kill = faster
@@ -2123,7 +2122,7 @@ PBAI::ScoreHandler.add_final do |score, ai, user, target, move|
   user_slow_kill = !faster && o_count == 0 && count > 0
   target_fast_kill = !faster && o_count > 0
   if count > 0
-    if user.get_move_damage(target, move) >= target.hp
+    if user.get_calc_self(target, move) >= target.hp
       if fast_kill
         add = 15
       elsif target_fast_kill
@@ -2147,7 +2146,7 @@ PBAI::ScoreHandler.add_final do |score, ai, user, target, move|
     $ai_flags[:can_kill] = false if se == 0
     count1 = 0
     user.moves.each do |m|
-      count1 += 1 if user.get_move_damage(target, m) >= target.hp/2
+      count1 += 1 if user.get_calc_self(target, m) >= target.hp/2
     end
     if count1 > 0 && target_fast_kill
       add = score

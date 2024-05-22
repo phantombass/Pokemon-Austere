@@ -1924,6 +1924,15 @@ class PokeBattle_Move
     return ret
   end
 
+  def pbBaseType(user)
+    ret = @type
+    return ret if !ret || ret<0
+    if user.abilityActive?
+      ret = BattleHandlers.triggerMoveBaseTypeModifierAbility(user.ability,user,self,ret)
+    end
+    return ret
+  end
+
   def pbCalcType(user)
     @powerBoost = false
     $orig_grass = false

@@ -269,6 +269,8 @@ class PBAI
     attr_accessor :revealed_item
     attr_accessor :used_moves
     attr_reader :flags
+    attr_reader :calc
+    attr_reader :self_calc
 
   	def initialize(side, pokemon, wild_pokemon = false)
   		@side = side
@@ -283,6 +285,8 @@ class PBAI
       @revealed_ability = false
       @revealed_item = false
   		@skill = wild_pokemon ? 0 : 200
+      @calc = {}
+      @self_calc = {}
       @flags = {}
   	end
 
@@ -628,6 +632,60 @@ class PBAI
       return score
     end
 
+    def set_calc(target,hash)
+      @calc[target.pokemon.species] = hash
+    end
+
+    def set_self_calc(target,hash)
+      @self_calc[target.pokemon.species] = hash
+    end
+
+    def calc_all(target)
+      str = "="*30
+      str += "\nNow calcing all party members vs #{target.pokemon.name}\n"
+      str += "="*29
+      party = @ai.battle.pbParty(self.index)
+      party.each do |pkmn|
+        next if pkmn.fainted?
+        mon = (pkmn == self.pokemon) ? self : @ai.pbMakeFakeBattler(pkmn)
+        pk = pkmn == self.pokemon ? self : @ai.pokemon_to_projection(pkmn)
+        new_hash = {}
+        target.moves.each do |move|
+          next if move.category == 2
+          dmg = target.get_move_damage(mon,move)
+          new_hash[move.id] = dmg
+          str += "\nDamage from #{target.name} to #{pkmn.name} using #{move.name} => #{dmg}"
+        end
+        pk.set_calc(target,new_hash)
+      end
+      PBAI.log(str)
+    end
+
+    def calc_self(target)
+      str = "="*30
+      str += "\nNow calcing all moves vs #{target.pokemon.name}\n="
+      str += "="*29
+      calc = {}
+      self.moves.each do |move|
+        calc[move.id] = self.get_move_damage(target,move)
+        str += "\n#{move.name} => #{calc[move.id]}"
+      end
+      PBAI.log(str)
+      self.set_self_calc(target,calc)
+    end
+
+    def get_calc(target,move)
+      return 0 if move.category == 2
+      return target.get_move_damage(self,move) if $spam_block_triggered
+      return @calc[target.pokemon.species][move.id] || 0
+    end
+
+    def get_calc_self(target,move)
+      return 0 if move.category == 2
+      return self.get_move_damage(target,move) if $spam_block_triggered
+      return @self_calc[target.pokemon.species][move.id] || 0
+    end
+
   	def choose_move
   		# An array of scores in the format of [move_index, score, target]
       scores = []
@@ -637,6 +695,18 @@ class PBAI
       $target_ind = -1
       rand_trigger = false
       immune = []
+      $test_trigger = true
+      targets = opposing_side.battlers.clone
+      @side.battlers.each do |proj|
+        next if proj == self || proj.nil? || proj.index == self.index + 2 || proj.index == self.index - 2
+        targets << proj
+      end
+      targets.each do |tar1|
+        next if !tar1
+        next if tar1.fainted?
+        self.calc_all(tar1) unless @calc.keys.include?(tar1.pokemon.species)
+        self.calc_self(tar1)
+      end
       # Calculates whether to use an item
       item_score = get_item_score()
       # Yields [score, item, target&]
@@ -650,13 +720,6 @@ class PBAI
       PBAI.log("=" * 10 + " Turn #{@battle.turnCount + 1} " + "=" * 10)
       # Gets the battler projections of the opposing side
       # Calculate a score for each possible target
-
-      targets = opposing_side.battlers.clone
-      @side.battlers.each do |proj|
-        next if proj == self || proj.nil? || proj.index == self.index + 2 || proj.index == self.index - 2
-        targets << proj
-      end
-      $test_trigger = true
       targets.each do |target|
         next if target.nil?
         next if target.fainted?
@@ -786,7 +849,7 @@ class PBAI
       weights = scores.map { |e| e[1] }
       total = weights.sum
       scores.each_with_index do |e, i|
-        finalPerc = total == 0 ? 0 : (weights[i] / total.to_f * 100).round
+        finalPerc = total == 0 ? 0 : (weights[i] / total.to_f * 100)
         if i == 0
           # Item
           name = PBItems.getName(e[2])
@@ -1178,10 +1241,11 @@ class PBAI
         score = PBAI::SwitchHandler.trigger_out(score,@ai,self,target)
       end
       PBAI.log("Switch out Score: #{score}")
-      switch = score > 0
+      weight = @ai.battle.pbSideSize(1) == 2 ? 4 : 0
+      switch = score > weight
       $switch_flags[:score] = score
-      nope = switch ? "" : "not"
-      PBAI.log("The AI will #{nope} try to switch.")
+      nope = switch ? "start Switch logic." : "not start Switch logic."
+      PBAI.log("The AI will #{nope}")
       return switch
     end
 
@@ -1216,7 +1280,7 @@ class PBAI
               next if target.nil?
               score = PBAI::SwitchHandler.trigger_general(score,@ai,self,proj,target)
               target_moves = target.moves
-              target_moves = [$spam_block_flags[:choice]] if check_spam_block && $spam_block_flags[:choice].is_a?(Battle::Move)
+              target_moves = [$spam_block_flags[:choice]] if check_spam_block && $spam_block_flags[:choice].is_a?(PokeBattle_Move)
               if target_moves != nil
                 for i in target_moves
                   score = PBAI::SwitchHandler.trigger_type(i.type,score,@ai,self,proj,target)
@@ -1261,7 +1325,14 @@ class PBAI
         if !prj
           raise "No projection for #{mon.name}"
         end
-        self_party.push(mon) if prj.pokemon.trainerID == self.pokemon.trainerID && prj.pokemon != self.pokemon
+        ally = nil
+        if @ai.battle.pbSideSize(1) == 2
+          self.battler.eachAlly do |al|
+            ally = al
+          end
+        end
+        active = (prj.pokemon == self.pokemon) || (ally && (prj.pokemon == ally.pokemon))
+        self_party.push(mon) if prj.pokemon.trainerID == self.pokemon.trainerID && !active
       end
       matchup = self_party.map do |pkmn|
         proj = @ai.pokemon_to_projection(pkmn)
@@ -1815,14 +1886,14 @@ class PBAI
       return false if self.bad_against?(target)
       kill = false
       for t in target.used_moves
-        kill = true if target.get_move_damage(self,t) >= self.hp
+        kill = true if self.get_calc(target,t) >= self.hp
       end
       if kill == true && target.faster_than?(self)
         return false
       end
       for i in self.moves
-        return true if self.get_move_damage(target,i) >= target.hp
-        return true if i.id != 0 && i.priority > 0 && i.damagingMove? && self.get_move_damage(target,i) >= target.hp
+        return true if self.get_calc_self(target,i) >= target.hp
+        return true if i.id != 0 && i.priority > 0 && i.damagingMove? && self.get_calc_self(target,i) >= target.hp
       end
       return true if target.bad_against?(self) && self.faster_than?(target)
       return false
@@ -1880,7 +1951,8 @@ class PBAI
     	return 1.0 if move_id == 0
       move = PokeBattle_Move.pbFromPBMove(@ai.battle, PBMove.new(move_id))
       # Calculate the type this move would be if used by us
-      types = move.pbCalcType(@battler)
+      mon = self.is_a?(PokeBattle_Battler) ? self : pbMakeFakeBattler(self.pokemon)
+      types = move.pbCalcType(mon)
       types = [types] if !types.is_a?(Array)
       user_types = types
       target_types = self.pbTypes(true)

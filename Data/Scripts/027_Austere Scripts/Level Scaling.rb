@@ -101,6 +101,7 @@ end
 
 module Level_Scale
   Active = 901
+  Boss_Mon = 908
 
   def self.active?
     return $game_switches[Level_Scale::Active]
@@ -112,6 +113,10 @@ module Level_Scale
 
   def self.deactivate
     $game_switches[Level_Scale::Active] = false
+  end
+
+  def self.boss_mon
+    $game_switches[Level_Scale::Boss_Mon] = true
   end
 end
 
@@ -162,6 +167,8 @@ Events.onWildPokemonCreate += proc { |_sender, e|
     pokemon.setAbility(2)
     pokemon.pbLearnMove(:PSYBEAM)
     pokemon.pbLearnMove(:DRAININGKISS)
+    pokemon.pbLearnMove(:HPFIGHTING)
+    pokemon.pbLearnMove(:PROTECT)
     PBStats.eachStat {|s| pokemon.iv[s] = 31}
     pokemon.calcStats
   end
