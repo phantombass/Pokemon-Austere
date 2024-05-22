@@ -58,13 +58,13 @@ PBAI::ThreatHandler.add do |score,ai,battler,target|
   target.moves.each do |move|
     next if move.category == 2
     next if !move
-    kill_me = target.get_move_damage(battler,move) >= battler.hp
+    kill_me = battler.get_calc(target,move) >= battler.hp
     dmg += 1 if kill_me
   end
   battler.moves.each do |move2|
     next if move2.category == 2
     next if !move2
-    kill_them = battler.get_move_damage(target,move2) >= target.hp
+    kill_them = battler.get_calc_self(target,move2) >= target.hp
     dmg2 += 1 if kill_them
   end
   if dmg == 0 && dmg2 > 0
@@ -236,7 +236,7 @@ PBAI::ThreatHandler.add do |score,ai,battler,target|
   end
   if roles[target.pokemon].include?([PBRoles::PHYSICALBREAKER,PBRoles::SPECIALBREAKER])
     count = 0
-    target.moves.each {|move| count += 1 if target.get_move_damage(battler,move) >= battler.hp}
+    target.moves.each {|move| count += 1 if battler.get_calc(target,move) >= battler.hp}
     score += count
     PBAI.log_threat(count,"for being a breaker and having moves that can KO us.")
     if roles[target.pokemon].include?(PBRoles::PHYSICALBREAKER) && target.can_burn?
@@ -300,12 +300,12 @@ PBAI::ThreatHandler.add do |score,ai,battler,target|
   self_party.each do |pkmn|
     next if pkmn.fainted?
     mon = (pkmn == battler.pokemon) ? battler : ai.pbMakeFakeBattler(pkmn)
+    proj = ai.pokemon_to_projection(pkmn)
     dmg = 0
     target.moves.each do |move|
       next if move.statusMove?
-      PBAI.log("Damage from #{move.name} to #{pkmn.name}: #{target.get_move_damage(mon,move)}/#{mon.hp}")
-      kill = target.get_move_damage(mon,move) >= mon.hp
-      proj = ai.pokemon_to_projection(pkmn)
+      PBAI.log("Damage from #{move.name} to #{pkmn.name}: #{proj.get_calc(target,move)}/#{mon.hp}")
+      kill = proj.get_calc(target,move) >= mon.hp
       faster = proj.faster_than?(target)
       dmg += 1 if kill && !faster
     end

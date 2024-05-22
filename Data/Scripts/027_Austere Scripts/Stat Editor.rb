@@ -8,47 +8,52 @@ class PokemonSummary_Scene
       dorefresh = false
       if Input.trigger?(Input::A)
         if @page==2
-	      pbPlayDecisionSE
-		  pbMoveSelection
-		  dorefresh = true
-		end
+    	     pbPlayDecisionSE
+    		  pbMoveSelection
+    		  dorefresh = true
+    		end
       elsif Input.trigger?(Input::B)
         pbPlayCloseMenuSE
         break
       elsif Input.trigger?(Input::C)
         if @page==1
-		  @page += 1
-		  dorefresh = true
-		elsif @page==2
+  		    @page += 1
+  		    dorefresh = true
+    		elsif @page==2
           @page += 1
-		  dorefresh = true
-		elsif @page==3
-		  @page += 1
-		  dorefresh = true
-		elsif @page==4
-		  @page += 1
-		  dorefresh = true
-    elsif @page==5
-      min_grind_commands = []
-      cmdLevel = -1
-      cmdNature = -1
-      cmdStatChange = -1
-      cmdAbility = -1
-      min_grind_commands[cmdLevel = min_grind_commands.length] = _INTL("Set Level")
-      min_grind_commands[cmdNature = min_grind_commands.length] = _INTL("Change Nature")
-      min_grind_commands[cmdStatChange = min_grind_commands.length] = _INTL("Change EVs/IVs") if !DISABLE_EVS
-      min_grind_commands[cmdAbility = min_grind_commands.length] = _INTL("Change Ability")
-      min_command = pbShowCommands(min_grind_commands) if !@inbattle
-      if cmdLevel>=0 && min_command==cmdLevel
-        change_Level
-      elsif cmdNature>=0 && min_command==cmdNature
-        change_Nature
-      elsif cmdStatChange>=0 && min_command==cmdStatChange
-        change_Stats
-      elsif cmdAbility>=0 && min_command==cmdAbility
-        change_Ability
-      end
-		end
+    		  dorefresh = true
+    		elsif @page==3
+    		  @page += 1
+    		  dorefresh = true
+    		elsif @page==4
+    		  @page += 1
+    		  dorefresh = true
+        elsif @page==5
+          min_grind_commands = []
+          cmdLevel = -1
+          cmdNature = -1
+          cmdStatChange = -1
+          cmdAbility = -1
+          min_grind_commands[cmdLevel = min_grind_commands.length] = _INTL("Set Level")
+          min_grind_commands[cmdNature = min_grind_commands.length] = _INTL("Change Nature") if !DISABLE_EVS
+          min_grind_commands[cmdStatChange = min_grind_commands.length] = _INTL("Change EVs/IVs") if !DISABLE_EVS
+          min_grind_commands[cmdAbility = min_grind_commands.length] = _INTL("Change Ability") if !DISABLE_EVS
+          min_command = pbShowCommands(min_grind_commands) if !@inbattle
+          if cmdLevel>=0 && min_command==cmdLevel
+            if @pokemon.level > LEVEL_CAP[$game_system.level_cap]
+              pbMessage(_INTL("You can't change the Level of this Pokémon."))
+              dorefresh = true
+            else
+              change_Level
+            end
+          elsif cmdNature>=0 && min_command==cmdNature
+            change_Nature
+          elsif cmdStatChange>=0 && min_command==cmdStatChange
+            change_Stats
+          elsif cmdAbility>=0 && min_command==cmdAbility
+            change_Ability
+          end
+    		end
       elsif Input.trigger?(Input::UP) && @partyindex>0
         oldindex = @partyindex
         pbGoToPrevious
@@ -771,5 +776,84 @@ class PokeBattle_Pokemon
     return false if egg? || shadowPokemon?
     getEggMovesList.each { |m| return true if !hasMove?(m[1]) }
     return false
+  end
+end
+
+
+def change_Stats(pokemon)
+  pbMessage(_INTL("Which stat?\\ch[34,7,HP,ATTACK,DEFENSE,SPATK,SPDEF,SPEED,Cancel]"))
+  stat = $game_variables[34]
+  stats = [PBStats::HP,PBStats::ATTACK,PBStats::DEFENSE,PBStats::SPATK,PBStats::SPDEF,PBStats::SPEED]
+  pkmn = $Trainer.pokemonParty[pokemon]
+  if pbConfirmMessage(_INTL("Are you sure?"))
+    pkmn.iv[stats[stat]] = 31
+    pkmn.calcStats
+    return true
+  else
+    return false
+  end
+end
+  
+
+def change_Nature(pokemon)
+  commands = []
+  pkmn = $Trainer.pokemonParty[pokemon]
+  for i in 0...PBNatures.getCount
+    text = _INTL("{1}",PBNatures.getName(i))
+    commands.push(text)
+  end
+  cmd = pkmn.nature
+  loop do
+    oldnature = PBNatures.getName(pkmn.nature)
+    cmd = pbShowCommands(nil,commands,cmd)
+    break if cmd<0
+    if cmd>=0 && cmd<PBNatures.getCount   # Set nature override
+      pkmn.setNature(cmd)
+      pkmn.calcStats
+      return true
+    else
+      return false
+    end
+  end
+  return false
+end
+
+def pbHeartScaleGuy
+  pbMessage(_INTL("I can change your Pokémon's NATURE or IVs!"))
+  if !$PokemonBag.pbHasItem?(:HEARTSCALE)
+    pbMessage(_INTL("Please come back with a HEART SCALE."))
+  else
+    if pbConfirmMessage(_INTL("Would you like me to do that?"))
+      pbChooseNonEggPokemon(1,3)
+      if pbGet(1) > -1
+        pbMessage(_INTL("What would you like to change?\\ch[34,3,NATURE: 2 SCALES,IVs: 1 SCALE EACH,Cancel]"))
+        var = pbGet(34)
+        case var
+        when 0
+          if $PokemonBag.pbQuantity(:HEARTSCALE) < 2
+            pbMessage(_INTL("You need more HEART SCALES."))
+            ret = false
+          else
+            ret = change_Nature(pbGet(1))
+            amt = 2 if ret
+          end
+        when 1
+          ret = change_Stats(pbGet(1))
+          amt = 1 if ret
+        else
+          ret = false
+        end
+      else
+        ret = false
+      end
+      if ret == false
+        pbMessage(_INTL("Some other time then."))
+      else
+        $PokemonBag.pbDeleteItem(:HEARTSCALE,amt)
+        pbMessage(_INTL("All set! Come again!"))
+      end
+    else
+      pbMessage(_INTL("Some other time then."))
+    end
   end
 end

@@ -53,6 +53,7 @@ class PokeBattle_Battle
     level_cap = $PokemonSystem.level_caps != 1 ? LEVEL_CAP[$game_system.level_cap] : MAXIMUM_LEVEL
     if $PokemonSystem.level_caps != 1
       level_cap_gap = PBExperience.pbGetExpInternal(level_cap,growthRate) - pkmn.exp
+      level_cap_gap = 1 if level_cap_gap <= 0
     end
     # Main Exp calculation
     exp = 0

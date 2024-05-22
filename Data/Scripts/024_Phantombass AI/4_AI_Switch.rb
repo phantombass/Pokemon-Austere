@@ -163,7 +163,7 @@ PBAI::SwitchHandler.add_out do |score,ai,battler,target|
 		  next if ai.battle.wildBattle?
 			for i in target_moves
 				next if target_moves == nil
-			  dmg = t.get_move_damage(battler, i)
+			  dmg = battler.get_calc(t, i)
 			  calc += 1 if (dmg >= battler.hp)
 			end
 		end
@@ -171,7 +171,7 @@ PBAI::SwitchHandler.add_out do |score,ai,battler,target|
 			next if t.nil?
 		  next if ai.battle.wildBattle?
 		  for i in battler.moves
-		    dmg = battler.get_move_damage(t, i)
+		    dmg = battler.get_calc_self(t, i)
 		    damage += 1 if (dmg >= t.hp)
 		  end
 		end
@@ -328,7 +328,7 @@ PBAI::SwitchHandler.add_out do |score,ai,battler,target|
 		next if target.nil?
 	  next if ai.battle.wildBattle?
 	  for i in battler.moves
-	    dmg = battler.get_move_damage(target, i)
+	    dmg = battler.get_calc_self(target, i)
 	    calc += 1 if dmg >= target.hp/3
 	  end
 	end
@@ -402,7 +402,7 @@ PBAI::SwitchHandler.add_out do |score,ai,battler,target|
 			flag1 = true
 		end
 		for i in battler.moves
-	    dmg = battler.get_move_damage(target, i)
+	    dmg = battler.get_calc_self(target, i)
 	    damage += 1 if dmg >= target.totalhp/2
 	  end
 	  if damage == 0
@@ -460,7 +460,7 @@ end
 
 # Don't switch if you have a non-bad matchup
 PBAI::SwitchHandler.add_out do |score,ai,battler,target|
-	weak = target.moves.any? {|move| target.get_move_damage(battler,move) >= battler.hp}
+	weak = target.moves.any? {|move| battler.get_calc(target,move) >= battler.hp}
 	if battler.turnCount == 0 && weak == false
 		score -= 5
 		PBAI.log_switch_out(-5,"to not switch if we don't have a bad matchup.")
@@ -478,7 +478,7 @@ PBAI::SwitchHandler.add_out do |score,ai,battler,target|
         score += 5
         PBAI.log_switch_out(5,"Encored into status move")
       else
-        dmg = battler.get_move_damage(target, encored_move)
+        dmg = battler.get_calc_self(target, encored_move)
         if dmg > target.totalhp/3
           score -= 3
           PBAI.log_switch_out(-3,"Encored into good move")
@@ -532,11 +532,12 @@ PBAI::SwitchHandler.add_out do |score,ai,battler,target|
 		next if pkmn.fainted?
 		next if pkmn == battler.pokemon
 		mon = ai.pbMakeFakeBattler(pkmn)
+		proj = ai.pokemon_to_projection(pkmn)
 		moves = 0
 		best = 0
 		target.moves.each do |move|
 			eff = (PBTypes.getCombinedEffectiveness(move.type,pkmn.types[0],pkmn.types[1]))/8
-			dmg = target.get_move_damage(mon, move)
+			dmg = proj.get_calc(target, move)
 			moves += 1 if eff >= 2.0 && move.damagingMove? && dmg >= mon.hp/2
 			best += 1 if eff < 2.0 && move.damagingMove? && dmg >= mon.hp/2
 		end

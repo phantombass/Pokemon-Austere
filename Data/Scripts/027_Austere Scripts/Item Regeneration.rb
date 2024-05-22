@@ -7,12 +7,6 @@ class PokeBattle_Battle
     @field.field_effects = $game_screen.field_effects
     $field_effect_bg = backdrop
     sendOuts = pbSetUpSides
-    olditems = []
-    pbParty(0).each_with_index do |pkmn,i|
-      item = getID(PBItems,pkmn.item)
-      olditems.push(item)
-    end
-    $olditems = olditems
     # Create all the sprites and play the battle intro animation
     @scene.pbStartBattle(self)
     # Show trainers on both sides sending out Pokémon
@@ -145,16 +139,55 @@ class PokeBattle_Battle
     pbParty(0).each_with_index do |pkmn,i|
       next if !pkmn
       @peer.pbOnLeavingBattle(self,pkmn,@usedInBattle[0][i],true)   # Reset form
-      if @opponent
-        pkmn.setItem($olditems[i])
-      else
-        pkmn.setItem(@initialItems[0][i])
-      end
+      pkmn.setItem(@initialItems[0][i])
     end
     Level_Scaling.boss_battle = false
     Level_Scaling.gym_leader = false
+    $game_switches[908] = false
     $qol_toggle = true
     $game_switches[950] = false
     return @decision
   end
+end
+
+def pbPickBerry(berry,qty=1)
+  interp=pbMapInterpreter
+  thisEvent=interp.get_character(0)
+  berryData=interp.getVariable
+  berry=getID(PBItems,berry)
+  special = [:CUSTAPBERRY,:ROWAPBERRY,:JABOCABERRY]
+  mid = [:GOLDBERRY,:MIRACLEBERRY]
+  qty = special.include?(berry) ? rand(5)+1 : mid.include?(berry) ? rand(21) + 10 : rand(71)+10
+  itemname=(qty>1) ? PBItems.getNamePlural(berry) : PBItems.getName(berry)
+  if qty>1
+    message=_INTL("There are {1} {2}!",qty,itemname)
+  else
+    message=_INTL("There is 1 {1}!",itemname)
+  end
+  if !$PokemonBag.pbCanStore?(berry,qty)
+    pbMessage(_INTL("Too bad...\nThe BAG is full..."))
+    return
+  end
+  $PokemonBag.pbStoreItem(berry,qty)
+  if qty>1
+    pbMessage(_INTL("You picked the {1} {2}.\\wtnp[30]",qty,itemname))
+  else
+    pbMessage(_INTL("You picked the {1}.\\wtnp[30]",itemname))
+  end
+  pocket = pbGetPocket(berry)
+  pbMessage(_INTL("{1} put the {2} in the {3} POCKET.\1",
+     $Trainer.name,itemname,PokemonBag.pocketNames()[pocket]))
+  if NEW_BERRY_PLANTS
+    pbMessage(_INTL("The soil returned to its soft and earthy state."))
+    berryData=[0,0,0,0,0,0,0,0]
+  else
+    pbMessage(_INTL("The soil returned to its soft and loamy state."))
+    berryData=[0,0,false,0,0,0]
+  end
+  interp.setVariable(berryData)
+  pbSetSelfSwitch(thisEvent.id,"A",true)
+end
+
+def pbBerryPlant
+  pbMessage(_INTL("This soil is completely dried out..."))
 end

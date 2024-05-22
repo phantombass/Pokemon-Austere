@@ -16,7 +16,7 @@ PBAI::SwitchHandler.add do |score,ai,battler,proj,target|
   		PBAI.log_switch(proj.pokemon.name,"+ 3")
   	end
   	if mon.defensive? && !proj.pokemon.hasRole?([PBRoles::PHYSICALWALL,PBRoles::SPECIALWALL])
-  		if proj.pokemon.hasRole?([PBRoles::DEFENSIVEPIVOT,PBRoles::CLERIC,PBRoles::TOXICSTALLER,PBRoles::LEAD,PBRoles::TANK])
+  		if proj.pokemon.hasRole?([PBRoles::DEFENSIVEPIVOT,PBRoles::CLERIC,PBRoles::TOXICSTALLER,PBRoles::HAZARDLEAD,PBRoles::TANK])
   			score += 2
   			PBAI.log_switch(proj.pokemon.name,"+ 2")
   		else
@@ -36,7 +36,7 @@ PBAI::SwitchHandler.add do |score,ai,battler,proj,target|
 	target_moves = target.moves
 	mon = ai.pbMakeFakeBattler(proj.pokemon)
 	for move in battler.moves
-		dmg = proj.get_move_damage(target, move)
+		dmg = proj.get_calc(target, move)
 		off += 1 if move.damagingMove? && dmg >= mon.totalhp/2
 	end
 	if target_moves != nil
@@ -64,8 +64,8 @@ PBAI::SwitchHandler.add do |score,ai,battler,proj,target|
 		party = ai.battle.pbParty(battler.index)
 		setup_moves = [:SWORDSDANCE,:WORKUP,:NASTYPLOT,:GROWTH,:HOWL,:BULKUP,:CALMMIND,:TAILGLOW,:AGILITY,:ROCKPOLISH,:AUTOTOMIZE,
       :SHELLSMASH,:SHIFTGEAR,:QUIVERDANCE,:VICTORYDANCE,:CLANGOROUSSOUL,:CHARGE,:COIL,:HONECLAWS,:IRONDEFENSE,:COSMICPOWER,:AMNESIA,:DRAGONDANCE]
-		setup_mons = party.find_all {|mon| mon.hasRole?([PBRoles::SETUPSWEEPER,PBRoles::WINCON]) && mon.moves.any? {|move| setup_moves.include?(move)}}
-		strong_moves = target.moves.find_all {|targ_move| target.get_move_damage(pkmn,targ_move) >= pkmn.hp/2}
+		setup_mons = party.find_all {|mon| mon.hasRole?([PBRoles::SETUPSWEEPER,PBRoles::WINCON]) && mon.moves.any? {|move| setup_moves.include?(move.id)}}
+		strong_moves = target.moves.find_all {|targ_move| proj.get_calc(target,targ_move) >= pkmn.hp/2}
 		setup_mons.each do |pk|
 			next if pk != pkmn
 			score += 1 if pk.faster_than?(target)

@@ -63,9 +63,10 @@ end
 #===============================================================================
 class PokeBattle_Move_084 < PokeBattle_Move
   def pbBaseDamage(baseDmg,user,target)
-    if @battle.choices[target.index][0]!=:None &&
-       ((@battle.choices[target.index][0]!=:UseMove &&
-       @battle.choices[target.index][0]!=:Shift) || target.movedThisRound?)
+    ind = target.index ? target.index : 2
+    if @battle.choices[ind][0]!=:None &&
+       ((@battle.choices[ind][0]!=:UseMove &&
+       @battle.choices[ind][0]!=:Shift) || target.movedThisRound?)
       baseDmg *= 2
     end
     return baseDmg
