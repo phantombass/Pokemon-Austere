@@ -358,7 +358,7 @@ def useMoveFly
   pbEraseEscapePoint
   return true
 end
-def canMoveUseRockSmash?
+def canUseMoveRockSmash?
   showmsg = true
   return false if !HM_Catalogue.rock_smash
   facingEvent = $game_player.pbFacingEvent
@@ -377,10 +377,15 @@ def useMoveRockSmash
   if facingEvent
     pbSmashEvent(facingEvent)
     pbRockSmashRandomEncounter
-    pbRockSmashRandomItem
+    #pbRockSmashRandomItem
   end
   return true
 end
+
+def pbRockSmash
+  return useMoveRockSmash if canUseMoveRockSmash?
+end
+
 def canUseMoveStrength?
    showmsg = true
    return false if !HM_Catalogue.strength
@@ -398,6 +403,11 @@ def useMoveStrength
    $PokemonMap.strengthUsed = true
    return true
 end
+
+def pbStrength
+  return useMoveStrength if canUseMoveStrength?
+end
+
 def canUseMoveSurf?
    showmsg = true
    return false if !HM_Catalogue.surf
@@ -431,6 +441,11 @@ def useMoveSurf
    pbStartSurfing
    return true
 end
+
+def pbSurf
+  return useMoveSurf if canUseMoveSurf?
+end
+
 def canUseMoveWaterfall?
   showmsg = true
   return false if !HM_Catalogue.waterfall
@@ -448,6 +463,11 @@ def useMoveWaterfall
    Kernel.pbAscendWaterfall
    return true
 end
+
+def pbWaterfall
+  return useMoveWaterfall if canUseMoveWaterfall?
+end
+
 def canUseMoveRockClimb?
   showmsg = true
   return false if !HM_Catalogue.rock_climb

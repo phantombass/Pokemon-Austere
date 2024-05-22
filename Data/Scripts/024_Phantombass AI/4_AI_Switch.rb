@@ -260,7 +260,7 @@ PBAI::SwitchHandler.add_out do |score,ai,battler,target|
 		score -= 5
 		PBAI.log_switch_out(-5,"Do not reset buffed stats")
 	elsif battler.set_up_score < 0
-		if battler.stages[:SPEED] < 0 && ai.battle.field.effects[PBEffects::TrickRoom] != 0
+		if battler.stages[PBStats::SPEED] < (-1*ai.battle.pbSideSize(1)) && ai.battle.field.effects[PBEffects::TrickRoom] != 0
 			score -= 5
 			PBAI.log_switch_out(-5,"Abuse Trick Room")
 		else

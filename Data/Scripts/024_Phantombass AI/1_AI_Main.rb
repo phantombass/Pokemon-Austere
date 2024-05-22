@@ -786,7 +786,7 @@ class PBAI
       weights = scores.map { |e| e[1] }
       total = weights.sum
       scores.each_with_index do |e, i|
-        finalPerc = total == 0 ? 0 : (weights[i] / total.to_f * 100).round
+        finalPerc = total == 0 ? 0 : (weights[i] / total.to_f * 100)
         if i == 0
           # Item
           name = PBItems.getName(e[2])
@@ -1178,10 +1178,11 @@ class PBAI
         score = PBAI::SwitchHandler.trigger_out(score,@ai,self,target)
       end
       PBAI.log("Switch out Score: #{score}")
+      weight = @ai.battle.pbSideSize(1) == 2 ? 4 : 0
       switch = score > 0
       $switch_flags[:score] = score
-      nope = switch ? "" : "not"
-      PBAI.log("The AI will #{nope} try to switch.")
+      nope = switch ? "start Switch logic." : "not start Switch logic."
+      PBAI.log("The AI will #{nope}")
       return switch
     end
 
@@ -1261,7 +1262,14 @@ class PBAI
         if !prj
           raise "No projection for #{mon.name}"
         end
-        self_party.push(mon) if prj.pokemon.trainerID == self.pokemon.trainerID && prj.pokemon != self.pokemon
+        ally = nil
+        if @ai.battle.pbSideSize(1) == 2
+          self.battler.eachAlly do |al|
+            ally = al
+          end
+        end
+        active = (prj.pokemon == self.pokemon) || (ally && (prj.pokemon == ally.pokemon))
+        self_party.push(mon) if prj.pokemon.trainerID == self.pokemon.trainerID && !active
       end
       matchup = self_party.map do |pkmn|
         proj = @ai.pokemon_to_projection(pkmn)
@@ -1880,7 +1888,8 @@ class PBAI
     	return 1.0 if move_id == 0
       move = PokeBattle_Move.pbFromPBMove(@ai.battle, PBMove.new(move_id))
       # Calculate the type this move would be if used by us
-      types = move.pbCalcType(@battler)
+      mon = self.is_a?(PokeBattle_Battler) ? self : pbMakeFakeBattler(self.pokemon)
+      types = move.pbCalcType(mon)
       types = [types] if !types.is_a?(Array)
       user_types = types
       target_types = self.pbTypes(true)
