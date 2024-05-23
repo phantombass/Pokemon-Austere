@@ -90,6 +90,10 @@ def pbCompleteMission(mission_id)
   Mission_Database.complete(mission_id)
 end
 
+def pbMakeMissionAvailable(mission_id)
+  Mission_Database.make_available(mission_id)
+end
+
 
 class Mission_Database
   attr_accessor :available
@@ -116,7 +120,7 @@ class Mission_Database
     chosen = false
     for key in MISSION_DATA.keys
       mission = MISSION_DATA[key]
-      chosen = true if $game_switches[mission[:Chosen_Switch]] == true
+      chosen = $game_switches[mission[:Chosen_Switch]]
       @available.push(key) if $game_switches[mission[:Available_Switch]] == true && chosen == false
     end
     @available.uniq!
@@ -145,8 +149,23 @@ class Mission_Database
   end
 
   def self.make_available(mission_id)
-    @available.push(mission_id)
-    $game_switches[913] = true
+    mission = MISSION_DATA[mission_id]
+    prereq = MISSION_DATA[mission[:Prerequisite]]
+    if $game_switches[prereq[:Completed]] || mission_id == 1
+      $game_switches[913] = false
+      $game_switches[mission[:Available_Switch]] = true
+      self.refresh_available
+    end
+  end
+
+  def self.refresh_available
+    chosen = false
+    for key in MISSION_DATA.keys
+      mission = MISSION_DATA[key]
+      chosen = $game_switches[mission[:Chosen_Switch]]
+      @available.push(key) if $game_switches[mission[:Available_Switch]] && chosen == false
+    end
+    @available.uniq!
   end
 
   def self.display_available_missions

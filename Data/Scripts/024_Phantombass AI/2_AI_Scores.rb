@@ -1295,7 +1295,7 @@ PBAI::ScoreHandler.add("035") do |score, ai, user, target, move|
       end
       end
       if count == 0 && t_count == 0
-        add = user.turnCount == 0 ? 6 : 4
+        add = user.turnCount == 0 ? 9 : 4
         score += add
         PBAI.log("+ #{add} to boost to guarantee the kill")
       elsif count > 0
@@ -1334,7 +1334,7 @@ PBAI::ScoreHandler.add("02E") do |score, ai, user, target, move|
       end
       # As long as the target's stat stages are more advantageous than ours (i.e. net < 0), Haze is a good choice
       if count == 0 && t_count == 0
-        add = user.turnCount == 0 ? 6 : 4
+        add = user.turnCount == 0 ? 9 : 4
         score += add
         PBAI.log("+ #{add} to boost to guarantee the kill")
       elsif count > 0
@@ -1372,7 +1372,7 @@ PBAI::ScoreHandler.add("024", "518", "026") do |score, ai, user, target, move|
       end
       end
       if count == 0 && t_count == 0
-        add = user.turnCount == 0 ? 6 : 4
+        add = user.turnCount == 0 ? 9 : 4
         score += add
         PBAI.log("+ #{add} to boost to guarantee the kill")
       elsif count > 0
@@ -1410,7 +1410,7 @@ PBAI::ScoreHandler.add("032") do |score, ai, user, target, move|
       end
       # As long as the target's stat stages are more advantageous than ours (i.e. net < 0), Haze is a good choice
       if count == 0 && t_count == 0
-        add = user.turnCount == 0 ? 6 : 4
+        add = user.turnCount == 0 ? 9 : 4
         score += add
         PBAI.log("+ #{add} to boost to guarantee the kill")
       elsif count > 0
@@ -1448,7 +1448,7 @@ PBAI::ScoreHandler.add("02B", "02C") do |score, ai, user, target, move|
       end
       # As long as the target's stat stages are more advantageous than ours (i.e. net < 0), Haze is a good choice
       if count == 0 && t_count == 0
-        add = user.turnCount == 0 ? 6 : 4
+        add = user.turnCount == 0 ? 9 : 4
         score += add
         PBAI.log("+ #{add} to boost to guarantee the kill")
       elsif count > 0
@@ -1772,7 +1772,7 @@ PBAI::ScoreHandler.add("036") do |score, ai, user, target, move|
       end
       end
       if count == 0 && t_count == 0
-        add = user.turnCount == 0 ? 6 : 4
+        add = user.turnCount == 0 ? 9 : 4
         score += add
         PBAI.log("+ #{add} to boost to guarantee the kill")
       elsif count > 0
@@ -1837,7 +1837,7 @@ PBAI::ScoreHandler.add("09C") do |score, ai, user, target, move|
   end
   if user.hasRole?(PBRoles::SUPPORT) && ally == true
     score += 2
-    PBAI.log("+ 200 to boost ally attacks")
+    PBAI.log("+ 2 to boost ally attacks")
   end
   next score
 end
@@ -1845,8 +1845,8 @@ end
 #Tailwind
 PBAI::ScoreHandler.add("05B") do |score, ai, user, target, move|
   if user.hasRole?(PBRoles::SPEEDCONTROL) && (user.turnCount == 0 || user.side.effects[PBEffects::Tailwind] == 0)
-    score += 3
-    PBAI.log("+ 3 to set Tailwind")
+    score += 9
+    PBAI.log("+ 9 to set Tailwind")
   end
   next score
 end
@@ -1927,14 +1927,10 @@ PBAI::ScoreHandler.add do |score, ai, user, target, move|
   [:SWIFTSWIM,:RAINDISH,:DRYSKIN,:FORECAST,:STEAMPOWERED],
   [:ICEBODY,:SLUSHRUSH,:SNOWCLOAK,:ICEFACE,:FORECAST],
   [:SANDRUSH,:SANDVEIL,:SANDFORCE,:FORECAST],
-  [:STARSPRINT],
-  [:NOCTEMBOOST],
-  [:TOXICRUSH],
   [:SURGESURFER,:QUARKDRIVE],
   [:MEADOWRUSH],
   [nil],
-  [:BRAINBLAST],
-  [:SLUDGERUSH]]
+  [:BRAINBLAST]]
   idx = -1
   setter.each do |abil|
     idx += 1

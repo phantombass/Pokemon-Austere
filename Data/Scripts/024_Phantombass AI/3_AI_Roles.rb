@@ -255,7 +255,7 @@ def pbLoadTrainer(trainerid,trainername,partyid=0)
       g = (poke[TPGENDER]) ? poke[TPGENDER] : (opponent.female?) ? 1 : 0
       pokemon.setGender(g)
       (poke[TPSHINY]) ? pokemon.makeShiny : pokemon.makeNotShiny
-      n = (poke[TPNATURE]) ? poke[TPNATURE] : (pokemon.species+opponent.trainertype)%(PBNatures.maxValue+1)
+      n = (poke[TPNATURE]) ? poke[TPNATURE] : :BASHFUL
       pokemon.setNature(n)
       roles = poke[TPROLES]
       role_ids = []
@@ -275,7 +275,7 @@ def pbLoadTrainer(trainerid,trainername,partyid=0)
         if poke[TPIV] && poke[TPIV].length>0
           pokemon.iv[i] = (i<poke[TPIV].length) ? poke[TPIV][i] : poke[TPIV][0]
         else
-          pokemon.iv[i] = [level/2,PokeBattle_Pokemon::IV_STAT_LIMIT].min
+          pokemon.iv[i] = 31
         end
         if !DISABLE_EVS
           if poke[TPEV] && poke[TPEV].length>0

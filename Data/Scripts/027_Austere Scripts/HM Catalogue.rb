@@ -361,18 +361,16 @@ end
 def canUseMoveRockSmash?
   showmsg = true
   return false if !HM_Catalogue.rock_smash
-  facingEvent = $game_player.pbFacingEvent
-  if !facingEvent || facingEvent.name!="Rock"
-    Kernel.pbMessage(_INTL("Can't use that here.")) if showmsg
-    return false
-  end
+  #facingEvent = $game_player.pbFacingEvent
+  #if !facingEvent || facingEvent.name != "Rock"
+  #  Kernel.pbMessage(_INTL("Can't use that here.")) if showmsg
+  #  return false
+  #end
   return true
 end
 
 def useMoveRockSmash
-  if !pbHiddenMoveAnimation(nil)
-    Kernel.pbMessage(_INTL("{1} used Rock Smash!",$Trainer.name))
-  end
+  Kernel.pbMessage(_INTL("{1} used Rock Smash!",$Trainer.name))
   facingEvent = $game_player.pbFacingEvent
   if facingEvent
     pbSmashEvent(facingEvent)
