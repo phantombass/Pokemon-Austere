@@ -1791,6 +1791,7 @@ class PokeBattle_Battler
       targets.each do |b|
         next if b.damageState.unaffected
         move.pbEffectWhenDealingDamage(user,b)
+        move.pbEffectAfterAllHits(user,b) if [:KNOCKOFF,:BUGBITE,:COVET,:THIEF,:PLUCK].include?(move.id)
       end
       # Ability/item effects such as Static/Rocky Helmet, and Grudge, etc.
       targets.each do |b|

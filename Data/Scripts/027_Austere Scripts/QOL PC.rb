@@ -1,9 +1,11 @@
+GAUNTLET = 949
+
 def pbPCBoxLink
   gym_maps = [112]
   pbPlayDecisionSE
   pbMessage("Which would you like to do?\\ch[34,4,Access PC,Heal: #{pbGet(36)},Cancel]")
   if $game_variables[34] == 0
-    if !gym_maps.include?($game_map.map_id)
+    if !gym_maps.include?($game_map.map_id) && !$game_switches[GAUNTLET]
       pbFadeOutIn {
         scene = PokemonStorageScene.new
         screen = PokemonStorageScreen.new(scene,$PokemonStorage)

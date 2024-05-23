@@ -44,6 +44,32 @@ class PokeBattle_Battle
     pbBattleLoop
   end
 
+  def pbCanRun?(idxBattler)
+    return false if trainerBattle?
+    return false if $game_switches[908]
+    battler = @battlers[idxBattler]
+    return false if !@canRun && !battler.opposes?
+    return true if battler.pbHasType?(:GHOST) && NEWEST_BATTLE_MECHANICS
+    return true if battler.abilityActive? &&
+                   BattleHandlers.triggerRunFromBattleAbility(battler.ability,battler)
+    return true if battler.itemActive? &&
+                   BattleHandlers.triggerRunFromBattleItem(battler.item,battler)
+    return false if battler.effects[PBEffects::Trapping]>0 ||
+                    battler.effects[PBEffects::MeanLook]>=0 ||
+                    battler.effects[PBEffects::Ingrain] ||
+          battler.effects[PBEffects::JawLock] ||
+                    battler.effects[PBEffects::OctolockUser]>=0 ||
+                    battler.effects[PBEffects::NoRetreat] ||
+                    @field.effects[PBEffects::FairyLock]>0
+    eachOtherSideBattler(idxBattler) do |b|
+      return false if b.abilityActive? &&
+                      BattleHandlers.triggerTrappingTargetAbility(b.ability,battler,b,self)
+      return false if b.itemActive? &&
+                      BattleHandlers.triggerTrappingTargetItem(b.item,battler,b,self)
+    end
+    return true
+  end
+
   def pbEndOfBattle
     oldDecision = @decision
     @decision = 4 if @decision==1 && wildBattle? && @caughtPokemon.length>0

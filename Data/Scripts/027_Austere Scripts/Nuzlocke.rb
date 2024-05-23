@@ -199,7 +199,7 @@ class PokeBattle_Battle
     self.rules["batonpassclause"] = true
   end
   def pbItemMenu(idxBattler,firstAction)
-    if !@internalBattle || @opponent || $game_switches[950] == true
+    if !@internalBattle || @opponent || $game_switches[908] == true || $game_switches[950] == true
       pbDisplay(_INTL("Items can't be used here."))
       return false
     end

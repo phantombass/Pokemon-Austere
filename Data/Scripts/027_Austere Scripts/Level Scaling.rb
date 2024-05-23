@@ -117,6 +117,7 @@ module Level_Scale
 
   def self.boss_mon
     $game_switches[Level_Scale::Boss_Mon] = true
+    $game_switches[950] = true
   end
 end
 
@@ -128,22 +129,15 @@ Events.onTrainerPartyLoad+=proc {|_sender, e |
        levelcap = LEVEL_CAP[$game_system.level_cap]
        mlv = $Trainer.party.map { |e| e.level  }.max
       for i in 0...party.length
-        level = 0
-        level=1 if level<1
+        level = party[i].level
         if Level_Scaling.gym_leader?
           level = levelcap
-        elsif Level_Scaling.boss_battle? || Level_Scaling.partner?
-          level = mlv - 1
         else
-          level = mlv - 2 -rand(2)
+          level = level
         end
         level = 1 if level<1
         party[i].level = level
         party[i].calcStats
-        if !Level_Scaling.gym_leader? && !Level_Scaling.boss_battle? && !Level_Scaling.partner?
-          party[i].species = Level_Scaling.evolve(party[i],level,levelcap)
-          party[i].resetMoves if $Trainer.numbadges == 0
-        end
       end
     end
   end
@@ -156,6 +150,7 @@ Events.onWildPokemonCreate += proc { |_sender, e|
     new_level = max_level - 3 - rand(3)   # For variety
     new_level = 1 if new_level < 1
     pokemon.level = new_level
+    pokemon.setAbility(rand(3))
     Level_Scaling.evolve(pokemon,new_level,levelcap)
     pokemon.calcStats
     pokemon.resetMoves
@@ -163,12 +158,23 @@ Events.onWildPokemonCreate += proc { |_sender, e|
   if pokemon.level > levelcap
     $game_switches[950] = true
   end
+  if $game_map.map_id == 121 && $game_switches[908]
+    pokemon.setAbility(2)
+    pokemon.pbLearnMove(:LUNGE)
+    pokemon.pbLearnMove(:STORMTHROW)
+    pokemon.pbLearnMove(:ROCKTOMB)
+    pokemon.pbLearnMove(:QUICKATTACK)
+    pokemon.setNature(:ADAMANT)
+    PBStats.eachStat {|s| pokemon.iv[s] = 31}
+    pokemon.calcStats
+  end
   if $game_map.map_id == 137
     pokemon.setAbility(2)
     pokemon.pbLearnMove(:PSYBEAM)
     pokemon.pbLearnMove(:DRAININGKISS)
     pokemon.pbLearnMove(:HPFIGHTING)
     pokemon.pbLearnMove(:PROTECT)
+    pokemon.setNature(:TIMID)
     PBStats.eachStat {|s| pokemon.iv[s] = 31}
     pokemon.calcStats
   end
